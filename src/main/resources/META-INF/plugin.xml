@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>it.frob.sleighidea</id>
+    <name>SleighIDEA</name>
+    <version>0.1</version>
+    <vendor email="a.gatti@frob.it" url="https://github.com/agatti/sleighidea">Alessandro Gatti</vendor>
+
+    <description><![CDATA[Sleigh syntax highlighter for IntelliJ IDEA.]]></description>
+
+    <change-notes><![CDATA[]]></change-notes>
+
+    <idea-version since-build="212.5457"/>
+
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="Sleigh File" implementationClass="it.frob.sleighidea.SleighFileType"
+                  fieldName="INSTANCE" language="Sleigh" extensions="slaspec;sinc"/>
+        <lang.parserDefinition language="Sleigh" implementationClass="it.frob.sleighidea.SleighParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="Sleigh"
+                                       implementationClass="it.frob.sleighidea.SleighSyntaxHighlighterFactory"/>
+        <colorSettingsPage implementation="it.frob.sleighidea.SleighColourSettingsPage"/>
+    </extensions>
+
+    <actions>
+    </actions>
+
+</idea-plugin>
