@@ -23,6 +23,8 @@
         <annotator language="Sleigh" implementationClass="it.frob.sleighidea.SleighAnnotator"/>
         <lang.psiStructureViewFactory language="Sleigh"
                                       implementationClass="it.frob.sleighidea.SleighStructureViewFactory"/>
+        <lang.foldingBuilder language="Sleigh"
+                             implementationClass="it.frob.sleighidea.SleighFoldingBuilder"/>
         <lang.commenter language="Sleigh" implementationClass="it.frob.sleighidea.SleighCommenter"/>
     </extensions>
 

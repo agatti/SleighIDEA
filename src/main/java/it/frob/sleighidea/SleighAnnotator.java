@@ -15,6 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class SleighAnnotator implements Annotator {
+
+    public static final String SLEIGH_PREFIX_STRING = "sleigh";
+
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         if (!(element instanceof SleighCtorstart)) {
