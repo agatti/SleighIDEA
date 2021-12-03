@@ -122,33 +122,29 @@
 spec ::= endiandef ( definition | constructorlike ) * <<eof>>
 
 endiandef ::= KEY_DEFINE KEY_ENDIAN ASSIGN endian SEMI
-endian ::= KEY_BIG
-  | KEY_LITTLE
-definition ::= ( aligndef
-  | tokendef
-  | contextdef
-  | spacedef
-  | varnodedef
-  | bitrangedef
-  | pcodeopdef
-  | valueattach
-  | nameattach
-  | varattach
-  ) SEMI
+endian ::= KEY_BIG | KEY_LITTLE
+definition ::= ( aligndef | tokendef | contextdef | spacedef | varnodedef | bitrangedef | pcodeopdef | valueattach | nameattach | varattach ) SEMI
 aligndef ::= KEY_DEFINE KEY_ALIGNMENT ASSIGN integer
-tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN fielddef *
-fielddef ::= strict_id ASSIGN LPAREN integer COMMA integer RPAREN fieldmod *
+tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN fielddefs
+fielddefs ::= fielddef *
+fielddef ::= strict_id ASSIGN LPAREN integer COMMA integer RPAREN fieldmods
+fieldmods ::= fieldmod *
 fieldmod ::= KEY_SIGNED | KEY_HEX | KEY_DEC
-contextfielddefs ::= ( identifier ASSIGN LPAREN integer COMMA integer RPAREN contextfieldmod* )*
+contextfielddefs ::= contextfielddef *
+contextfielddef ::= identifier ASSIGN LPAREN integer COMMA integer RPAREN contextfieldmods
+contextfieldmods ::= contextfieldmod *
 contextfieldmod ::= KEY_SIGNED | KEY_NOFLOW | KEY_HEX | KEY_DEC
 contextdef ::= KEY_DEFINE KEY_CONTEXT identifier contextfielddefs
-spacedef ::= KEY_DEFINE KEY_SPACE identifier spacemod *
+spacedef ::= KEY_DEFINE KEY_SPACE identifier spacemods
+spacemods ::= spacemod *
 spacemod ::= typemod | sizemod | wordsizemod | KEY_DEFAULT
-typemod ::= KEY_TYPE ASSIGN identifier
+typemod ::= KEY_TYPE ASSIGN type
+type ::= identifier
 sizemod ::= KEY_SIZE ASSIGN integer
 wordsizemod ::= KEY_WORDSIZE ASSIGN integer
 varnodedef ::= KEY_DEFINE identifier KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN integer identifierlist
-bitrangedef ::= KEY_DEFINE KEY_BITRANGE bitrange +
+bitrangedef ::= KEY_DEFINE KEY_BITRANGE bitranges
+bitranges ::= bitrange +
 bitrange ::= identifier ASSIGN identifier LBRACKET integer COMMA integer RBRACKET
 pcodeopdef ::= KEY_DEFINE KEY_PCODEOP identifierlist
 valueattach ::= KEY_ATTACH KEY_VALUES identifierlist intblist
@@ -159,7 +155,7 @@ stringoridentlist ::= ( LBRACKET stringorident + RBRACKET ) | stringorident
 stringorident ::= id_or_wild | qstring
 intblist ::= ( LBRACKET intbpart + RBRACKET ) | neginteger
 intbpart ::= neginteger | UNDERSCORE
-neginteger ::= integer | ( '-' ? integer )
+neginteger ::= integer | ( MINUS integer )
 
 constructorlike ::= macrodef | withblock | constructor
 macrodef ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody
@@ -176,7 +172,7 @@ bitpattern ::= pequation
 ctorstart ::= ( identifier display ) | display
 contextblock ::= ( LBRACKET ctxstmts RBRACKET ) *
 ctxstmts ::= ctxstmt *
-ctxstmt ::= ( ctxassign | pfuncall ) SEMI
+ctxstmt ::= ( ctxassign SEMI ) | ( pfuncall SEMI )
 ctxassign ::= ctxlval ASSIGN pexpression
 ctxlval ::= identifier
 pfuncall ::= pexpression_apply
@@ -240,11 +236,7 @@ assignment ::= ( KEY_LOCAL lvalue ASSIGN expr ) | ( lvalue ASSIGN expr )
 declaration ::= ( KEY_LOCAL identifier COLON constant ) | ( KEY_LOCAL identifier )
 lvalue ::= sembitrange | ( identifier COLON constant ) | identifier | sizedstar expr
 sembitrange ::= identifier LBRACKET constant COMMA constant RBRACKET
-sizedstar ::=
-  ( ASTERISK LBRACKET identifier RBRACKET COLON constant )
-| ( ASTERISK LBRACKET identifier RBRACKET )
-| ( ASTERISK COLON constant )
-| ASTERISK
+sizedstar ::= ( ASTERISK LBRACKET identifier RBRACKET COLON constant ) | ( ASTERISK LBRACKET identifier RBRACKET ) | ( ASTERISK COLON constant ) | ASTERISK
 funcall ::= expr_apply
 build_stmt ::= KEY_BUILD identifier
 crossbuild_stmt ::= KEY_CROSSBUILD varnode COMMA identifier
@@ -269,18 +261,7 @@ expr_and_op ::= AMPERSAND
 expr_eq ::= expr_comp ( eq_op expr_comp ) *
 eq_op ::= EQUAL | NOTEQUAL | FEQUAL | FNOTEQUAL
 expr_comp ::= expr_shift ( compare_op expr_shift ) *
-compare_op ::= LESS
-| GREATEQUAL
-| LESSEQUAL
-| GREAT
-| SLESS
-| SGREATEQUAL
-| SLESSEQUAL
-| SGREAT
-| FLESS
-| FGREATEQUAL
-| FLESSEQUAL
-| FGREAT
+compare_op ::= LESS | GREATEQUAL | LESSEQUAL | GREAT | SLESS | SGREATEQUAL | SLESSEQUAL | SGREAT | FLESS | FGREATEQUAL | FLESSEQUAL | FGREAT
 expr_shift ::= expr_add ( shift_op expr_add ) *
 shift_op ::= LEFT | RIGHT | SRIGHT
 expr_add ::= expr_mult ( add_op expr_mult ) *
@@ -294,57 +275,14 @@ expr_apply ::= identifier expr_operands
 expr_operands ::= LPAREN ( expr ( COMMA expr ) * ) ? RPAREN
 expr_term ::= ( LPAREN expr RPAREN ) | sembitrange | varnode
 
-varnode ::= integer
-| identifier
-| ( integer COLON constant )
-| ( identifier COLON constant )
-| ( AMPERSAND COLON constant varnode )
-| ( AMPERSAND varnode )
+varnode ::= integer | identifier | ( integer COLON constant ) | ( identifier COLON constant ) | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
 constant ::= integer
 
 display ::= COLON printpiece * RES_IS
 printpiece ::= identifier | whitespace | concatenate | qstring | special
 whitespace ::= WS
 concatenate ::= CARET
-special ::= DISPCHAR
-| LINECOMMENT
-| LBRACE
-| RBRACE
-| LBRACKET
-| RBRACKET
-| LPAREN
-| RPAREN
-| ELLIPSIS
-| EQUAL
-| NOTEQUAL
-| LESS
-| GREAT
-| LESSEQUAL
-| GREATEQUAL
-| ASSIGN
-| COLON
-| COMMA
-| ASTERISK
-| BOOL_AND
-| BOOL_OR
-| BOOL_XOR
-| PIPE
-| AMPERSAND
-| LEFT
-| RIGHT
-| PLUS
-| MINUS
-| SLASH
-| PERCENT
-| EXCLAIM
-| TILDE
-| SEMI
-| SPEC_AND
-| SPEC_OR
-| SPEC_XOR
-| DEC_INT
-| HEX_INT
-| BIN_INT
+special ::= DISPCHAR | LINECOMMENT | LBRACE | RBRACE | LBRACKET | RBRACKET | LPAREN | RPAREN | ELLIPSIS | EQUAL | NOTEQUAL | LESS | GREAT | LESSEQUAL | GREATEQUAL | ASSIGN | COLON | COMMA | ASTERISK | BOOL_AND | BOOL_OR | BOOL_XOR | PIPE | AMPERSAND | LEFT | RIGHT | PLUS | MINUS | SLASH | PERCENT | EXCLAIM | TILDE | SEMI | SPEC_AND | SPEC_OR | SPEC_XOR | DEC_INT | HEX_INT | BIN_INT
 
 qstring ::= QSTRING
 
@@ -352,38 +290,7 @@ id_or_wild ::= identifier | wildcard
 wildcard ::= UNDERSCORE
 
 identifier ::= strict_id | key_as_id
-key_as_id ::= KEY_ALIGNMENT
-| KEY_ATTACH
-| KEY_BIG
-| KEY_BITRANGE
-| KEY_BUILD
-| KEY_CALL
-| KEY_CONTEXT
-| KEY_CROSSBUILD
-| KEY_DEC
-| KEY_DEFAULT
-| KEY_DEFINE
-| KEY_ENDIAN
-| KEY_EXPORT
-| KEY_GOTO
-| KEY_HEX
-| KEY_LITTLE
-| KEY_LOCAL
-| KEY_MACRO
-| KEY_NAMES
-| KEY_NOFLOW
-| KEY_OFFSET
-| KEY_PCODEOP
-| KEY_RETURN
-| KEY_SIGNED
-| KEY_SIZE
-| KEY_SPACE
-| KEY_TOKEN
-| KEY_TYPE
-| KEY_UNIMPL
-| KEY_VALUES
-| KEY_VARIABLES
-| KEY_WORDSIZE
+key_as_id ::= KEY_ALIGNMENT | KEY_ATTACH | KEY_BIG | KEY_BITRANGE | KEY_BUILD | KEY_CALL | KEY_CONTEXT | KEY_CROSSBUILD | KEY_DEC | KEY_DEFAULT | KEY_DEFINE | KEY_ENDIAN | KEY_EXPORT | KEY_GOTO | KEY_HEX | KEY_LITTLE | KEY_LOCAL | KEY_MACRO | KEY_NAMES | KEY_NOFLOW | KEY_OFFSET | KEY_PCODEOP | KEY_RETURN | KEY_SIGNED | KEY_SIZE | KEY_SPACE | KEY_TOKEN | KEY_TYPE | KEY_UNIMPL | KEY_VALUES | KEY_VARIABLES | KEY_WORDSIZE
 strict_id ::= IDENTIFIER
 
 IDENTIFIER ::= symbol
@@ -391,3 +298,10 @@ IDENTIFIER ::= symbol
 integer ::= hexnumber | decnumber | binnumber
 
 QSTRING ::= string
+
+WS ::= ' ' | '\t' | '\r' | '\n'
+DISPCHAR ::= '@' | '$' | '?'
+LINECOMMENT ::= '#'
+DEC_INT ::= decnumber
+HEX_INT ::= hexnumber
+BIN_INT ::= binnumber

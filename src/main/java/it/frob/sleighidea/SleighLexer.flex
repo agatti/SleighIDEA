@@ -128,12 +128,6 @@ STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
   "values"           { return KEY_VALUES; }
   "variables"        { return KEY_VARIABLES; }
   "wordsize"         { return KEY_WORDSIZE; }
-  "WS"               { return WS; }
-  "DISPCHAR"         { return DISPCHAR; }
-  "LINECOMMENT"      { return LINECOMMENT; }
-  "DEC_INT"          { return DEC_INT; }
-  "HEX_INT"          { return HEX_INT; }
-  "BIN_INT"          { return BIN_INT; }
 
   {SPACE}            { return SPACE; }
   {COMMENT}          { return COMMENT; }
