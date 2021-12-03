@@ -21,6 +21,8 @@
                                        implementationClass="it.frob.sleighidea.SleighSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="it.frob.sleighidea.SleighColourSettingsPage"/>
         <annotator language="Sleigh" implementationClass="it.frob.sleighidea.SleighAnnotator"/>
+        <lang.psiStructureViewFactory language="Sleigh"
+                                      implementationClass="it.frob.sleighidea.SleighStructureViewFactory"/>
     </extensions>
 
     <actions>
