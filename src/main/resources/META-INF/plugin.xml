@@ -20,6 +20,7 @@
         <lang.syntaxHighlighterFactory language="Sleigh"
                                        implementationClass="it.frob.sleighidea.SleighSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="it.frob.sleighidea.SleighColourSettingsPage"/>
+        <annotator language="Sleigh" implementationClass="it.frob.sleighidea.SleighAnnotator"/>
     </extensions>
 
     <actions>
