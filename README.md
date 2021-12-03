@@ -11,7 +11,8 @@ a [Sleigh](https://ghidra.re/courses/languages/html/sleigh.html) plugin for Inte
 * Some token colouring in the editor view
 * Simple colour customisation support
 * Gutter icons for tables and opcodes
-* Basic structure view support for opcodes.
+* Basic structure view support for opcodes
+* Basic folding support.
 
 ## What is not there
 
@@ -19,8 +20,9 @@ Pretty much everything else:
 
 * 100% compatibility with Sleigh's compiler
 * `@include`, `@ifdef`, `@define`, `@endif`
-* Folding support
+* Full folding support
 * Full structure view
+* Full syntax colouring
 * Interpreting the language instead of merely parsing it
 * etc.
 
