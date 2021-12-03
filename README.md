@@ -9,7 +9,9 @@ a [Sleigh](https://ghidra.re/courses/languages/html/sleigh.html) plugin for Inte
 * File type recognition
 * Initial implementation of a Sleigh grammar
 * Some token colouring in the editor view
-* Simple colour customisation support.
+* Simple colour customisation support
+* Gutter icons for tables and opcodes
+* Basic structure view support for opcodes.
 
 ## What is not there
 
@@ -18,7 +20,7 @@ Pretty much everything else:
 * 100% compatibility with Sleigh's compiler
 * `@include`, `@ifdef`, `@define`, `@endif`
 * Folding support
-* Structure view
+* Full structure view
 * Interpreting the language instead of merely parsing it
 * etc.
 
@@ -49,6 +51,8 @@ IntelliJ IDEA installation, import the project, and use the `runIde` Gradle task
 
 * The filetype icon is taken from Ghidra's source code repository and it is believed to be released under the same
   licence as Ghidra, hence Apache 2.0.
+* The table and opcode marker icons are taken from [FamFamFam](http://www.famfamfam.com/lab/icons/silk/), and licensed
+  under the Creative Commons Attributed 2.5 licence.
 
 A copy of the Apache 2.0 licence is available in the repository as `LICENCE.txt`.
 
