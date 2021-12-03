@@ -15,9 +15,11 @@ import java.util.Map;
 
 public class SleighColourSettingsPage implements ColorSettingsPage {
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
+            new AttributesDescriptor("Bad value", SleighSyntaxHighlighter.BAD_CHARACTER),
+            new AttributesDescriptor("Function call", SleighSyntaxHighlighter.FUNCTION_CALL),
             new AttributesDescriptor("Keyword", SleighSyntaxHighlighter.KEYWORD),
+            new AttributesDescriptor("Label", SleighSyntaxHighlighter.LABEL),
             new AttributesDescriptor("Number", SleighSyntaxHighlighter.NUMBER),
-            new AttributesDescriptor("Bad value", SleighSyntaxHighlighter.BAD_CHARACTER)
     };
 
     @Nullable
@@ -45,7 +47,10 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
                 ";\n" +
                 "define pcodeop readIRQ;\n" +
                 "REL: reloc is rel [ reloc = inst_next + rel; ] { export *:2 reloc; } \n" +
-                ":NOP is op=0b00000000 { }";
+                ":NOP is op=0b00000000 {\n" +
+                "if carry(A, B) goto next_inst;\n" +
+                "<skip>\n" +
+                "}";
     }
 
     @Nullable

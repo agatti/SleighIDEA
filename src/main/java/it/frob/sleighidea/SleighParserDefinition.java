@@ -18,10 +18,13 @@ import it.frob.sleighidea.psi.SleighFile;
 import it.frob.sleighidea.psi.SleighTypes;
 import org.jetbrains.annotations.NotNull;
 
+import static it.frob.sleighidea.psi.SleighTypes.QSTRING;
+
 public class SleighParserDefinition implements ParserDefinition {
 
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
     public static final TokenSet COMMENTS = TokenSet.create(SleighTypes.COMMENT);
+    public static final TokenSet QSTRINGS = TokenSet.create(SleighTypes.QSTRING);
 
     public static final IFileElementType FILE = new IFileElementType(SleighLanguage.INSTANCE);
 
@@ -57,7 +60,7 @@ public class SleighParserDefinition implements ParserDefinition {
 
     @Override
     public @NotNull TokenSet getStringLiteralElements() {
-        return TokenSet.EMPTY;
+        return QSTRINGS;
     }
 
     @Override

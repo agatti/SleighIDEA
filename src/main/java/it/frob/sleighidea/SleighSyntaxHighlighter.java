@@ -12,6 +12,8 @@ import com.intellij.psi.tree.IElementType;
 import it.frob.sleighidea.psi.SleighTypes;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
 public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
@@ -21,7 +23,8 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey BAD_CHARACTER =
             createTextAttributesKey("SLEIGH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER);
     public static final TextAttributesKey NUMBER = createTextAttributesKey("SLEIGH_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
-
+    public static final TextAttributesKey LABEL = createTextAttributesKey("LABEL", DefaultLanguageHighlighterColors.LABEL);
+    public static final TextAttributesKey FUNCTION_CALL = createTextAttributesKey("FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
 
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
     private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD};
@@ -35,57 +38,61 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
         return new SleighLexerAdapter();
     }
 
+    /**
+     * Check if the given token type is for a keyword or not.
+     *
+     * @param tokenType the token type to check.
+     * @return true if the token is for a keyword, false otherwise.
+     */
+    private boolean isKeyword(IElementType tokenType) {
+        return Arrays.asList(SleighTypes.RES_IF,
+                SleighTypes.RES_IS,
+                SleighTypes.RES_WITH,
+                SleighTypes.KEY_ALIGNMENT,
+                SleighTypes.KEY_ATTACH,
+                SleighTypes.KEY_BIG,
+                SleighTypes.KEY_BITRANGE,
+                SleighTypes.KEY_BUILD,
+                SleighTypes.KEY_CALL,
+                SleighTypes.KEY_CONTEXT,
+                SleighTypes.KEY_CROSSBUILD,
+                SleighTypes.KEY_DEC,
+                SleighTypes.KEY_DEFAULT,
+                SleighTypes.KEY_DEFINE,
+                SleighTypes.KEY_DEFINED,
+                SleighTypes.KEY_ENDIAN,
+                SleighTypes.KEY_EXPORT,
+                SleighTypes.KEY_GOTO,
+                SleighTypes.KEY_HEX,
+                SleighTypes.KEY_LITTLE,
+                SleighTypes.KEY_LOCAL,
+                SleighTypes.KEY_MACRO,
+                SleighTypes.KEY_NAMES,
+                SleighTypes.KEY_NOFLOW,
+                SleighTypes.KEY_OFFSET,
+                SleighTypes.KEY_PCODEOP,
+                SleighTypes.KEY_RETURN,
+                SleighTypes.KEY_SIGNED,
+                SleighTypes.KEY_SIZE,
+                SleighTypes.KEY_SPACE,
+                SleighTypes.KEY_TOKEN,
+                SleighTypes.KEY_TYPE,
+                SleighTypes.KEY_UNIMPL,
+                SleighTypes.KEY_VALUES,
+                SleighTypes.KEY_VARIABLES,
+                SleighTypes.KEY_WORDSIZE
+        ).contains(tokenType);
+    }
+
     @NotNull
     @Override
     public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
-        if (tokenType.equals(SleighTypes.COMMENT)) {
+        if (isKeyword(tokenType)) {
+            return KEYWORD_KEYS;
+        } else if (tokenType.equals(SleighTypes.COMMENT)) {
             return COMMENT_KEYS;
         } else if (tokenType.equals(TokenType.BAD_CHARACTER)) {
             return BAD_CHAR_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_DEFINE)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_SIZE)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_WORDSIZE)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_DEFAULT)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_TOKEN)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_OFFSET)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_SIGNED)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_HEX)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_DEC)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.RES_IS)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.RES_IF)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.RES_WITH)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_EXPORT)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_MACRO)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_LOCAL)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_PCODEOP)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_TYPE)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_ENDIAN)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_BIG)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_LITTLE)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_SPACE)) {
-            return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.KEY_ALIGNMENT)) {
-            return KEYWORD_KEYS;
         } else if (tokenType.equals(SleighTypes.HEXNUMBER)) {
             return NUMBER_KEYS;
         } else if (tokenType.equals(SleighTypes.BINNUMBER)) {
@@ -96,5 +103,4 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
             return EMPTY_KEYS;
         }
     }
-
 }
