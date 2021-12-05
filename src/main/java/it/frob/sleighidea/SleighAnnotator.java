@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.PlatformIcons;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +21,16 @@ import java.util.List;
 
 public class SleighAnnotator implements Annotator, DumbAware {
 
+    /**
+     * The prefix string marking Sleigh annotations.
+     */
     public static final String SLEIGH_PREFIX_STRING = "sleigh";
+
+    /**
+     * A list containing all built-in function calls.
+     *
+     * TODO: Use an immutable data structure.
+     */
     private static final List<String> STD_LIBRARY_CALL = Arrays.asList(
             "abs",
             "carry",
@@ -43,41 +53,49 @@ public class SleighAnnotator implements Annotator, DumbAware {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (element instanceof SleighLabel) {
-            setHighlighting(element, holder, SleighSyntaxHighlighter.LABEL);
-            return;
-        }
-
-        if (element instanceof SleighExprApply) {
-            if (STD_LIBRARY_CALL.contains(element.getFirstChild().getText())) {
-                setHighlighting(element.getFirstChild(), holder, SleighSyntaxHighlighter.FUNCTION_CALL);
-            }
-            return;
-        }
-
-        if (element instanceof SleighCtorstart) {
-            PsiElement firstChild = element.getFirstChild();
-
-            if (firstChild instanceof SleighIdentifier) {
-                // Table
-                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                        .range(element)
-                        .gutterIconRenderer(tableGutterRendererFactory())
-                        .create();
-                return;
+        element.accept(new SleighVisitor() {
+            @Override
+            public void visitLabel(@NotNull SleighLabel visited) {
+                setHighlighting(visited, holder, SleighSyntaxHighlighter.LABEL);
             }
 
-            if (firstChild instanceof SleighDisplay) {
-                // Opcode
-                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                        .range(element)
-                        .gutterIconRenderer(opcodeGutterRendererFactory())
-                        .create();
+            @Override
+            public void visitMacrodef(@NotNull SleighMacrodef visited) {
+                assignGutterIcon(visited, holder, PlatformIcons.FUNCTION_ICON);
             }
-        }
+
+            @Override
+            public void visitExprApply(@NotNull SleighExprApply visited) {
+                if (STD_LIBRARY_CALL.contains(visited.getFirstChild().getText())) {
+                    setHighlighting(visited.getFirstChild(), holder, SleighSyntaxHighlighter.FUNCTION_CALL);
+                }
+            }
+
+            @Override
+            public void visitCtorstart(@NotNull SleighCtorstart visited) {
+                PsiElement firstChild = visited.getFirstChild();
+
+                if (firstChild instanceof SleighIdentifier) {
+                    assignGutterIcon(visited, holder, SleighIcons.TABLE_GO);
+                    return;
+                }
+
+                if (firstChild instanceof SleighDisplay) {
+                    assignGutterIcon(visited, holder, SleighIcons.TABLE);
+                }
+            }
+        });
     }
 
-    private void setHighlighting(@NotNull PsiElement element, @NotNull AnnotationHolder holder, @NotNull TextAttributesKey key) {
+    /**
+     * Set a custom highlight rule for the given element.
+     *
+     * @param element the element to assign a highlight rule to.
+     * @param holder  the annotation holder that will bind the given rule to the given element.
+     * @param key     the text attributes to use when rendering the element.
+     */
+    private void setHighlighting(@NotNull PsiElement element, @NotNull AnnotationHolder holder,
+                                 @NotNull TextAttributesKey key) {
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                 .range(element)
                 .enforcedTextAttributes(TextAttributes.ERASE_MARKER)
@@ -89,36 +107,31 @@ public class SleighAnnotator implements Annotator, DumbAware {
                 .create();
     }
 
-    private GutterRenderer tableGutterRendererFactory() {
-        return new GutterRenderer(SleighIcons.TABLE_GO);
-    }
+    /**
+     * Assign a gutter icon to the given element.
+     *
+     * @param element the element to assign an icon to.
+     * @param holder  the annotation holder that will bind the given icon to the given element.
+     * @param icon    the icon to draw next to the element.
+     */
+    private void assignGutterIcon(@NotNull PsiElement element, @NotNull AnnotationHolder holder, @NotNull Icon icon) {
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                .range(element)
+                .gutterIconRenderer(new GutterIconRenderer() {
+                    @Override
+                    public boolean equals(Object obj) {
+                        return this == obj;
+                    }
 
-    private GutterRenderer opcodeGutterRendererFactory() {
-        return new GutterRenderer(SleighIcons.TABLE);
-    }
+                    @Override
+                    public int hashCode() {
+                        return System.identityHashCode(this);
+                    }
 
-    private static final class GutterRenderer extends GutterIconRenderer {
-        private final Icon icon;
-
-        public GutterRenderer(Icon icon) {
-            super();
-
-            this.icon = icon;
-        }
-
-        @Override
-        public @NotNull Icon getIcon() {
-            return icon;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj == this;
-        }
-
-        @Override
-        public int hashCode() {
-            return System.identityHashCode(this);
-        }
+                    @Override
+                    public @NotNull Icon getIcon() {
+                        return icon;
+                    }
+                }).create();
     }
 }
