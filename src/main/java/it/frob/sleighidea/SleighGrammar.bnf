@@ -275,7 +275,7 @@ expr_apply ::= identifier expr_operands
 expr_operands ::= LPAREN ( expr ( COMMA expr ) * ) ? RPAREN
 expr_term ::= ( LPAREN expr RPAREN ) | sembitrange | varnode
 
-varnode ::= integer | identifier | ( integer COLON constant ) | ( identifier COLON constant ) | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
+varnode ::= ( integer COLON constant ) | integer | identifier | ( identifier COLON constant ) | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
 constant ::= integer
 
 display ::= COLON printpiece * RES_IS
