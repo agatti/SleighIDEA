@@ -7,7 +7,7 @@ a [Sleigh](https://ghidra.re/courses/languages/html/sleigh.html) plugin for Inte
 ## What is there
 
 * File type recognition
-* Initial implementation of a Sleigh grammar
+* Mostly working implementation of a Sleigh grammar
 * Some token colouring in the editor view
 * Simple colour customisation support
 * Gutter icons for tables and opcodes
@@ -23,7 +23,9 @@ Pretty much everything else:
 * Full folding support
 * Full structure view
 * Full syntax colouring
-* Interpreting the language instead of merely parsing it
+* Autocompletion support
+* Handling of `.ldefs`, `.cspec`, `.pspec`, and `.opinion` files
+* Inspections
 * etc.
 
 ## FAQ
