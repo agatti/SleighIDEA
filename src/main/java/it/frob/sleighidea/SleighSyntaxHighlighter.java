@@ -9,10 +9,9 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import it.frob.sleighidea.psi.SleighTypes;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
@@ -32,75 +31,82 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributesKey[] NUMBER_KEYS = new TextAttributesKey[]{NUMBER};
     private static final TextAttributesKey[] EMPTY_KEYS = new TextAttributesKey[0];
 
+    /**
+     * Keyword tokens container.
+     */
+    private static final TokenSet KEYWORDS = TokenSet.create(
+            SleighTypes.RES_IF,
+            SleighTypes.RES_IS,
+            SleighTypes.RES_WITH,
+            SleighTypes.KEY_ALIGNMENT,
+            SleighTypes.KEY_ATTACH,
+            SleighTypes.KEY_BIG,
+            SleighTypes.KEY_BITRANGE,
+            SleighTypes.KEY_BUILD,
+            SleighTypes.KEY_CALL,
+            SleighTypes.KEY_CONTEXT,
+            SleighTypes.KEY_CROSSBUILD,
+            SleighTypes.KEY_DEC,
+            SleighTypes.KEY_DEFAULT,
+            SleighTypes.KEY_DEFINE,
+            SleighTypes.KEY_DEFINED,
+            SleighTypes.KEY_ENDIAN,
+            SleighTypes.KEY_EXPORT,
+            SleighTypes.KEY_GOTO,
+            SleighTypes.KEY_HEX,
+            SleighTypes.KEY_LITTLE,
+            SleighTypes.KEY_LOCAL,
+            SleighTypes.KEY_MACRO,
+            SleighTypes.KEY_NAMES,
+            SleighTypes.KEY_NOFLOW,
+            SleighTypes.KEY_OFFSET,
+            SleighTypes.KEY_PCODEOP,
+            SleighTypes.KEY_RETURN,
+            SleighTypes.KEY_SIGNED,
+            SleighTypes.KEY_SIZE,
+            SleighTypes.KEY_SPACE,
+            SleighTypes.KEY_TOKEN,
+            SleighTypes.KEY_TYPE,
+            SleighTypes.KEY_UNIMPL,
+            SleighTypes.KEY_VALUES,
+            SleighTypes.KEY_VARIABLES,
+            SleighTypes.KEY_WORDSIZE
+    );
+
+    /**
+     * Number tokens container.
+     */
+    private static final TokenSet NUMBERS = TokenSet.create(
+            SleighTypes.BINNUMBER,
+            SleighTypes.DECNUMBER,
+            SleighTypes.HEXNUMBER
+    );
+
     @NotNull
     @Override
     public Lexer getHighlightingLexer() {
         return new SleighLexerAdapter();
     }
 
-    /**
-     * Check if the given token type is for a keyword or not.
-     *
-     * @param tokenType the token type to check.
-     * @return true if the token is for a keyword, false otherwise.
-     */
-    private boolean isKeyword(IElementType tokenType) {
-        return Arrays.asList(SleighTypes.RES_IF,
-                SleighTypes.RES_IS,
-                SleighTypes.RES_WITH,
-                SleighTypes.KEY_ALIGNMENT,
-                SleighTypes.KEY_ATTACH,
-                SleighTypes.KEY_BIG,
-                SleighTypes.KEY_BITRANGE,
-                SleighTypes.KEY_BUILD,
-                SleighTypes.KEY_CALL,
-                SleighTypes.KEY_CONTEXT,
-                SleighTypes.KEY_CROSSBUILD,
-                SleighTypes.KEY_DEC,
-                SleighTypes.KEY_DEFAULT,
-                SleighTypes.KEY_DEFINE,
-                SleighTypes.KEY_DEFINED,
-                SleighTypes.KEY_ENDIAN,
-                SleighTypes.KEY_EXPORT,
-                SleighTypes.KEY_GOTO,
-                SleighTypes.KEY_HEX,
-                SleighTypes.KEY_LITTLE,
-                SleighTypes.KEY_LOCAL,
-                SleighTypes.KEY_MACRO,
-                SleighTypes.KEY_NAMES,
-                SleighTypes.KEY_NOFLOW,
-                SleighTypes.KEY_OFFSET,
-                SleighTypes.KEY_PCODEOP,
-                SleighTypes.KEY_RETURN,
-                SleighTypes.KEY_SIGNED,
-                SleighTypes.KEY_SIZE,
-                SleighTypes.KEY_SPACE,
-                SleighTypes.KEY_TOKEN,
-                SleighTypes.KEY_TYPE,
-                SleighTypes.KEY_UNIMPL,
-                SleighTypes.KEY_VALUES,
-                SleighTypes.KEY_VARIABLES,
-                SleighTypes.KEY_WORDSIZE
-        ).contains(tokenType);
-    }
-
     @NotNull
     @Override
     public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
-        if (isKeyword(tokenType)) {
+        if (KEYWORDS.contains(tokenType)) {
             return KEYWORD_KEYS;
-        } else if (tokenType.equals(SleighTypes.COMMENT)) {
-            return COMMENT_KEYS;
-        } else if (tokenType.equals(TokenType.BAD_CHARACTER)) {
-            return BAD_CHAR_KEYS;
-        } else if (tokenType.equals(SleighTypes.HEXNUMBER)) {
-            return NUMBER_KEYS;
-        } else if (tokenType.equals(SleighTypes.BINNUMBER)) {
-            return NUMBER_KEYS;
-        } else if (tokenType.equals(SleighTypes.DECNUMBER)) {
-            return NUMBER_KEYS;
-        } else {
-            return EMPTY_KEYS;
         }
+
+        if (NUMBERS.contains(tokenType)) {
+            return NUMBER_KEYS;
+        }
+
+        if (tokenType.equals(SleighTypes.COMMENT)) {
+            return COMMENT_KEYS;
+        }
+
+        if (tokenType.equals(TokenType.BAD_CHARACTER)) {
+            return BAD_CHAR_KEYS;
+        }
+
+        return EMPTY_KEYS;
     }
 }

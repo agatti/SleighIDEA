@@ -5,17 +5,41 @@ package it.frob.sleighidea;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.List;
 
-public class SleighAnnotator implements Annotator {
+public class SleighAnnotator implements Annotator, DumbAware {
 
     public static final String SLEIGH_PREFIX_STRING = "sleigh";
+    private static final List<String> STD_LIBRARY_CALL = Arrays.asList(
+            "abs",
+            "carry",
+            "ceil",
+            "cpool",
+            "delayslot",
+            "float2float",
+            "floor",
+            "int2float",
+            "nan",
+            "newobject",
+            "round",
+            "sborrow",
+            "scarry",
+            "sext",
+            "sqrt",
+            "trunc",
+            "zext"
+    );
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
@@ -25,68 +49,44 @@ public class SleighAnnotator implements Annotator {
         }
 
         if (element instanceof SleighExprApply) {
-            if (isStandardLibraryCall(element.getFirstChild().getText())) {
+            if (STD_LIBRARY_CALL.contains(element.getFirstChild().getText())) {
                 setHighlighting(element.getFirstChild(), holder, SleighSyntaxHighlighter.FUNCTION_CALL);
             }
             return;
         }
 
-        if (!(element instanceof SleighCtorstart)) {
-            return;
-        }
+        if (element instanceof SleighCtorstart) {
+            PsiElement firstChild = element.getFirstChild();
 
-        PsiElement firstChild = element.getFirstChild();
+            if (firstChild instanceof SleighIdentifier) {
+                // Table
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                        .range(element)
+                        .gutterIconRenderer(tableGutterRendererFactory())
+                        .create();
+                return;
+            }
 
-        if (firstChild instanceof SleighIdentifier) {
-            // Table
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                    .range(element)
-                    .gutterIconRenderer(tableGutterRendererFactory())
-                    .create();
-            return;
-        }
-
-        if (firstChild instanceof SleighDisplay) {
-            // Opcode
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                    .range(element)
-                    .gutterIconRenderer(opcodeGutterRendererFactory())
-                    .tooltip("Opcode " + firstChild.getText())
-                    .create();
+            if (firstChild instanceof SleighDisplay) {
+                // Opcode
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                        .range(element)
+                        .gutterIconRenderer(opcodeGutterRendererFactory())
+                        .create();
+            }
         }
     }
 
     private void setHighlighting(@NotNull PsiElement element, @NotNull AnnotationHolder holder, @NotNull TextAttributesKey key) {
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                 .range(element)
-                .textAttributes(key)
+                .enforcedTextAttributes(TextAttributes.ERASE_MARKER)
                 .create();
-    }
 
-    private boolean isStandardLibraryCall(String functionName) {
-        switch (functionName) {
-            case "zext":
-            case "sext":
-            case "carry":
-            case "scarry":
-            case "sborrow":
-            case "nan":
-            case "abs":
-            case "sqrt":
-            case "int2float":
-            case "float2float":
-            case "trunc":
-            case "ceil":
-            case "floor":
-            case "round":
-            case "cpool":
-            case "newobject":
-            case "delayslot":
-                return true;
-
-            default:
-                return false;
-        }
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                .range(element)
+                .enforcedTextAttributes(EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key))
+                .create();
     }
 
     private GutterRenderer tableGutterRendererFactory() {

@@ -18,8 +18,6 @@ import it.frob.sleighidea.psi.SleighFile;
 import it.frob.sleighidea.psi.SleighTypes;
 import org.jetbrains.annotations.NotNull;
 
-import static it.frob.sleighidea.psi.SleighTypes.QSTRING;
-
 public class SleighParserDefinition implements ParserDefinition {
 
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);

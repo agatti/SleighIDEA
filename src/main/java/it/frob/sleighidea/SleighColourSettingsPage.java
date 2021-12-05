@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SleighColourSettingsPage implements ColorSettingsPage {
@@ -21,6 +22,13 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Label", SleighSyntaxHighlighter.LABEL),
             new AttributesDescriptor("Number", SleighSyntaxHighlighter.NUMBER),
     };
+
+    private static final Map<String, TextAttributesKey> ATTRIBUTES_KEY_MAP = new HashMap<>();
+
+    static {
+        ATTRIBUTES_KEY_MAP.put("label", SleighSyntaxHighlighter.LABEL);
+        ATTRIBUTES_KEY_MAP.put("function", SleighSyntaxHighlighter.FUNCTION_CALL);
+    }
 
     @Nullable
     @Override
@@ -48,15 +56,15 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
                 "define pcodeop readIRQ;\n" +
                 "REL: reloc is rel [ reloc = inst_next + rel; ] { export *:2 reloc; } \n" +
                 ":NOP is op=0b00000000 {\n" +
-                "if carry(A, B) goto next_inst;\n" +
-                "<skip>\n" +
+                "if <function>carry</function>(A, B) goto next_inst;\n" +
+                "<label><skip></label>\n" +
                 "}";
     }
 
     @Nullable
     @Override
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-        return null;
+        return ATTRIBUTES_KEY_MAP;
     }
 
     @NotNull
