@@ -15,6 +15,8 @@
 	elementTypeClass="it.frob.sleighidea.psi.SleighElementType"
 	tokenTypeClass="it.frob.sleighidea.psi.SleighTokenType"
 
+	psiImplUtilClass="it.frob.sleighidea.psi.impl.SleighPsiImplUtil"
+
 	tokens=[
 		ASTERISK='*'
 		ASSIGN='='
@@ -278,7 +280,7 @@ expr_term ::= ( LPAREN expr RPAREN ) | sembitrange | varnode
 varnode ::= ( identifier COLON constant ) | identifier | ( integer COLON constant ) | integer | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
 constant ::= integer
 
-display ::= COLON printpiece * RES_IS
+display ::= COLON printpiece * RES_IS { methods = [ getDisplayText ]}
 printpiece ::= identifier | whitespace | concatenate | qstring | special
 whitespace ::= WS
 concatenate ::= CARET
