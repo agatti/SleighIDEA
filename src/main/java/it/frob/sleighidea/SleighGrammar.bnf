@@ -32,11 +32,11 @@
 		EXCLAIM="!"
 		TILDE="~"
 		EQUAL='=='
-        NOTEQUAL='!='
-        LESS='<'
-        GREAT='>'
-        LESSEQUAL='<='
-        GREATEQUAL='>='
+		NOTEQUAL='!='
+		LESS='<'
+		GREAT='>'
+		LESSEQUAL='<='
+		GREATEQUAL='>='
 		BOOL_OR='||'
 		BOOL_XOR='^^'
 		BOOL_AND='&&'
@@ -186,7 +186,7 @@ pequation_and_op ::= AMPERSAND
 pequation_ellipsis ::= ( ELLIPSIS pequation_ellipsis_right ) | pequation_ellipsis_right
 pequation_ellipsis_right ::= ( pequation_atomic ELLIPSIS ) | pequation_atomic
 pequation_atomic ::= constraint | ( LPAREN pequation RPAREN )
-constraint ::= identifier ( constraint_op pexpression2 ) ?
+constraint ::= identifier [ constraint_op pexpression2 ]
 constraint_op ::= ASSIGN | NOTEQUAL | LESS | LESSEQUAL | GREAT | GREATEQUAL
 pexpression ::= pexpression_or
 pexpression_or ::= pexpression_xor ( pexpression_or_op pexpression_xor ) *
@@ -205,7 +205,7 @@ pexpression_unary ::= ( pexpression_unary_op pexpression_term ) | pexpression_fu
 pexpression_unary_op ::= MINUS | TILDE
 pexpression_func ::= pexpression_apply | pexpression_term
 pexpression_apply ::= identifier pexpression_operands
-pexpression_operands ::= LPAREN ( pexpression ( COMMA pexpression ) * ) ? RPAREN
+pexpression_operands ::= LPAREN [ pexpression ( COMMA pexpression ) * ] RPAREN
 pexpression_term ::= identifier | integer | ( LPAREN pexpression RPAREN )
 pexpression2 ::= pexpression2_or
 pexpression2_or ::= pexpression2_xor ( pexpression2_or_op pexpression2_xor ) *
@@ -224,7 +224,7 @@ pexpression2_unary ::= ( pexpression2_unary_op pexpression2_term ) | pexpression
 pexpression2_unary_op ::= MINUS | TILDE
 pexpression2_func ::= pexpression2_apply | pexpression2_term
 pexpression2_apply ::= identifier pexpression2_operands
-pexpression2_operands ::= LPAREN ( pexpression2 ( COMMA pexpression2 ) * ) ? RPAREN
+pexpression2_operands ::= LPAREN [ pexpression2 ( COMMA pexpression2 ) * ] RPAREN
 pexpression2_term ::= identifier | integer | ( LPAREN pexpression2 RPAREN )
 
 semanticbody ::= LBRACE statement * RBRACE
@@ -268,14 +268,14 @@ expr_add ::= expr_mult ( add_op expr_mult ) *
 add_op ::= PLUS | MINUS | FPLUS | FMINUS
 expr_mult ::= expr_unary ( mult_op expr_unary ) *
 mult_op ::= ASTERISK | SLASH | PERCENT | SDIV | SREM | FMULT | FDIV
-expr_unary ::= unary_op ? expr_func
+expr_unary ::= [ unary_op ] expr_func
 unary_op ::= EXCLAIM | TILDE | MINUS | FMINUS | sizedstar
 expr_func ::= expr_apply | expr_term
 expr_apply ::= identifier expr_operands
-expr_operands ::= LPAREN ( expr ( COMMA expr ) * ) ? RPAREN
+expr_operands ::= LPAREN [ expr ( COMMA expr ) * ] RPAREN
 expr_term ::= ( LPAREN expr RPAREN ) | sembitrange | varnode
 
-varnode ::= ( integer COLON constant ) | integer | identifier | ( identifier COLON constant ) | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
+varnode ::= ( identifier COLON constant ) | identifier | ( integer COLON constant ) | integer | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
 constant ::= integer
 
 display ::= COLON printpiece * RES_IS
