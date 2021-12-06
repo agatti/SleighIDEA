@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +63,23 @@ public class SleighAnnotator implements Annotator, DumbAware {
             @Override
             public void visitMacrodef(@NotNull SleighMacrodef visited) {
                 assignGutterIcon(visited, holder, PlatformIcons.FUNCTION_ICON);
+                SleighIdentifier macroElement = PsiTreeUtil.findChildOfType(visited, SleighIdentifier.class);
+                if (macroElement != null) {
+                    setHighlighting(macroElement, holder, SleighSyntaxHighlighter.MACRO);
+                }
+            }
+
+            @Override
+            public void visitTokendef(@NotNull SleighTokendef visited) {
+                assignGutterIcon(visited, holder, PlatformIcons.CLASS_ICON);
+            }
+
+            @Override
+            public void visitPcodeopdef(@NotNull SleighPcodeopdef visited) {
+                SleighIdentifier pcodeopElement = PsiTreeUtil.findChildOfType(visited, SleighIdentifier.class);
+                if (pcodeopElement != null) {
+                    setHighlighting(pcodeopElement, holder, SleighSyntaxHighlighter.PCODEOP);
+                }
             }
 
             @Override

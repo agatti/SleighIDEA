@@ -24,6 +24,8 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey NUMBER = createTextAttributesKey("SLEIGH_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
     public static final TextAttributesKey LABEL = createTextAttributesKey("LABEL", DefaultLanguageHighlighterColors.LABEL);
     public static final TextAttributesKey FUNCTION_CALL = createTextAttributesKey("FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
+    public static final TextAttributesKey MACRO = createTextAttributesKey("MACRO", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+    public static final TextAttributesKey PCODEOP = createTextAttributesKey("PCODEOP", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
 
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
     private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD};

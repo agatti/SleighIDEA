@@ -20,14 +20,17 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Function call", SleighSyntaxHighlighter.FUNCTION_CALL),
             new AttributesDescriptor("Keyword", SleighSyntaxHighlighter.KEYWORD),
             new AttributesDescriptor("Label", SleighSyntaxHighlighter.LABEL),
+            new AttributesDescriptor("Macro and PcodeOp", SleighSyntaxHighlighter.MACRO),
             new AttributesDescriptor("Number", SleighSyntaxHighlighter.NUMBER),
     };
 
     private static final Map<String, TextAttributesKey> ATTRIBUTES_KEY_MAP = new HashMap<>();
 
     static {
-        ATTRIBUTES_KEY_MAP.put("label", SleighSyntaxHighlighter.LABEL);
         ATTRIBUTES_KEY_MAP.put("function", SleighSyntaxHighlighter.FUNCTION_CALL);
+        ATTRIBUTES_KEY_MAP.put("label", SleighSyntaxHighlighter.LABEL);
+        ATTRIBUTES_KEY_MAP.put("macro", SleighSyntaxHighlighter.MACRO);
+        ATTRIBUTES_KEY_MAP.put("pcodeop", SleighSyntaxHighlighter.MACRO);
     }
 
     @Nullable
@@ -51,9 +54,10 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
                 "define space RAM type=ram_space size=2 default;\n" +
                 "define register offset=0x00 size=1 [ A X Y P ];\n" +
                 "define token opbyte (8)\n" +
-                "   op       = (0,7)\n" +
+                "   op       = (0,7) signed dec\n" +
                 ";\n" +
-                "define pcodeop readIRQ;\n" +
+                "macro <macro>testmacro</macro>() {}\n" +
+                "define pcodeop <pcodeop>readIRQ</pcodeop>;\n" +
                 "REL: reloc is rel [ reloc = inst_next + rel; ] { export *:2 reloc; } \n" +
                 ":NOP is op=0b00000000 {\n" +
                 "if <function>carry</function>(A, B) goto next_inst;\n" +
