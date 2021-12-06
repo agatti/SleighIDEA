@@ -4,15 +4,23 @@ package it.frob.sleighidea.psi.impl;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import it.frob.sleighidea.psi.SleighDisplay;
-import it.frob.sleighidea.psi.SleighIdentifier;
-import it.frob.sleighidea.psi.SleighMacrodef;
-import it.frob.sleighidea.psi.SleighOplist;
+import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;
 
 public class SleighPsiImplUtil {
+
+    /**
+     * Extract a placeholder text string from a SleighTokendef element.
+     *
+     * @param element the element to get the placeholder text for.
+     * @return the placeholder text derived from the given element.
+     */
+    public static String getPlaceholderText(@NotNull SleighTokendef element) {
+        SleighIdentifier identifier = PsiTreeUtil.findChildOfType(element, SleighIdentifier.class);
+        return identifier != null ? identifier.getText().trim() : null;
+    }
 
     /**
      * Extract a placeholder text string from a SleighDisplay element.

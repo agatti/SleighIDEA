@@ -18,12 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware {
+
     @Override
     public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull PsiElement root, @NotNull Document document,
                                                           boolean quick) {
         List<FoldingDescriptor> descriptors = new ArrayList<>();
 
         root.acceptChildren(new SleighVisitor() {
+            @Override
+            public void visitDefinition(@NotNull SleighDefinition visited) {
+                SleighTokendef tokenContainer = PsiTreeUtil.findChildOfType(visited, SleighTokendef.class);
+                SleighIdentifier identifier = PsiTreeUtil.findChildOfType(tokenContainer, SleighIdentifier.class);
+                if (identifier != null) {
+                    FoldingGroup group = FoldingGroup.newGroup(SleighAnnotator.SLEIGH_PREFIX_STRING);
+                    descriptors.add(new FoldingDescriptor(visited.getNode(), visited.getTextRange(), group,
+                            tokenContainer.getPlaceholderText()));
+                }
+            }
+
             @Override
             public void visitConstructorlike(@NotNull SleighConstructorlike visited) {
                 visited.acceptChildren(new SleighVisitor() {
@@ -32,7 +44,7 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
                     public void visitMacrodef(@NotNull SleighMacrodef visited) {
                         FoldingGroup group = FoldingGroup.newGroup(SleighAnnotator.SLEIGH_PREFIX_STRING);
                         PsiElement parent = visited.getParent();
-                        descriptors.add(new FoldingDescriptor(parent.getNode(), parent.getTextRange(), group));
+                        descriptors.add(new FoldingDescriptor(parent.getNode(), parent.getTextRange(), group, visited.getPlaceholderText()));
                     }
 
                     @Override
@@ -45,7 +57,8 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
                         if (container.getFirstChild() instanceof SleighDisplay) {
                             FoldingGroup group = FoldingGroup.newGroup(SleighAnnotator.SLEIGH_PREFIX_STRING);
                             PsiElement parent = visited.getParent();
-                            descriptors.add(new FoldingDescriptor(parent.getNode(), parent.getTextRange(), group));
+                            descriptors.add(new FoldingDescriptor(parent.getNode(), parent.getTextRange(), group,
+                                    ((SleighDisplay) container.getFirstChild()).getPlaceholderText()));
                         }
                     }
                 });
@@ -55,26 +68,9 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
         return descriptors.toArray(new FoldingDescriptor[0]);
     }
 
-    private String getMacroPlaceholderText(ASTNode macro) {
-        return macro.getPsi(SleighMacrodef.class).getPlaceholderText();
-    }
-
     @Override
     public @Nullable String getPlaceholderText(@NotNull ASTNode node) {
-        ASTNode macroNode = node.findChildByType(SleighTypes.MACRODEF);
-        if (macroNode != null) {
-            return getMacroPlaceholderText(macroNode);
-        }
-
-        ASTNode instructionNode = node.findChildByType(SleighTypes.CTORSTART);
-        if (instructionNode != null) {
-            ASTNode displayNode = instructionNode.findChildByType(SleighTypes.DISPLAY);
-            if (displayNode != null) {
-                return displayNode.getPsi(SleighDisplay.class).getPlaceholderText();
-            }
-        }
-
-        return node.getText();
+        return null;
     }
 
     @Override
