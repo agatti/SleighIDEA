@@ -40,7 +40,7 @@ public class SleighStructureViewElement implements StructureViewTreeElement, Sor
         if (presentation == null) {
             if ((element instanceof SleighCtorstart) && (element.getFirstChild() instanceof SleighDisplay)) {
                 return new PresentationData(
-                        ((SleighDisplay) element.getFirstChild()).getDisplayText(),
+                        ((SleighDisplay) element.getFirstChild()).getPlaceholderText(),
                         "",
                         SleighIcons.TABLE,
                         null

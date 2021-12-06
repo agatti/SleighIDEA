@@ -160,7 +160,7 @@ intbpart ::= neginteger | UNDERSCORE
 neginteger ::= integer | ( MINUS integer )
 
 constructorlike ::= macrodef | withblock | constructor
-macrodef ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody
+macrodef ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody { methods = [ getPlaceholderText ]}
 arguments ::= oplist *
 oplist ::= identifier ( COMMA identifier ) *
 withblock ::= RES_WITH id_or_nil COLON bitpat_or_nil contextblock LBRACE constructorlikelist RBRACE
@@ -280,7 +280,7 @@ expr_term ::= ( LPAREN expr RPAREN ) | sembitrange | varnode
 varnode ::= ( identifier COLON constant ) | identifier | ( integer COLON constant ) | integer | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
 constant ::= integer
 
-display ::= COLON printpiece * RES_IS { methods = [ getDisplayText ]}
+display ::= COLON printpiece * RES_IS { methods = [ getPlaceholderText ]}
 printpiece ::= identifier | whitespace | concatenate | qstring | special
 whitespace ::= WS
 concatenate ::= CARET

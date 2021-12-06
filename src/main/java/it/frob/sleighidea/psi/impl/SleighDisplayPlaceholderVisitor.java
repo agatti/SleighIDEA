@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class SleighDisplayVisitor extends SleighVisitor {
+class SleighDisplayPlaceholderVisitor extends SleighVisitor {
     private enum SleighDisplayVisitingState {
         COLLECTING_NAME,
         COLLECTING_ARGUMENTS
@@ -57,7 +57,7 @@ class SleighDisplayVisitor extends SleighVisitor {
         }
     }
 
-    public String getDisplayText() {
+    public String getPlaceholderText() {
         if (!arguments.isEmpty()) {
             builder.append(" ")
                     .append(arguments.stream()
