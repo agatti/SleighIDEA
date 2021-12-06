@@ -76,10 +76,7 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
         if (instructionNode != null) {
             ASTNode displayNode = instructionNode.findChildByType(SleighTypes.DISPLAY);
             if (displayNode != null) {
-                String displayText = SleighPsiImplUtil.getDisplayText(displayNode);
-                if (displayText != null) {
-                    return displayText;
-                }
+                return SleighPsiImplUtil.getDisplayText(displayNode);
             }
         }
 

@@ -38,11 +38,16 @@ public class SleighStructureViewElement implements StructureViewTreeElement, Sor
     public @NotNull ItemPresentation getPresentation() {
         ItemPresentation presentation = element.getPresentation();
         if (presentation == null) {
-            // TODO: Manipulate the tree rather than this...
-
-            String rawElementText = element.getText().trim();
-            String itemLabel = rawElementText.replaceAll("\\s+", " ");
-            presentation = new PresentationData(itemLabel.substring(0, itemLabel.length() - 2), "", SleighIcons.TABLE, null);
+            if ((element instanceof SleighCtorstart) && (element.getFirstChild() instanceof SleighDisplay)) {
+                return new PresentationData(
+                        ((SleighDisplay) element.getFirstChild()).getDisplayText(),
+                        "",
+                        SleighIcons.TABLE,
+                        null
+                );
+            } else {
+                presentation = new PresentationData();
+            }
         }
 
         return presentation;
