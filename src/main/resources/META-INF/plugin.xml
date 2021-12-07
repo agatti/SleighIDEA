@@ -16,6 +16,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="Sleigh File" implementationClass="it.frob.sleighidea.SleighFileType"
                   fieldName="INSTANCE" language="Sleigh" extensions="slaspec;sinc"/>
+        <lang.braceMatcher language="Sleigh"
+                           implementationClass="it.frob.sleighidea.SleighBraceMatcher"/>
         <lang.parserDefinition language="Sleigh" implementationClass="it.frob.sleighidea.SleighParserDefinition"/>
         <lang.syntaxHighlighterFactory language="Sleigh"
                                        implementationClass="it.frob.sleighidea.SleighSyntaxHighlighterFactory"/>
