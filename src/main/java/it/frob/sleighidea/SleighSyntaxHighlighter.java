@@ -16,16 +16,24 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
 public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
-    public static final TextAttributesKey KEYWORD = createTextAttributesKey("SLEIGH_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
+    public static final TextAttributesKey KEYWORD =
+            createTextAttributesKey("SLEIGH_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
     public static final TextAttributesKey COMMENT =
             createTextAttributesKey("SLEIGH_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
     public static final TextAttributesKey BAD_CHARACTER =
             createTextAttributesKey("SLEIGH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER);
-    public static final TextAttributesKey NUMBER = createTextAttributesKey("SLEIGH_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
-    public static final TextAttributesKey LABEL = createTextAttributesKey("LABEL", DefaultLanguageHighlighterColors.LABEL);
-    public static final TextAttributesKey FUNCTION_CALL = createTextAttributesKey("FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
-    public static final TextAttributesKey MACRO = createTextAttributesKey("MACRO", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
-    public static final TextAttributesKey PCODEOP = createTextAttributesKey("PCODEOP", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+    public static final TextAttributesKey NUMBER =
+            createTextAttributesKey("SLEIGH_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
+    public static final TextAttributesKey LABEL =
+            createTextAttributesKey("LABEL", DefaultLanguageHighlighterColors.LABEL);
+    public static final TextAttributesKey FUNCTION_CALL =
+            createTextAttributesKey("FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
+    public static final TextAttributesKey MACRO =
+            createTextAttributesKey("MACRO", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+    public static final TextAttributesKey PCODEOP =
+            createTextAttributesKey("PCODEOP", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+    public static final TextAttributesKey IDENTIFIER =
+            createTextAttributesKey("IDENTIFIER", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE);
 
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
     private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD};

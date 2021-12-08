@@ -19,6 +19,7 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Bad value", SleighSyntaxHighlighter.BAD_CHARACTER),
             new AttributesDescriptor("Function call", SleighSyntaxHighlighter.FUNCTION_CALL),
             new AttributesDescriptor("Keyword", SleighSyntaxHighlighter.KEYWORD),
+            new AttributesDescriptor("Identifier", SleighSyntaxHighlighter.IDENTIFIER),
             new AttributesDescriptor("Label", SleighSyntaxHighlighter.LABEL),
             new AttributesDescriptor("Macro and PcodeOp", SleighSyntaxHighlighter.MACRO),
             new AttributesDescriptor("Number", SleighSyntaxHighlighter.NUMBER),
@@ -29,6 +30,7 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
     static {
         ATTRIBUTES_KEY_MAP.put("function", SleighSyntaxHighlighter.FUNCTION_CALL);
         ATTRIBUTES_KEY_MAP.put("label", SleighSyntaxHighlighter.LABEL);
+        ATTRIBUTES_KEY_MAP.put("identifier", SleighSyntaxHighlighter.IDENTIFIER);
         ATTRIBUTES_KEY_MAP.put("macro", SleighSyntaxHighlighter.MACRO);
         ATTRIBUTES_KEY_MAP.put("pcodeop", SleighSyntaxHighlighter.MACRO);
     }
@@ -52,7 +54,7 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
                 "define endian=little;\n" +
                 "define alignment=1;\n" +
                 "define space RAM type=ram_space size=2 default;\n" +
-                "define register offset=0x00 size=1 [ A X Y P ];\n" +
+                "define register offset=0x00 size=1 [ <identifier>A</identifier> <identifier>B</identifier> ];\n" +
                 "define token opbyte (8)\n" +
                 "   op       = (0,7) signed dec\n" +
                 ";\n" +

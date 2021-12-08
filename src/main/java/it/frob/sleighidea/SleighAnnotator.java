@@ -102,6 +102,12 @@ public class SleighAnnotator implements Annotator, DumbAware {
                     assignGutterIcon(visited, holder, SleighIcons.TABLE);
                 }
             }
+
+            @Override
+            public void visitIdentifierlist(@NotNull SleighIdentifierlist visited) {
+                PsiTreeUtil.collectElementsOfType(visited, SleighIdentifier.class)
+                        .forEach(identifier -> setHighlighting(identifier, holder, SleighSyntaxHighlighter.IDENTIFIER));
+            }
         });
     }
 
