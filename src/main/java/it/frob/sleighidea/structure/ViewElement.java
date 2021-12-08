@@ -13,7 +13,9 @@ import it.frob.sleighidea.SleighIcons;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ViewElement implements StructureViewTreeElement, SortableTreeElement {
 
@@ -24,6 +26,7 @@ public class ViewElement implements StructureViewTreeElement, SortableTreeElemen
 
     /**
      * Create a new structure view element wrapping the given PSI element.
+     *
      * @param element the PSI element to wrap.
      */
     public ViewElement(NavigatablePsiElement element) {
@@ -62,13 +65,27 @@ public class ViewElement implements StructureViewTreeElement, SortableTreeElemen
     @Override
     public TreeElement @NotNull [] getChildren() {
         if (element instanceof SleighFile) {
-            return Arrays.stream(PsiTreeUtil.collectElements(element,
-                            filterElement -> filterElement instanceof SleighTokendef ||
-                                    filterElement instanceof SleighMacrodef ||
-                                    (filterElement instanceof SleighCtorstart) &&
-                                            (filterElement.getFirstChild() instanceof SleighDisplay)))
-                    .map(psiElement -> new ViewElement((NavigatablePsiElement) psiElement))
-                    .toArray(TreeElement[]::new);
+            SleighFile file = (SleighFile) this.element;
+
+            List<ViewElement> viewElements = new ArrayList<>();
+
+            viewElements.addAll(file.getTokens()
+                    .stream()
+                    .map(token -> new ViewElement((NavigatablePsiElement) token))
+                    .collect(Collectors.toList()));
+
+            viewElements.addAll(file.getMacros()
+                    .stream()
+                    .map(macro -> new ViewElement((NavigatablePsiElement) macro))
+                    .collect(Collectors.toList()));
+
+            viewElements.addAll(PsiTreeUtil.collectElementsOfType(this.element, SleighCtorstart.class)
+                    .stream()
+                    .filter(constructor -> constructor.getFirstChild() instanceof SleighDisplay)
+                    .map(constructor -> new ViewElement((NavigatablePsiElement) constructor))
+                    .collect(Collectors.toList()));
+
+            return viewElements.toArray(new TreeElement[0]);
         }
 
         return EMPTY_ARRAY;

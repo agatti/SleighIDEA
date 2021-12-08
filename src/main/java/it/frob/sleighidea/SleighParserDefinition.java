@@ -14,8 +14,8 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import it.frob.sleighidea.parser.SleighParser;
-import it.frob.sleighidea.psi.SleighFile;
 import it.frob.sleighidea.psi.SleighTypes;
+import it.frob.sleighidea.psi.impl.SleighFileImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class SleighParserDefinition implements ParserDefinition {
@@ -68,6 +68,6 @@ public class SleighParserDefinition implements ParserDefinition {
 
     @Override
     public @NotNull PsiFile createFile(@NotNull FileViewProvider viewProvider) {
-        return new SleighFile(viewProvider);
+        return new SleighFileImpl(viewProvider);
     }
 }

@@ -2,26 +2,26 @@
 
 package it.frob.sleighidea.psi;
 
-import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.FileViewProvider;
-import it.frob.sleighidea.SleighFileType;
-import it.frob.sleighidea.SleighLanguage;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiFile;
 
-public class SleighFile extends PsiFileBase {
+import java.util.Collection;
 
-    public SleighFile(@NotNull FileViewProvider viewProvider) {
-        super(viewProvider, SleighLanguage.INSTANCE);
-    }
+/**
+ * Public interface for accessing Sleigh files' structured content.
+ */
+public interface SleighFile extends PsiFile {
 
-    @Override
-    public @NotNull FileType getFileType() {
-        return SleighFileType.INSTANCE;
-    }
+    /**
+     * Get an immutable collection containing all the valid {@code macro} definition tokens.
+     *
+     * @return the {@link SleighMacrodef} instances present in the file.
+     */
+    Collection<SleighMacrodef> getMacros();
 
-    @Override
-    public String toString() {
-        return "Sleigh File";
-    }
+    /**
+     * Get an immutable collection containing all the valid {@code token} definition tokens.
+     *
+     * @return the {@link SleighTokendef} instances present in the file.
+     */
+    Collection<SleighTokendef> getTokens();
 }

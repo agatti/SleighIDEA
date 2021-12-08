@@ -19,14 +19,50 @@ import java.util.stream.Collectors;
 public class SleighPsiImplUtil {
 
     /**
+     * Extract the name of a {@link SleighTokendef} element.
+     *
+     * @param element the element to get the name of.
+     * @return the token's name, or null if none could be extracted.
+     */
+    public static @Nullable String getName(@NotNull SleighTokendef element) {
+        SleighIdentifier identifier = PsiTreeUtil.findChildOfType(element, SleighIdentifier.class);
+        return identifier != null ? identifier.getText().trim() : null;
+    }
+
+    /**
      * Extract a placeholder text string from a SleighTokendef element.
      *
      * @param element the element to get the placeholder text for.
      * @return the placeholder text derived from the given element.
      */
     public static @Nullable String getPlaceholderText(@NotNull SleighTokendef element) {
-        SleighIdentifier identifier = PsiTreeUtil.findChildOfType(element, SleighIdentifier.class);
-        return identifier != null ? identifier.getText().trim() : null;
+        return getName(element);
+    }
+
+    /**
+     * Create an {@link ItemPresentation} instance for the given {@link SleighTokendef} element.
+     *
+     * @param element the {@link SleighTokendef} element to create an item presentation for.
+     * @return an {@link ItemPresentation} instance for the given element.
+     */
+    public static ItemPresentation getPresentation(@NotNull SleighTokendef element) {
+        return new ItemPresentation() {
+            @Override
+            public @NlsSafe @Nullable String getPresentableText() {
+                return SleighPsiImplUtil.getPlaceholderText(element);
+            }
+
+            @Override
+            public @NlsSafe @Nullable String getLocationString() {
+                PsiFile containingFile = element.getContainingFile();
+                return containingFile == null ? null : containingFile.getName();
+            }
+
+            @Override
+            public @Nullable Icon getIcon(boolean unused) {
+                return PlatformIcons.CLASS_ICON;
+            }
+        };
     }
 
     /**
@@ -61,26 +97,12 @@ public class SleighPsiImplUtil {
                         .collect(Collectors.joining(", ", "(" ,")")).trim();
     }
 
-    public static ItemPresentation getPresentation(@NotNull SleighTokendef element) {
-        return new ItemPresentation() {
-            @Override
-            public @NlsSafe @Nullable String getPresentableText() {
-                return SleighPsiImplUtil.getPlaceholderText(element);
-            }
-
-            @Override
-            public @NlsSafe @Nullable String getLocationString() {
-                PsiFile containingFile = element.getContainingFile();
-                return containingFile == null ? null : containingFile.getName();
-            }
-
-            @Override
-            public @Nullable Icon getIcon(boolean unused) {
-                return PlatformIcons.CLASS_ICON;
-            }
-        };
-    }
-
+    /**
+     * Create an {@link ItemPresentation} instance for the given {@link SleighMacrodef} element.
+     *
+     * @param element the {@link SleighMacrodef} element to create an item presentation for.
+     * @return an {@link ItemPresentation} instance for the given element.
+     */
     public static ItemPresentation getPresentation(@NotNull SleighMacrodef element) {
         return new ItemPresentation() {
             @Override
