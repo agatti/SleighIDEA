@@ -33,7 +33,7 @@ DECNUMBER=[0-9]+
 DISPLAYCHAR=[@$?]
 HEXNUMBER=0x[\da-fA-F]+
 BINNUMBER=0b[01]+
-SYMBOL=[a-zA-Z][a-zA-Z\d_.]*
+SYMBOL=[_a-zA-Z][a-zA-Z\d_.]*
 STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
 
 %%

@@ -117,7 +117,7 @@
 		displaychar='regexp:[@$?]'
 		hexnumber='regexp:0x[\da-fA-F]+'
 		binnumber='regexp:0b[01]+'
-		symbol='regexp:[a-zA-Z][a-zA-Z\d_.]*'
+		symbol='regexp:[_a-zA-Z][a-zA-Z\d_.]*'
 		string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
 	]
 }
