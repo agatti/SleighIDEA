@@ -42,8 +42,12 @@ in parsing or there are some original constructs that cannot be mapped 1:1 from 
 
 ### How do I build this?
 
-That's fairly simple. Install the [Grammar-Kit plugin](https://plugins.jetbrains.com/plugin/6606-grammar-kit/) in your
-IntelliJ IDEA installation, import the project, and use the `runIde` Gradle task to test it out.
+* Install the [Grammar-Kit plugin](https://plugins.jetbrains.com/plugin/6606-grammar-kit/), then restart the IDE if
+  requested.
+* Import the project
+* Right click on `SleighGrammar.bnf` and select **Generate Parser Code**
+* Right click on `SleighLexer.flex` and select **Run JFlex Generator**
+* Execute the `runIde` Gradle task from the Gradle tasks list.
 
 ### Screenshot?
 
