@@ -30,6 +30,7 @@ WHITE_SPACE=\s+
 SPACE=[ \t\n\x0B\f\r]+
 COMMENT=#.*
 DECNUMBER=[0-9]+
+DISPLAYCHAR=[@$?]
 HEXNUMBER=0x[\da-fA-F]+
 BINNUMBER=0b[01]+
 SYMBOL=[a-zA-Z][a-zA-Z\d_.]*
@@ -132,6 +133,7 @@ STRING=('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")
   {SPACE}            { return SPACE; }
   {COMMENT}          { return COMMENT; }
   {DECNUMBER}        { return DECNUMBER; }
+  {DISPLAYCHAR}      { return DISPLAYCHAR; }
   {HEXNUMBER}        { return HEXNUMBER; }
   {BINNUMBER}        { return BINNUMBER; }
   {SYMBOL}           { return SYMBOL; }

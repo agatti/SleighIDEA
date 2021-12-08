@@ -114,6 +114,7 @@
 		space='regexp:\s+'
 		comment='regexp:#.*'
 		decnumber='regexp:\d+'
+		displaychar='regexp:[@$?]'
 		hexnumber='regexp:0x[\da-fA-F]+'
 		binnumber='regexp:0b[01]+'
 		symbol='regexp:[a-zA-Z][a-zA-Z\d_.]*'
@@ -284,11 +285,58 @@ expr_term ::= ( LPAREN expr RPAREN ) | sembitrange | varnode
 varnode ::= ( identifier COLON constant ) | identifier | ( integer COLON constant ) | integer | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
 constant ::= integer
 
-display ::= COLON printpiece * RES_IS { methods = [ getPlaceholderText ]}
-printpiece ::= identifier | whitespace | concatenate | qstring | special
+display ::= COLON pieces RES_IS {
+	methods = [ getPlaceholderText ]
+}
+private pieces ::= printpiece *
+printpiece ::=
+	  identifier
+	| whitespace
+	| concatenate
+	| qstring
+	| special
 whitespace ::= WS
 concatenate ::= CARET
-special ::= DISPCHAR | LINECOMMENT | LBRACE | RBRACE | LBRACKET | RBRACKET | LPAREN | RPAREN | ELLIPSIS | EQUAL | NOTEQUAL | LESS | GREAT | LESSEQUAL | GREATEQUAL | ASSIGN | COLON | COMMA | ASTERISK | BOOL_AND | BOOL_OR | BOOL_XOR | PIPE | AMPERSAND | LEFT | RIGHT | PLUS | MINUS | SLASH | PERCENT | EXCLAIM | TILDE | SEMI | SPEC_AND | SPEC_OR | SPEC_XOR | DEC_INT | HEX_INT | BIN_INT
+special ::=
+	  DISPCHAR
+	| LINECOMMENT
+	| LBRACE
+	| RBRACE
+	| LBRACKET
+	| RBRACKET
+	| LPAREN
+	| RPAREN
+	| ELLIPSIS
+	| EQUAL
+	| NOTEQUAL
+	| LESS
+	| GREAT
+	| LESSEQUAL
+	| GREATEQUAL
+	| ASSIGN
+	| COLON
+	| COMMA
+	| ASTERISK
+	| BOOL_AND
+	| BOOL_OR
+	| BOOL_XOR
+	| PIPE
+	| AMPERSAND
+	| LEFT
+	| RIGHT
+	| PLUS
+	| MINUS
+	| SLASH
+	| PERCENT
+	| EXCLAIM
+	| TILDE
+	| SEMI
+	| SPEC_AND
+	| SPEC_OR
+	| SPEC_XOR
+	| DEC_INT
+	| HEX_INT
+	| BIN_INT
 
 qstring ::= QSTRING
 
@@ -306,7 +354,7 @@ integer ::= hexnumber | decnumber | binnumber
 QSTRING ::= string
 
 WS ::= ' ' | '\t' | '\r' | '\n'
-DISPCHAR ::= '@' | '$' | '?'
+DISPCHAR ::= displaychar
 LINECOMMENT ::= '#'
 DEC_INT ::= decnumber
 HEX_INT ::= hexnumber
