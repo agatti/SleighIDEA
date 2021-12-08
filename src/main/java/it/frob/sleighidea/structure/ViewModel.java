@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-package it.frob.sleighidea;
+package it.frob.sleighidea.structure;
 
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.StructureViewModelBase;
@@ -11,10 +11,10 @@ import it.frob.sleighidea.psi.SleighDisplay;
 import it.frob.sleighidea.psi.SleighIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-public class SleighStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
+public class ViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
 
-    public SleighStructureViewModel(PsiFile psiFile) {
-        super(psiFile, new SleighStructureViewElement(psiFile));
+    public ViewModel(PsiFile psiFile) {
+        super(psiFile, new ViewElement(psiFile));
     }
 
     @Override
