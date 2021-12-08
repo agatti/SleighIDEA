@@ -34,6 +34,8 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
             createTextAttributesKey("PCODEOP", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
     public static final TextAttributesKey IDENTIFIER =
             createTextAttributesKey("IDENTIFIER", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE);
+    public static final TextAttributesKey BUILT_IN_SYMBOL =
+            createTextAttributesKey("BUILT_IN_SYMBOL", DefaultLanguageHighlighterColors.KEYWORD);
 
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
     private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD};

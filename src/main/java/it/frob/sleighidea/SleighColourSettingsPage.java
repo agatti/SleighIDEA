@@ -17,6 +17,7 @@ import java.util.Map;
 public class SleighColourSettingsPage implements ColorSettingsPage {
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
             new AttributesDescriptor("Bad value", SleighSyntaxHighlighter.BAD_CHARACTER),
+            new AttributesDescriptor("Built-in symbol", SleighSyntaxHighlighter.BUILT_IN_SYMBOL),
             new AttributesDescriptor("Function call", SleighSyntaxHighlighter.FUNCTION_CALL),
             new AttributesDescriptor("Keyword", SleighSyntaxHighlighter.KEYWORD),
             new AttributesDescriptor("Identifier", SleighSyntaxHighlighter.IDENTIFIER),
@@ -28,6 +29,7 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
     private static final Map<String, TextAttributesKey> ATTRIBUTES_KEY_MAP = new HashMap<>();
 
     static {
+        ATTRIBUTES_KEY_MAP.put("builtinsymbol", SleighSyntaxHighlighter.BUILT_IN_SYMBOL);
         ATTRIBUTES_KEY_MAP.put("function", SleighSyntaxHighlighter.FUNCTION_CALL);
         ATTRIBUTES_KEY_MAP.put("label", SleighSyntaxHighlighter.LABEL);
         ATTRIBUTES_KEY_MAP.put("identifier", SleighSyntaxHighlighter.IDENTIFIER);
@@ -62,7 +64,7 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
                 "define pcodeop <pcodeop>readIRQ</pcodeop>;\n" +
                 "REL: reloc is rel [ reloc = inst_next + rel; ] { export *:2 reloc; } \n" +
                 ":NOP is op=0b00000000 {\n" +
-                "if <function>carry</function>(A, B) goto next_inst;\n" +
+                "if <function>carry</function>(A, B) goto <builtinsymbol>next_inst</builtinsymbol>;\n" +
                 "<label><skip></label>\n" +
                 "}";
     }

@@ -52,6 +52,20 @@ public class SleighAnnotator implements Annotator, DumbAware {
             "zext"
     );
 
+    /**
+     * A list containing all built-in symbols.
+     *
+     * TODO: Use an immutable data structure.
+     */
+    private static final List<String> BUILT_IN_SYMBOLS = Arrays.asList(
+            "const",
+            "epsilon",
+            "inst_next",
+            "inst_start",
+            "instruction",
+            "unique"
+    );
+
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         element.accept(new SleighVisitor() {
@@ -107,6 +121,19 @@ public class SleighAnnotator implements Annotator, DumbAware {
             public void visitIdentifierlist(@NotNull SleighIdentifierlist visited) {
                 PsiTreeUtil.collectElementsOfType(visited, SleighIdentifier.class)
                         .forEach(identifier -> setHighlighting(identifier, holder, SleighSyntaxHighlighter.IDENTIFIER));
+            }
+
+            @Override
+            public void visitJumpdest(@NotNull SleighJumpdest visited) {
+                SleighIdentifier jumpTarget = PsiTreeUtil.getChildOfType(visited, SleighIdentifier.class);
+                if (jumpTarget == null) {
+                    return;
+                }
+
+                String jumpTargetString = jumpTarget.getText();
+                if (jumpTargetString.equals("inst_next") || jumpTargetString.equals("inst_start")) {
+                    setHighlighting(jumpTarget, holder, SleighSyntaxHighlighter.BUILT_IN_SYMBOL);
+                }
             }
         });
     }
