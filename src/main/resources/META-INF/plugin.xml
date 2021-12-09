@@ -28,6 +28,19 @@
         <lang.foldingBuilder language="Sleigh"
                              implementationClass="it.frob.sleighidea.SleighFoldingBuilder"/>
         <lang.commenter language="Sleigh" implementationClass="it.frob.sleighidea.SleighCommenter"/>
+
+        <!-- Inspections (errors) -->
+
+        <localInspection language="Sleigh" shortName="DuplicateDefaultSpaceDefinition"
+                         displayName="Duplicate default space definition"
+                         groupName="Sleigh" enabledByDefault="true" level="ERROR"
+                         implementationClass="it.frob.sleighidea.inspections.DuplicateDefaultSpaceDefinitionInspection"/>
+        <localInspection language="Sleigh" shortName="DuplicateSpaceDefinition" displayName="Duplicate space definition"
+                         groupName="Sleigh" enabledByDefault="true" level="ERROR"
+                         implementationClass="it.frob.sleighidea.inspections.DuplicateSpaceDefinitionInspection"/>
+        <localInspection language="Sleigh" shortName="InvalidSpaceSize" displayName="Space sizes checker"
+                         groupName="Sleigh" enabledByDefault="true" level="ERROR"
+                         implementationClass="it.frob.sleighidea.inspections.InvalidSpaceSizeInspection"/>
     </extensions>
 
     <actions>

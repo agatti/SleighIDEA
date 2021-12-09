@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Concrete implementation of {@link SleighFile}.
@@ -51,13 +52,25 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     );
 
     /**
+     * All the {@code space} elements in the file, wrapped in a cache-aware linear container.
+     */
+    private final CachedValue<List<Space>> spacesList = createCachedValue(
+            new ValueProvider<List<Space>>() {
+                @Override
+                protected @NotNull List<Space> computeValue() {
+                    return Collections.unmodifiableList(collectSpacesList());
+                }
+            }
+    );
+
+    /**
      * All the {@code space} elements in the file, wrapped in a cache-aware container.
      */
-    private final CachedValue<Map<String, Space>> spaces = createCachedValue(
+    private final CachedValue<Map<String, Space>> spacesMap = createCachedValue(
             new ValueProvider<Map<String, Space>>() {
                 @Override
                 protected @NotNull Map<String, Space> computeValue() {
-                    return Collections.unmodifiableMap(collectSpaces());
+                    return Collections.unmodifiableMap(buildSpacesMap(spacesList.getValue()));
                 }
             }
     );
@@ -97,8 +110,8 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     }
 
     @Override
-    public Map<String, Space> getSpaces() {
-        return spaces.getValue();
+    public @Nullable Space getSpaceForName(@NotNull String name) {
+        return spacesMap.getValue().getOrDefault(name, null);
     }
 
     /**
@@ -161,12 +174,8 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
      * {@link Space} model container classes, indexed by their name.
      */
     @NotNull
-    private Map<String, Space> collectSpaces() {
-        Map<String, Space> collectedSpaces = new HashMap<>();
-
-        // TODO: Check for multiple default spaces.
-
-        PsiTreeUtil.collectElementsOfType(this, SleighSpacedef.class)
+    private List<Space> collectSpacesList() {
+        return PsiTreeUtil.collectElementsOfType(this, SleighSpacedef.class)
                 .stream()
                 .map(space -> {
                     try {
@@ -177,14 +186,27 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .forEach(space -> {
-                    if (collectedSpaces.containsKey(space.getName())) {
-                        // TODO: Figure out how to handle duplicate spaces.
-                        return;
-                    }
-                    collectedSpaces.put(space.getName(), space);
-                });
+                .collect(Collectors.toList());
+    }
 
-        return collectedSpaces;
+    /**
+     * Build a map out of the given {@link Space} list container.
+     *
+     * @param spaces the instances to build a map with.
+     * @return a map containing the given instances, indexed by their assigned name.
+     */
+    @NotNull
+    private Map<String, Space> buildSpacesMap(@NotNull List<Space> spaces) {
+        Map<String, Space> spacesMap = new HashMap<>();
+
+        spaces.forEach(space -> {
+            if (spacesMap.containsKey(space.getName())) {
+                // TODO: Figure out how to handle duplicate spaces.
+                return;
+            }
+            spacesMap.put(space.getName(), space);
+        });
+
+        return spacesMap;
     }
 }

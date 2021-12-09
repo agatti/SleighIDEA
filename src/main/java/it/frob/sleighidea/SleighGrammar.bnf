@@ -362,7 +362,12 @@ strict_id ::= IDENTIFIER
 
 IDENTIFIER ::= symbol
 
-integer ::= hexnumber | decnumber | binnumber
+integer ::=
+	  hexnumber
+	| decnumber
+	| binnumber {
+	methods = [ toPositiveInteger ]
+}
 
 QSTRING ::= string
 

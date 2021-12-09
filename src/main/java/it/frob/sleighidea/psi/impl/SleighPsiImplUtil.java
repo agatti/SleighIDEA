@@ -32,7 +32,7 @@ public class SleighPsiImplUtil {
     }
 
     /**
-     * Extract a placeholder text string from a SleighTokendef element.
+     * Extract a placeholder text string from a {@link SleighTokendef} element.
      *
      * @param element the element to get the placeholder text for.
      * @return the placeholder text derived from the given element.
@@ -68,7 +68,7 @@ public class SleighPsiImplUtil {
     }
 
     /**
-     * Extract a placeholder text string from a SleighDisplay element.
+     * Extract a placeholder text string from a {@link SleighDisplay} element.
      *
      * @param element the element to get the placeholder text for.
      * @return the placeholder text derived from the given element.
@@ -81,7 +81,7 @@ public class SleighPsiImplUtil {
     }
 
     /**
-     * Extract a placeholder text string from a SleighMacrodef element.
+     * Extract a placeholder text string from a {@link SleighMacrodef} element.
      *
      * @param element the element to get the placeholder text for.
      * @return the placeholder text derived from the given element.
@@ -149,7 +149,7 @@ public class SleighPsiImplUtil {
             throw new ModelException(String.format("Invalid size modifiers found for `%s`: %d.",
                     element.getText(), sizeModifiers.length));
         }
-        return Integer.parseInt(sizeModifiers[0].getText());
+        return sizeModifiers[0].getInteger().toPositiveInteger();
     }
 
     /**
@@ -169,7 +169,7 @@ public class SleighPsiImplUtil {
                 return 1;
 
             case 1:
-                return Integer.parseInt(wordSizeModifiers[0].getText());
+                return wordSizeModifiers[0].getInteger().toPositiveInteger();
 
             default:
                 throw new ModelException(String.format("Invalid word size modifiers found for `%s`: %d.",
@@ -211,5 +211,30 @@ public class SleighPsiImplUtil {
                         spaceElement -> SleighTypes.KEY_DEFAULT.toString().equals(spaceElement.getText())))
                 .findAny()
                 .isPresent();
+    }
+
+    /**
+     * Convert a {@link SleighInteger} instance to an integer, taking care of base conversion.
+     *
+     * @param integer the {@link SleighInteger} instance to convert.
+     * @return the converted positive integer.
+     */
+    public static int toPositiveInteger(@NotNull SleighInteger integer) {
+        PsiElement binaryNumber = integer.getBinnumber();
+        if (binaryNumber != null) {
+            return Integer.parseInt(binaryNumber.getText().substring(2), 2);
+        }
+
+        PsiElement decimalNumber = integer.getDecnumber();
+        if (decimalNumber != null) {
+            return Integer.parseInt(decimalNumber.getText(), 10);
+        }
+
+        PsiElement hexadecimalNumber = integer.getHexnumber();
+        if (hexadecimalNumber != null) {
+            return Integer.parseInt(hexadecimalNumber.getText().substring(2), 16);
+        }
+
+        throw new IllegalStateException("Integer has no real value attached?");
     }
 }

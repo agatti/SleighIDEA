@@ -181,7 +181,7 @@ public class SpaceVisitor extends SleighVisitor {
                 return;
             }
 
-            int value = Integer.parseInt(sizeNode.getText());
+            int value = sizeNode.toPositiveInteger();
             if (value <= 0) {
                 isValid = false;
                 // TODO: Mark the node with an error - size cannot be zero.
@@ -202,7 +202,7 @@ public class SpaceVisitor extends SleighVisitor {
                 return;
             }
 
-            int value = Integer.parseInt(wordSizeNode.getText());
+            int value = wordSizeNode.toPositiveInteger();
             if (value <= 0) {
                 isValid = false;
                 // TODO: Mark the node with an error - word size cannot be zero.
@@ -232,7 +232,7 @@ public class SpaceVisitor extends SleighVisitor {
                 return;
             }
 
-            if (SleighTypes.KEY_DEFAULT.toString().equals(visited.getText())) {
+            if ("default".equals(visited.getText())) {
                 isDefault = true;
             }
         }

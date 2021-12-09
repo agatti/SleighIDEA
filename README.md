@@ -11,6 +11,7 @@ a [Sleigh](https://ghidra.re/courses/languages/html/sleigh.html) plugin for Inte
 * Some token colouring in the editor view
 * Simple colour customisation support
 * Gutter icons for tables and opcodes
+* Few syntax inspections
 * Basic structure view support for opcodes
 * Basic folding support.
 
@@ -25,8 +26,16 @@ Pretty much everything else:
 * Full syntax colouring
 * Autocompletion support
 * Handling of `.ldefs`, `.cspec`, `.pspec`, and `.opinion` files
-* Inspections
+* More inspections
 * etc.
+
+## Implemented inspections
+
+### Memory spaces
+
+* Duplicate name
+* Multiple default spaces
+* Invalid size and wordsize values.
 
 ## FAQ
 
@@ -47,7 +56,13 @@ in parsing or there are some original constructs that cannot be mapped 1:1 from 
 * Import the project
 * Right click on `SleighGrammar.bnf` and select **Generate Parser Code**
 * Right click on `SleighLexer.flex` and select **Run JFlex Generator**
-* Execute the `runIde` Gradle task from the Gradle tasks list.
+
+### How do I run this?
+
+Right now the plugin is simply not complete enough to be put on the JetBrains plugin market, so for now unless you plan
+to test this or work on it, just hold on until things are ready. That said, once you can successfully build the plugin
+using the instructions in the appropriate section, executing the `runIde` Gradle task from the Gradle tasks list should
+do the trick.
 
 ### Screenshot?
 
