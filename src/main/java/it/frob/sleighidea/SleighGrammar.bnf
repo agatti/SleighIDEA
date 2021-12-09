@@ -126,7 +126,18 @@ spec ::= endiandef ( definition | constructorlike ) * <<eof>>
 
 endiandef ::= KEY_DEFINE KEY_ENDIAN ASSIGN endian SEMI
 endian ::= KEY_BIG | KEY_LITTLE
-definition ::= ( aligndef | tokendef | contextdef | spacedef | varnodedef | bitrangedef | pcodeopdef | valueattach | nameattach | varattach ) SEMI
+definition ::=
+	( aligndef
+	| tokendef
+	| contextdef
+	| spacedef
+	| varnodedef
+	| bitrangedef
+	| pcodeopdef
+	| valueattach
+	| nameattach
+	| varattach
+	) SEMI
 aligndef ::= KEY_DEFINE KEY_ALIGNMENT ASSIGN integer
 tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN fielddefs {
 	methods = [ getName getPlaceholderText getPresentation ]
@@ -140,7 +151,9 @@ contextfielddef ::= identifier ASSIGN LPAREN integer COMMA integer RPAREN contex
 contextfieldmods ::= contextfieldmod *
 contextfieldmod ::= KEY_SIGNED | KEY_NOFLOW | KEY_HEX | KEY_DEC
 contextdef ::= KEY_DEFINE KEY_CONTEXT identifier contextfielddefs
-spacedef ::= KEY_DEFINE KEY_SPACE identifier spacemods
+spacedef ::= KEY_DEFINE KEY_SPACE identifier spacemods {
+	methods = [ getName getSize getType getWordSize isDefault ]
+}
 spacemods ::= spacemod *
 spacemod ::= typemod | sizemod | wordsizemod | KEY_DEFAULT
 typemod ::= KEY_TYPE ASSIGN type

@@ -8,11 +8,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
+import it.frob.sleighidea.model.ModelException;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -94,7 +96,7 @@ public class SleighPsiImplUtil {
                 PsiTreeUtil.getChildrenOfTypeAsList(PsiTreeUtil.findChildOfType(element, SleighOplist.class),
                                 SleighIdentifier.class).stream()
                         .map(PsiElement::getText)
-                        .collect(Collectors.joining(", ", "(" ,")")).trim();
+                        .collect(Collectors.joining(", ", "(", ")")).trim();
     }
 
     /**
@@ -121,5 +123,93 @@ public class SleighPsiImplUtil {
                 return PlatformIcons.FUNCTION_ICON;
             }
         };
+    }
+
+    /**
+     * Extract the name of a {@link SleighSpacedef} element.
+     *
+     * @param element the element to get the name of.
+     * @return the space's name.
+     */
+    public static @NotNull String getName(@NotNull SleighSpacedef element) {
+        return element.getIdentifier().getText().trim();
+    }
+
+    /**
+     * Extract the size of a {@link SleighSpacedef} element.
+     *
+     * @param element the element to get the size of.
+     * @return the space's size.
+     * @throws it.frob.sleighidea.model.ModelException if the incorrect number of modifiers is found.
+     */
+    public static int getSize(@NotNull SleighSpacedef element) throws ModelException {
+        SleighSizemod[] sizeModifiers = PsiTreeUtil.findChildrenOfType(element, SleighSizemod.class)
+                .toArray(new SleighSizemod[0]);
+        if (sizeModifiers.length != 1) {
+            throw new ModelException(String.format("Invalid size modifiers found for `%s`: %d.",
+                    element.getText(), sizeModifiers.length));
+        }
+        return Integer.parseInt(sizeModifiers[0].getText());
+    }
+
+    /**
+     * Extract the word size of a {@link SleighSpacedef} element.
+     *
+     * @apiNote this function will not check for duplicate {@code wordsize} modifiers in the space definition.
+     * @param element the element to get the word size of.
+     * @return the space's word size, defaulting to {@code 1} if none is defined.
+     * @throws it.frob.sleighidea.model.ModelException if the incorrect number of modifiers is found.
+     */
+    public static int getWordSize(@NotNull SleighSpacedef element) throws ModelException {
+        SleighWordsizemod[] wordSizeModifiers = PsiTreeUtil.findChildrenOfType(element, SleighWordsizemod.class)
+                .toArray(new SleighWordsizemod[0]);
+
+        switch (wordSizeModifiers.length) {
+            case 0:
+                return 1;
+
+            case 1:
+                return Integer.parseInt(wordSizeModifiers[0].getText());
+
+            default:
+                throw new ModelException(String.format("Invalid word size modifiers found for `%s`: %d.",
+                        element.getText(), wordSizeModifiers.length));
+        }
+    }
+
+    /**
+     * Extract the type of a {@link SleighSpacedef} element.
+     *
+     * @param element the element to get the type of.
+     * @return the space's type, or {@code null} if none could be extracted.
+     * @throws it.frob.sleighidea.model.ModelException if the incorrect number of modifiers is found.
+     */
+    public static @Nullable String getType(@NotNull SleighSpacedef element) throws ModelException {
+        SleighTypemod[] typeModifiers = PsiTreeUtil.findChildrenOfType(element, SleighTypemod.class)
+                .toArray(new SleighTypemod[0]);
+        switch (typeModifiers.length) {
+            case 0:
+                return null;
+
+            case 1:
+                return typeModifiers[0].getType().getText();
+
+            default:
+                throw new ModelException(String.format("Invalid type modifiers found for `%s`: %d.",
+                        element.getText(), typeModifiers.length));
+        }
+    }
+
+    /**
+     * Extract the default flag of a {@link SleighSpacedef} element.
+     *
+     * @param element the element to get the default flag of.
+     * @return {@code true} if the space acts as a default space, {@code false} otherwise.
+     */
+    public static boolean isDefault(@NotNull SleighSpacedef element) {
+        return Arrays.stream(PsiTreeUtil.collectElements(PsiTreeUtil.findChildOfType(element, SleighSpacemod.class),
+                        spaceElement -> SleighTypes.KEY_DEFAULT.toString().equals(spaceElement.getText())))
+                .findAny()
+                .isPresent();
     }
 }

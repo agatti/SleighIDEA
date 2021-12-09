@@ -13,16 +13,13 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import it.frob.sleighidea.SleighFileType;
 import it.frob.sleighidea.SleighLanguage;
-import it.frob.sleighidea.psi.SleighFile;
-import it.frob.sleighidea.psi.SleighMacrodef;
-import it.frob.sleighidea.psi.SleighTokendef;
+import it.frob.sleighidea.model.ModelException;
+import it.frob.sleighidea.model.Space;
+import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Concrete implementation of {@link SleighFile}.
@@ -49,6 +46,18 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
                 @Override
                 protected @NotNull List<SleighMacrodef> computeValue() {
                     return Collections.unmodifiableList(collectMacros());
+                }
+            }
+    );
+
+    /**
+     * All the {@code space} elements in the file, wrapped in a cache-aware container.
+     */
+    private final CachedValue<Map<String, Space>> spaces = createCachedValue(
+            new ValueProvider<Map<String, Space>>() {
+                @Override
+                protected @NotNull Map<String, Space> computeValue() {
+                    return Collections.unmodifiableMap(collectSpaces());
                 }
             }
     );
@@ -87,11 +96,16 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
         return macros.getValue();
     }
 
+    @Override
+    public Map<String, Space> getSpaces() {
+        return spaces.getValue();
+    }
+
     /**
      * Create a cached value.
      *
      * @param provider the cache-aware value provider to get data from.
-     * @param <T> the class of the value to cache.
+     * @param <T>      the class of the value to cache.
      * @return a {@link CachedValue} accessor instance.
      */
     @NotNull
@@ -138,5 +152,39 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     @NotNull
     private List<SleighMacrodef> collectMacros() {
         return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighMacrodef.class));
+    }
+
+    /**
+     * Extract all {@code space} elements in the file.
+     *
+     * @return a map containing the {@link SleighSpacedef} instances found in the file, wrapped in their respective
+     * {@link Space} model container classes, indexed by their name.
+     */
+    @NotNull
+    private Map<String, Space> collectSpaces() {
+        Map<String, Space> collectedSpaces = new HashMap<>();
+
+        // TODO: Check for multiple default spaces.
+
+        PsiTreeUtil.collectElementsOfType(this, SleighSpacedef.class)
+                .stream()
+                .map(space -> {
+                    try {
+                        return new Space(space);
+                    } catch (ModelException ignored) {
+                        // TODO: Figure out how to handle this case.
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .forEach(space -> {
+                    if (collectedSpaces.containsKey(space.getName())) {
+                        // TODO: Figure out how to handle duplicate spaces.
+                        return;
+                    }
+                    collectedSpaces.put(space.getName(), space);
+                });
+
+        return collectedSpaces;
     }
 }
