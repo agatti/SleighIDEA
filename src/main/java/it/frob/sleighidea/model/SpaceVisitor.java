@@ -173,7 +173,10 @@ public class SpaceVisitor extends SleighVisitor {
         @Override
         public void visitSizemod(@NotNull SleighSizemod visited) {
             SleighInteger sizeNode = PsiTreeUtil.findChildOfType(visited, SleighInteger.class);
-            assert sizeNode != null;
+            if (sizeNode == null) {
+                // No integer is attached if the value was invalid to begin with.
+                return;
+            }
 
             if (size.isPresent()) {
                 isValid = false;
@@ -181,20 +184,16 @@ public class SpaceVisitor extends SleighVisitor {
                 return;
             }
 
-            int value = sizeNode.toPositiveInteger();
-            if (value <= 0) {
-                isValid = false;
-                // TODO: Mark the node with an error - size cannot be zero.
-                return;
-            }
-
-            size = Optional.of(value);
+            size = Optional.of(sizeNode.toPositiveInteger());
         }
 
         @Override
         public void visitWordsizemod(@NotNull SleighWordsizemod visited) {
             SleighInteger wordSizeNode = PsiTreeUtil.findChildOfType(visited, SleighInteger.class);
-            assert wordSizeNode != null;
+            if (wordSizeNode == null) {
+                // No integer is attached if the value was invalid to begin with.
+                return;
+            }
 
             if (wordSize.isPresent()) {
                 isValid = false;
@@ -202,14 +201,7 @@ public class SpaceVisitor extends SleighVisitor {
                 return;
             }
 
-            int value = wordSizeNode.toPositiveInteger();
-            if (value <= 0) {
-                isValid = false;
-                // TODO: Mark the node with an error - word size cannot be zero.
-                return;
-            }
-
-            wordSize = Optional.of(value);
+            wordSize = Optional.of(wordSizeNode.toPositiveInteger());
         }
 
         @Override

@@ -35,7 +35,6 @@ Pretty much everything else:
 
 * Duplicate name
 * Multiple default spaces
-* Invalid size and wordsize values.
 
 ## FAQ
 

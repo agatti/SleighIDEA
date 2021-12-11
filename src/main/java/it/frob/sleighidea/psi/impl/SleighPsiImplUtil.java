@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Arrays;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -126,6 +126,54 @@ public class SleighPsiImplUtil {
     }
 
     /**
+     * Convert a String to an integer, taking care of base conversion.
+     *
+     * @param integer the string to convert.
+     * @return the converted positive integer.
+     */
+    public static int toPositiveInteger(@NotNull String integer) {
+        String lowerCase = integer.toLowerCase(Locale.ROOT).trim();
+
+        if (lowerCase.startsWith("0b")) {
+            return Integer.parseInt(integer.substring(2), 2);
+        }
+
+        if (lowerCase.startsWith("0x")) {
+            return Integer.parseInt(integer.substring(2), 16);
+        }
+
+        return Integer.parseInt(integer, 10);
+    }
+
+    /**
+     * Convert a {@link SleighInteger} instance to an integer, taking care of base conversion.
+     *
+     * @param integer the {@link SleighInteger} instance to convert.
+     * @return the converted positive integer.
+     */
+    public static int toPositiveInteger(@NotNull SleighInteger integer) {
+        PsiElement binaryNumber = integer.getBinnumber();
+        if (binaryNumber != null) {
+            return Integer.parseInt(binaryNumber.getText().substring(2), 2);
+        }
+
+        PsiElement decimalNumber = integer.getDecnumber();
+        if (decimalNumber != null) {
+            return Integer.parseInt(decimalNumber.getText(), 10);
+        }
+
+        PsiElement hexadecimalNumber = integer.getHexnumber();
+        if (hexadecimalNumber != null) {
+            return Integer.parseInt(hexadecimalNumber.getText().substring(2), 16);
+        }
+
+        // Handle SleighInteger elements that were constructed via meta rules.
+        return toPositiveInteger(integer.getText());
+    }
+
+    // Accessors for SleighSpacedef elements (and their children)
+
+    /**
      * Extract the name of a {@link SleighSpacedef} element.
      *
      * @param element the element to get the name of.
@@ -214,27 +262,72 @@ public class SleighPsiImplUtil {
     }
 
     /**
-     * Convert a {@link SleighInteger} instance to an integer, taking care of base conversion.
+     * Extract the {@link SleighInteger} instance contained in the given {@link SleighSizemod}.
      *
-     * @param integer the {@link SleighInteger} instance to convert.
-     * @return the converted positive integer.
+     * @param modifier the {@link SleighSpacemod} element to extract data from.
+     * @return the {@link SleighInteger} contained in the given element.
      */
-    public static int toPositiveInteger(@NotNull SleighInteger integer) {
-        PsiElement binaryNumber = integer.getBinnumber();
-        if (binaryNumber != null) {
-            return Integer.parseInt(binaryNumber.getText().substring(2), 2);
-        }
+    @NotNull
+    public static SleighInteger getInteger(@NotNull SleighSizemod modifier) {
+        return Objects.requireNonNull(PsiTreeUtil.findChildOfType(modifier, SleighInteger.class));
+    }
 
-        PsiElement decimalNumber = integer.getDecnumber();
-        if (decimalNumber != null) {
-            return Integer.parseInt(decimalNumber.getText(), 10);
-        }
+    /**
+     * Extract the {@link SleighInteger} instance contained in the given {@link SleighWordsizemod}.
+     *
+     * @param modifier the {@link SleighWordsizemod} element to extract data from.
+     * @return the {@link SleighInteger} contained in the given element.
+     */
+    @NotNull
+    public static SleighInteger getInteger(@NotNull SleighWordsizemod modifier) {
+        return Objects.requireNonNull(PsiTreeUtil.findChildOfType(modifier, SleighInteger.class));
+    }
 
-        PsiElement hexadecimalNumber = integer.getHexnumber();
-        if (hexadecimalNumber != null) {
-            return Integer.parseInt(hexadecimalNumber.getText().substring(2), 16);
-        }
+    // Accessors for SleighVarnodedef elements (and their children)
 
-        throw new IllegalStateException("Integer has no real value attached?");
+    /**
+     * Extract the identifiers list contained in the given {@link SleighVarnodedef}.
+     *
+     * @param varnode the {@link SleighVarnodedef} instance to extract data from.
+     * @return a list of identifiers defined in the source element, in string form.
+     */
+    @NotNull
+    public static List<String> getIdentifiers(@NotNull SleighVarnodedef varnode) {
+        return varnode.getIdentifierlist().getIdOrWildList().stream()
+                .map(PsiElement::getText)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Extract the variables list's start offset for the given {@link SleighVarnodedef}.
+     *
+     * @param varnode the {@link SleighVarnodedef} instance to extract data from.
+     * @return the starting offset for the input {@link SleighVarnodedef}.
+     */
+    public static int getOffset(@NotNull SleighVarnodedef varnode) {
+        Collection<SleighInteger> integers = PsiTreeUtil.findChildrenOfType(varnode, SleighInteger.class);
+        return integers.toArray(new SleighInteger[0])[0].toPositiveInteger();
+    }
+
+    /**
+     * Extract the variables list's size for the given {@link SleighVarnodedef}.
+     *
+     * @param varnode the {@link SleighVarnodedef} instance to extract data from.
+     * @return the variables size for the input {@link SleighVarnodedef}.
+     */
+    public static int getSize(@NotNull SleighVarnodedef varnode) {
+        Collection<SleighInteger> integers = PsiTreeUtil.findChildrenOfType(varnode, SleighInteger.class);
+        return integers.toArray(new SleighInteger[0])[1].toPositiveInteger();
+    }
+
+    /**
+     * Extract the given {@link SleighVarnodedef}'s bound memory space name.
+     *
+     * @param varnode the {@link SleighVarnodedef} instance to extract data from.
+     * @return the bound memory space name for the input element.
+     */
+    @NotNull
+    public static String getSpaceName(@NotNull SleighVarnodedef varnode) {
+        return varnode.getIdentifier().getText().trim();
     }
 }

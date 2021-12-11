@@ -158,9 +158,15 @@ spacemods ::= spacemod *
 spacemod ::= typemod | sizemod | wordsizemod | KEY_DEFAULT
 typemod ::= KEY_TYPE ASSIGN type
 type ::= identifier
-sizemod ::= KEY_SIZE ASSIGN integer
-wordsizemod ::= KEY_WORDSIZE ASSIGN integer
-varnodedef ::= KEY_DEFINE identifier KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN integer identifierlist
+sizemod ::= KEY_SIZE ASSIGN <<parseGreaterThanZeroInteger>> {
+	methods = [ getInteger ]
+}
+wordsizemod ::= KEY_WORDSIZE ASSIGN <<parseGreaterThanZeroInteger>> {
+	methods = [ getInteger ]
+}
+varnodedef ::= KEY_DEFINE identifier KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN <<parseGreaterThanZeroInteger>> identifierlist {
+	methods = [ getIdentifiers getOffset getSize getSpaceName ]
+}
 bitrangedef ::= KEY_DEFINE KEY_BITRANGE bitranges
 bitranges ::= bitrange +
 bitrange ::= identifier ASSIGN identifier LBRACKET integer COMMA integer RBRACKET
