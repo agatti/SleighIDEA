@@ -126,18 +126,17 @@ spec ::= endiandef ( definition | constructorlike ) * <<eof>>
 
 endiandef ::= KEY_DEFINE KEY_ENDIAN ASSIGN endian SEMI
 endian ::= KEY_BIG | KEY_LITTLE
-definition ::=
-	( aligndef
-	| tokendef
-	| contextdef
-	| spacedef
-	| varnodedef
-	| bitrangedef
-	| pcodeopdef
-	| valueattach
-	| nameattach
-	| varattach
-	) SEMI
+definition ::= ( aligndef
+             | tokendef
+             | contextdef
+             | spacedef
+             | varnodedef
+             | bitrangedef
+             | pcodeopdef
+             | valueattach
+             | nameattach
+             | varattach
+             ) SEMI
 aligndef ::= KEY_DEFINE KEY_ALIGNMENT ASSIGN integer
 tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN fielddefs {
 	methods = [ getName getPlaceholderText getPresentation ]
@@ -174,7 +173,8 @@ pcodeopdef ::= KEY_DEFINE KEY_PCODEOP identifierlist
 valueattach ::= KEY_ATTACH KEY_VALUES identifierlist intblist
 nameattach ::= KEY_ATTACH KEY_NAMES identifierlist stringoridentlist
 varattach ::= KEY_ATTACH KEY_VARIABLES identifierlist identifierlist
-identifierlist ::= ( LBRACKET id_or_wild + RBRACKET ) | id_or_wild
+identifierlist ::= ( LBRACKET id_or_wild + RBRACKET )
+	             | id_or_wild
 stringoridentlist ::= ( LBRACKET stringorident + RBRACKET ) | stringorident
 stringorident ::= id_or_wild | qstring
 intblist ::= ( LBRACKET intbpart + RBRACKET ) | neginteger

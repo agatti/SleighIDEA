@@ -3,7 +3,7 @@
 package it.frob.sleighidea.psi;
 
 import com.intellij.psi.PsiFile;
-import it.frob.sleighidea.model.Space;
+import it.frob.sleighidea.model.space.Space;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

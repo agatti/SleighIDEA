@@ -38,6 +38,12 @@
         <localInspection language="Sleigh" shortName="DuplicateSpaceDefinition" displayName="Duplicate space definition"
                          groupName="Sleigh" enabledByDefault="true" level="ERROR"
                          implementationClass="it.frob.sleighidea.inspections.DuplicateSpaceDefinitionInspection"/>
+        <localInspection language="Sleigh" shortName="UnknownVarnodedefSpace" displayName="Unknown variables node space"
+                         groupName="Sleigh" enabledByDefault="true" level="ERROR"
+                         implementationClass="it.frob.sleighidea.inspections.UnknownVarnodedefSpaceInspection"/>
+        <localInspection language="Sleigh" shortName="DuplicateVarnodeEntries" displayName="Duplicate space variables"
+                         groupName="Sleigh" enabledByDefault="true" level="ERROR"
+                         implementationClass="it.frob.sleighidea.inspections.DuplicateVarnodeEntriesInspection"/>
     </extensions>
 
     <actions>

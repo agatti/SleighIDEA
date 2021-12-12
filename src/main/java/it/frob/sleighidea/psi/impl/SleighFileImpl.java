@@ -14,7 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import it.frob.sleighidea.SleighFileType;
 import it.frob.sleighidea.SleighLanguage;
 import it.frob.sleighidea.model.ModelException;
-import it.frob.sleighidea.model.Space;
+import it.frob.sleighidea.model.space.Space;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

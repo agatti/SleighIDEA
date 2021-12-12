@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
-package it.frob.sleighidea.model;
+package it.frob.sleighidea.model.space;
 
+import it.frob.sleighidea.model.ModelException;
 import it.frob.sleighidea.psi.SleighSpacedef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -36,6 +36,11 @@ Pretty much everything else:
 * Duplicate name
 * Multiple default spaces
 
+### Variable definitions
+
+* Memory space validity
+* Duplicate variable definition
+
 ## FAQ
 
 ### Why is this not yet 100% compatible with Ghidra's Sleigh compiler?

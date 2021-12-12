@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-package it.frob.sleighidea.model;
+package it.frob.sleighidea.model.space;
 
 import com.intellij.psi.util.PsiTreeUtil;
 import it.frob.sleighidea.psi.*;
