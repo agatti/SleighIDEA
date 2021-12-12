@@ -4,10 +4,12 @@ package it.frob.sleighidea.model.space;
 
 import it.frob.sleighidea.model.ModelException;
 import it.frob.sleighidea.psi.SleighSpacedef;
+import it.frob.sleighidea.psi.SleighVarnodedef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnegative;
+import java.util.*;
 
 /**
  * Memory space class container.
@@ -45,17 +47,45 @@ public class Space {
     private final boolean isDefault;
 
     /**
+     * The memory space variables definition nodes.
+     */
+    private final List<VariablesContainer> containers = new ArrayList<>();
+
+    /**
+     * The variables bound to the memory space.
+     */
+    private final Map<String, Variable> variables = new HashMap<>();
+
+    /**
      * Use the given {@link SleighSpacedef} instance as a data source.
      *
      * @param definition the definition element to extract data from.
      * @throws ModelException if the extraction process failed.
      */
-    public Space(@NotNull SleighSpacedef definition) throws ModelException {
+    public Space(@NotNull SleighSpacedef definition, @NotNull Collection<SleighVarnodedef> variableDeclarations)
+            throws ModelException {
         SpaceVisitor visitor = new SpaceVisitor();
         definition.acceptChildren(visitor);
 
         if (!visitor.isValid()) {
             throw new ModelException("Invalid space definition found.");
+        }
+
+        for (SleighVarnodedef declaration : variableDeclarations) {
+            if (declaration.getSpaceName().equals(visitor.getName())) {
+                VariablesContainer variablesContainer = new VariablesContainer(declaration);
+
+                for (Variable variable : variablesContainer.getVariables()) {
+                    if (variables.containsKey(variable.getName())) {
+                        // TODO: Mark the node with an error - duplicate variable.
+                        throw new ModelException("Duplicate variable name found.");
+                    }
+
+                    variables.put(variable.getName(), variable);
+                }
+
+                containers.add(variablesContainer);
+            }
         }
 
         this.definition = definition;
@@ -114,6 +144,24 @@ public class Space {
     @Nonnegative
     public int getWordSize() {
         return wordSize;
+    }
+
+    /**
+     * Get the variable definitions containers for the memory space.
+     *
+     * @return a list of {@link VariablesContainer} instances.
+     */
+    public List<VariablesContainer> getContainers() {
+        return containers;
+    }
+
+    /**
+     * Get a map of all defined variables in the memory space.
+     *
+     * @return a map of {@code Variable} instances indexed by their name.
+     */
+    public Map<String, Variable> getVariables() {
+        return variables;
     }
 
     /**

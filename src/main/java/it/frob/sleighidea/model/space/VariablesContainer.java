@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 package it.frob.sleighidea.model.space;
 
 import it.frob.sleighidea.model.ModelException;

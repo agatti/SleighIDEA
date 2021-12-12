@@ -175,11 +175,12 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
      */
     @NotNull
     private List<Space> collectSpacesList() {
+        Collection<SleighVarnodedef> variableDeclarations = PsiTreeUtil.collectElementsOfType(this, SleighVarnodedef.class);
         return PsiTreeUtil.collectElementsOfType(this, SleighSpacedef.class)
                 .stream()
                 .map(space -> {
                     try {
-                        return new Space(space);
+                        return new Space(space, variableDeclarations);
                     } catch (ModelException ignored) {
                         // TODO: Figure out how to handle this case.
                     }
