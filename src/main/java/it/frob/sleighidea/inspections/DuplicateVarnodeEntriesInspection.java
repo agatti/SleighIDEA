@@ -3,10 +3,15 @@ package it.frob.sleighidea.inspections;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import it.frob.sleighidea.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
+import it.frob.sleighidea.psi.SleighFile;
+import it.frob.sleighidea.psi.SleighIdOrWild;
+import it.frob.sleighidea.psi.SleighIdentifier;
+import it.frob.sleighidea.psi.SleighVarnodedef;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -16,56 +21,22 @@ public class DuplicateVarnodeEntriesInspection extends BaseInspection {
 
     @Override
     protected void checkFile(@NotNull SleighFile file, @NotNull ProblemsHolder problemsHolder) {
-        VarnodeVisitor visitor = new VarnodeVisitor();
-        file.acceptChildren(visitor);
+        List<SleighIdentifier> variables = PsiTreeUtil.collectElementsOfType(file, SleighVarnodedef.class).stream()
+                .flatMap(container -> container.getIdentifierlist().getIdOrWildList().stream())
+                .map(SleighIdOrWild::getIdentifier)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
-        visitor.variablesFound.forEach((space, variables) -> {
-            // TODO: Find a faster way to achieve this.
-
-            for (int sourceIndex = 0; sourceIndex < variables.size() - 1; sourceIndex++) {
-                for (int targetIndex = sourceIndex + 1; targetIndex < variables.size(); targetIndex++) {
-                    String sourceName = variables.get(sourceIndex).getText().trim();
-                    String targetName = variables.get(targetIndex).getText().trim();
-
-                    if (!sourceName.equals(targetName)) {
-                        continue;
-                    }
-
+        for (int index = 1; index < variables.size(); index++) {
+            SleighIdentifier currentVariable = variables.get(index);
+            for (int checkIndex = 0; checkIndex < index; checkIndex++) {
+                SleighIdentifier pastVariable = variables.get(checkIndex);
+                if (currentVariable.getText().equals(pastVariable.getText())) {
                     problemsHolder.registerProblem(problemsHolder.getManager().createProblemDescriptor(
-                            variables.get(targetIndex), String.format("'%s' was already defined", targetName),
+                            currentVariable, String.format("'%s' was already defined", currentVariable.getText()),
                             (LocalQuickFix) null, ProblemHighlightType.ERROR, true));
+                    break;
                 }
-            }
-        });
-    }
-
-    /**
-     * Private PSI tree visitor that extracts all variables being defined in a given file.
-     */
-    private static class VarnodeVisitor extends SleighVisitor {
-        /**
-         * A map containing all {@link SleighIdentifier} defined in all {@link SleighVarnodedef} elements.
-         */
-        private final Map<String, List<SleighIdentifier>> variablesFound = new HashMap<>();
-
-        @Override
-        public void visitDefinition(@NotNull SleighDefinition visited) {
-            if (visited.getFirstChild() instanceof SleighVarnodedef) {
-                visited.getFirstChild().accept(this);
-            }
-        }
-
-        @Override
-        public void visitVarnodedef(@NotNull SleighVarnodedef visited) {
-            String spaceName = visited.getSpaceName();
-            List<SleighIdentifier> variables = visited.getIdentifierlist().getIdOrWildList().stream()
-                    .map(SleighIdOrWild::getIdentifier)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            if (variablesFound.containsKey(spaceName)) {
-                variablesFound.get(spaceName).addAll(variables);
-            } else {
-                variablesFound.put(spaceName, new ArrayList<>(variables));
             }
         }
     }
