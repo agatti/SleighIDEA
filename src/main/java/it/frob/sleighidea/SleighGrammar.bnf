@@ -137,7 +137,9 @@ definition ::= ( aligndef
              | nameattach
              | varattach
              ) SEMI
-aligndef ::= KEY_DEFINE KEY_ALIGNMENT ASSIGN integer
+aligndef ::= KEY_DEFINE KEY_ALIGNMENT ASSIGN <<parseGreaterThanZeroInteger>> {
+    methods = [ getAlignment ]
+}
 tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN fielddefs {
 	methods = [ getName getPlaceholderText getPresentation ]
 }

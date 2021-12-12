@@ -171,6 +171,20 @@ public class SleighPsiImplUtil {
         return toPositiveInteger(integer.getText());
     }
 
+    // Accessors for SleighAligndef
+
+    /**
+     * Extract the alignment value from a {@link SleighAligndef} element.
+     *
+     * @param element the element to get the alignment value from.
+     * @return the alignment value.
+     */
+    public static int getAlignment(@NotNull SleighAligndef element) {
+        SleighInteger integer = PsiTreeUtil.findChildOfType(element, SleighInteger.class);
+        assert integer != null;
+        return integer.toPositiveInteger();
+    }
+
     // Accessors for SleighSpacedef elements (and their children)
 
     /**
