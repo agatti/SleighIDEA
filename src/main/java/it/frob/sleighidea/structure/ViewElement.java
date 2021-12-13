@@ -67,7 +67,12 @@ public class ViewElement implements StructureViewTreeElement, SortableTreeElemen
         if (element instanceof SleighFile) {
             SleighFile file = (SleighFile) this.element;
 
-            List<ViewElement> viewElements = new ArrayList<>();
+            List<StructureViewTreeElement> viewElements = new ArrayList<>();
+
+            viewElements.addAll(file.getSpaces()
+                    .stream()
+                    .map(SpaceViewElement::new)
+                    .collect(Collectors.toList()));
 
             viewElements.addAll(file.getTokens()
                     .stream()

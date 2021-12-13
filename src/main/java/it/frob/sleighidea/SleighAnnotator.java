@@ -135,6 +135,11 @@ public class SleighAnnotator implements Annotator, DumbAware {
                     setHighlighting(jumpTarget, holder, SleighSyntaxHighlighter.BUILT_IN_SYMBOL);
                 }
             }
+
+            @Override
+            public void visitSpacedef(@NotNull SleighSpacedef visited) {
+                assignGutterIcon(visited, holder, PlatformIcons.ANONYMOUS_CLASS_ICON);
+            }
         });
     }
 

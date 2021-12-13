@@ -2,6 +2,7 @@
 
 package it.frob.sleighidea.psi.impl;
 
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiElement;
@@ -193,8 +194,42 @@ public class SleighPsiImplUtil {
      * @param element the element to get the name of.
      * @return the space's name.
      */
-    public static @NotNull String getName(@NotNull SleighSpacedef element) {
+    @NotNull
+    public static String getName(@NotNull SleighSpacedef element) {
         return element.getIdentifier().getText().trim();
+    }
+
+    /**
+     * Extract a placeholder text string from a {@link SleighSpacedef} element.
+     *
+     * @param element the element to get the placeholder text for.
+     * @return the placeholder text derived from the given element.
+     */
+    @NotNull
+    public static String getPlaceholderText(@NotNull SleighSpacedef element) throws ModelException {
+        return String.format("%s (size: %d, word size: %d)", getName(element), getSize(element), getWordSize(element));
+    }
+
+    /**
+     * Create an {@link ItemPresentation} instance for the given {@link SleighSpacedef} element.
+     *
+     * @param element the {@link SleighSpacedef} element to create an item presentation for.
+     * @return an {@link ItemPresentation} instance for the given element.
+     */
+    @NotNull
+    public static ItemPresentation getPresentation(@NotNull SleighSpacedef element) {
+        String placeholderText;
+
+        try {
+            placeholderText = getPlaceholderText(element);
+        } catch (ModelException ignored) {
+            placeholderText = "";
+        }
+
+        PsiFile containingFile = element.getContainingFile();
+        String location = containingFile == null ? "" : containingFile.getName();
+
+        return new PresentationData(placeholderText, location, PlatformIcons.ANONYMOUS_CLASS_ICON, null);
     }
 
     /**

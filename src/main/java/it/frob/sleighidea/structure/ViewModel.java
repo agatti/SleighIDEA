@@ -7,6 +7,7 @@ import com.intellij.ide.structureView.StructureViewModelBase;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.psi.PsiFile;
+import it.frob.sleighidea.model.space.Space;
 import it.frob.sleighidea.psi.SleighDisplay;
 import it.frob.sleighidea.psi.SleighIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,10 @@ public class ViewModel extends StructureViewModelBase implements StructureViewMo
 
     @Override
     public boolean isAlwaysShowsPlus(StructureViewTreeElement element) {
+        if (element instanceof SpaceViewElement) {
+            return !((Space) element.getValue()).getVariables().isEmpty();
+        }
+
         return false;
     }
 

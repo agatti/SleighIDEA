@@ -114,6 +114,11 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
         return spacesMap.getValue().getOrDefault(name, null);
     }
 
+    @Override
+    public Collection<Space> getSpaces() {
+        return spacesList.getValue();
+    }
+
     /**
      * Create a cached value.
      *

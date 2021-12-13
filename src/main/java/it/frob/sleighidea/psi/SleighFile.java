@@ -30,6 +30,13 @@ public interface SleighFile extends PsiFile {
     @Nullable Space getSpaceForName(@NotNull String name);
 
     /**
+     * Get an immutable collection containing all the {@link Space} instances in the file.
+     *
+     * @return the {@link Space} instances present in the file.
+     */
+    Collection<Space> getSpaces();
+
+    /**
      * Get an immutable collection containing all the valid {@code token} definition tokens.
      *
      * @return the {@link SleighTokendef} instances present in the file.
