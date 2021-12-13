@@ -4,7 +4,6 @@ package it.frob.sleighidea.psi.impl;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -14,59 +13,45 @@ import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.annotation.Nonnegative;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("UnstableApiUsage")
 public class SleighPsiImplUtil {
 
     /**
-     * Extract the name of a {@link SleighTokendef} element.
+     * Get the file name of the given element's containing file.
      *
-     * @param element the element to get the name of.
-     * @return the token's name, or null if none could be extracted.
+     * @param element the element to get the containing file name.
+     * @return the containing file name as a string or {@code null} if none could be obtained.
      */
-    public static @Nullable String getName(@NotNull SleighTokendef element) {
-        SleighIdentifier identifier = PsiTreeUtil.findChildOfType(element, SleighIdentifier.class);
-        return identifier != null ? identifier.getText().trim() : null;
+    @Nullable
+    private static String getContainingFile(@NotNull PsiElement element) {
+        PsiFile containingFile = element.getContainingFile();
+        return containingFile == null ? null : containingFile.getName();
     }
 
     /**
-     * Extract a placeholder text string from a {@link SleighTokendef} element.
+     * Convert a String to an integer, taking care of base conversion.
      *
-     * @param element the element to get the placeholder text for.
-     * @return the placeholder text derived from the given element.
+     * @param integer the string to convert.
+     * @return the converted positive integer.
      */
-    public static @Nullable String getPlaceholderText(@NotNull SleighTokendef element) {
-        return getName(element);
+    public static int baseAwareIntegerParser(@NotNull String integer) {
+        String lowerCase = integer.toLowerCase(Locale.ROOT).trim();
+
+        if (lowerCase.startsWith("0b")) {
+            return Integer.parseInt(integer.substring(2), 2);
+        }
+
+        if (lowerCase.startsWith("0x")) {
+            return Integer.parseInt(integer.substring(2), 16);
+        }
+
+        return Integer.parseInt(integer, 10);
     }
 
-    /**
-     * Create an {@link ItemPresentation} instance for the given {@link SleighTokendef} element.
-     *
-     * @param element the {@link SleighTokendef} element to create an item presentation for.
-     * @return an {@link ItemPresentation} instance for the given element.
-     */
-    public static ItemPresentation getPresentation(@NotNull SleighTokendef element) {
-        return new ItemPresentation() {
-            @Override
-            public @NlsSafe @Nullable String getPresentableText() {
-                return SleighPsiImplUtil.getPlaceholderText(element);
-            }
-
-            @Override
-            public @NlsSafe @Nullable String getLocationString() {
-                PsiFile containingFile = element.getContainingFile();
-                return containingFile == null ? null : containingFile.getName();
-            }
-
-            @Override
-            public @Nullable Icon getIcon(boolean unused) {
-                return PlatformIcons.CLASS_ICON;
-            }
-        };
-    }
+    // Accessors for SleighDisplay
 
     /**
      * Extract a placeholder text string from a {@link SleighDisplay} element.
@@ -80,6 +65,8 @@ public class SleighPsiImplUtil {
 
         return visitor.getPlaceholderText();
     }
+
+    // Accessors for SleighMacrodef
 
     /**
      * Extract a placeholder text string from a {@link SleighMacrodef} element.
@@ -97,7 +84,8 @@ public class SleighPsiImplUtil {
                 PsiTreeUtil.getChildrenOfTypeAsList(PsiTreeUtil.findChildOfType(element, SleighOplist.class),
                                 SleighIdentifier.class).stream()
                         .map(PsiElement::getText)
-                        .collect(Collectors.joining(", ", "(", ")")).trim();
+                        .collect(Collectors.joining(", ", "(", ")"))
+                        .trim();
     }
 
     /**
@@ -107,44 +95,11 @@ public class SleighPsiImplUtil {
      * @return an {@link ItemPresentation} instance for the given element.
      */
     public static ItemPresentation getPresentation(@NotNull SleighMacrodef element) {
-        return new ItemPresentation() {
-            @Override
-            public @NlsSafe @Nullable String getPresentableText() {
-                return SleighPsiImplUtil.getPlaceholderText(element);
-            }
-
-            @Override
-            public @NlsSafe @Nullable String getLocationString() {
-                PsiFile containingFile = element.getContainingFile();
-                return containingFile == null ? null : containingFile.getName();
-            }
-
-            @Override
-            public @Nullable Icon getIcon(boolean unused) {
-                return PlatformIcons.FUNCTION_ICON;
-            }
-        };
+        return new PresentationData(getPlaceholderText(element), getContainingFile(element),
+                PlatformIcons.FUNCTION_ICON, null);
     }
 
-    /**
-     * Convert a String to an integer, taking care of base conversion.
-     *
-     * @param integer the string to convert.
-     * @return the converted positive integer.
-     */
-    public static int toPositiveInteger(@NotNull String integer) {
-        String lowerCase = integer.toLowerCase(Locale.ROOT).trim();
-
-        if (lowerCase.startsWith("0b")) {
-            return Integer.parseInt(integer.substring(2), 2);
-        }
-
-        if (lowerCase.startsWith("0x")) {
-            return Integer.parseInt(integer.substring(2), 16);
-        }
-
-        return Integer.parseInt(integer, 10);
-    }
+    // Accessors for SleighInteger
 
     /**
      * Convert a {@link SleighInteger} instance to an integer, taking care of base conversion.
@@ -169,7 +124,7 @@ public class SleighPsiImplUtil {
         }
 
         // Handle SleighInteger elements that were constructed via meta rules.
-        return toPositiveInteger(integer.getText());
+        return baseAwareIntegerParser(integer.getText());
     }
 
     // Accessors for SleighAligndef
@@ -226,10 +181,8 @@ public class SleighPsiImplUtil {
             placeholderText = "";
         }
 
-        PsiFile containingFile = element.getContainingFile();
-        String location = containingFile == null ? "" : containingFile.getName();
-
-        return new PresentationData(placeholderText, location, PlatformIcons.ANONYMOUS_CLASS_ICON, null);
+        return new PresentationData(placeholderText, getContainingFile(element), PlatformIcons.ANONYMOUS_CLASS_ICON,
+                null);
     }
 
     /**
@@ -252,7 +205,6 @@ public class SleighPsiImplUtil {
     /**
      * Extract the word size of a {@link SleighSpacedef} element.
      *
-     * @apiNote this function will not check for duplicate {@code wordsize} modifiers in the space definition.
      * @param element the element to get the word size of.
      * @return the space's word size, defaulting to {@code 1} if none is defined.
      * @throws it.frob.sleighidea.model.ModelException if the incorrect number of modifiers is found.
@@ -378,5 +330,87 @@ public class SleighPsiImplUtil {
     @NotNull
     public static String getSpaceName(@NotNull SleighVarnodedef varnode) {
         return varnode.getIdentifier().getText().trim();
+    }
+
+    // Accessors for SleighFielddef elements (and their children)
+
+    /**
+     * Extract the name of a {@link SleighFielddef} element.
+     *
+     * @param element the element to get the name of.
+     * @return the token's name, or null if none could be extracted.
+     */
+    @NotNull
+    public static String getFieldName(@NotNull SleighFielddef element) {
+        return element.getStrictId().getText();
+    }
+
+    /**
+     * Extract the start bit of a {@link SleighFielddef} element.
+     * @param element the element to extract the start bit of.
+     * @return the field's start bit.
+     */
+    @Nonnegative
+    public static int getFieldStart(@NotNull SleighFielddef element) {
+        return element.getIntegerList().get(0).toPositiveInteger();
+    }
+
+    /**
+     * Extract the end bit of a {@link SleighFielddef} element.
+     * @param element the element to extract the end bit of.
+     * @return the field's end bit.
+     */
+    @Nonnegative
+    public static int getFieldEnd(@NotNull SleighFielddef element) {
+        return element.getIntegerList().get(1).toPositiveInteger();
+    }
+
+    /**
+     * Extract the signedness flag of a {@link SleighFielddef} element.
+     *
+     * @param element the element to get the default flag of.
+     * @return {@code true} if the field is signed, {@code false} otherwise.
+     */
+    public static boolean isSigned(@NotNull SleighFielddef element) {
+        return Arrays.stream(PsiTreeUtil.collectElements(PsiTreeUtil.findChildOfType(element, SleighFieldmod.class),
+                        fieldElement -> SleighTypes.KEY_SIGNED.toString().equals(fieldElement.getText())))
+                .findAny()
+                .isPresent();
+    }
+
+    // Accessors for SleighTokendef elements (and their children)
+
+    /**
+     * Extract the name of a {@link SleighTokendef} element.
+     *
+     * @param element the element to get the name of.
+     * @return the token's name, or null if none could be extracted.
+     */
+    @Nullable
+    public static String getName(@NotNull SleighTokendef element) {
+        SleighIdentifier identifier = PsiTreeUtil.findChildOfType(element, SleighIdentifier.class);
+        return identifier != null ? identifier.getText().trim() : null;
+    }
+
+    /**
+     * Extract a placeholder text string from a {@link SleighTokendef} element.
+     *
+     * @param element the element to get the placeholder text for.
+     * @return the placeholder text derived from the given element.
+     */
+    public static @Nullable String getPlaceholderText(@NotNull SleighTokendef element) {
+        return getName(element);
+    }
+
+    /**
+     * Create an {@link ItemPresentation} instance for the given {@link SleighTokendef} element.
+     *
+     * @param element the {@link SleighTokendef} element to create an item presentation for.
+     * @return an {@link ItemPresentation} instance for the given element.
+     */
+    @NotNull
+    public static ItemPresentation getPresentation(@NotNull SleighTokendef element) {
+        return new PresentationData(getPlaceholderText(element),  getContainingFile(element), PlatformIcons.CLASS_ICON,
+                null);
     }
 }

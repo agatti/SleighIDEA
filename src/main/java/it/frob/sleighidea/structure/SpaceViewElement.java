@@ -8,11 +8,8 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import it.frob.sleighidea.model.space.Space;
-import it.frob.sleighidea.model.space.Variable;
 import it.frob.sleighidea.psi.impl.SleighPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Comparator;
 
 /**
  * Structure view element wrapper for memory spaces.

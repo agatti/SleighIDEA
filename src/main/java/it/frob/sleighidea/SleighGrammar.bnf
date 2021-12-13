@@ -144,7 +144,9 @@ tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN fielddefs {
 	methods = [ getName getPlaceholderText getPresentation ]
 }
 fielddefs ::= fielddef *
-fielddef ::= strict_id ASSIGN LPAREN integer COMMA integer RPAREN fieldmods
+fielddef ::= strict_id ASSIGN LPAREN integer COMMA integer RPAREN fieldmods {
+    methods = [ getFieldName getFieldStart getFieldEnd isSigned ]
+}
 fieldmods ::= fieldmod *
 fieldmod ::= KEY_SIGNED | KEY_HEX | KEY_DEC
 contextfielddefs ::= contextfielddef *
@@ -153,7 +155,7 @@ contextfieldmods ::= contextfieldmod *
 contextfieldmod ::= KEY_SIGNED | KEY_NOFLOW | KEY_HEX | KEY_DEC
 contextdef ::= KEY_DEFINE KEY_CONTEXT identifier contextfielddefs
 spacedef ::= KEY_DEFINE KEY_SPACE identifier spacemods {
-	methods = [ getName getSize getType getWordSize isDefault ]
+	methods = [ getName getPlaceholderText getPresentation getSize getType getWordSize isDefault ]
 }
 spacemods ::= spacemod *
 spacemod ::= typemod | sizemod | wordsizemod | KEY_DEFAULT

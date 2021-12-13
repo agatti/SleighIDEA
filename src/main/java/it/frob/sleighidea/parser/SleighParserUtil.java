@@ -26,7 +26,7 @@ public class SleighParserUtil extends GeneratedParserUtilBase {
 
             int number;
             try {
-                number = SleighPsiImplUtil.toPositiveInteger(String.valueOf(builder.getOriginalText()
+                number = SleighPsiImplUtil.baseAwareIntegerParser(String.valueOf(builder.getOriginalText()
                                 .subSequence(marker.getStartOffset(), marker.getEndOffset())).trim());
             } catch (NumberFormatException exception) {
                 mark.error("Cannot parse number");
