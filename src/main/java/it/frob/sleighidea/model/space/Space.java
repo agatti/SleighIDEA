@@ -91,7 +91,7 @@ public class Space {
         this.definition = definition;
         name = visitor.getName();
         type = visitor.getType();
-        size = visitor.getSize();
+        size = Objects.requireNonNull(visitor.getSize());
         wordSize = visitor.getWordSize();
         isDefault = visitor.isDefault();
     }

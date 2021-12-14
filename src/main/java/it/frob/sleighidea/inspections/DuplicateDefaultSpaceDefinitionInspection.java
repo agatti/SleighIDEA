@@ -48,7 +48,7 @@ public class DuplicateDefaultSpaceDefinitionInspection extends BaseInspection {
 
         @Override
         public void visitSpacedef(@NotNull SleighSpacedef visited) {
-            for (SleighSpacemod modifier : visited.getSpacemods().getSpacemodList()) {
+            for (SleighSpacemod modifier : visited.getSpacemodList()) {
                 if ((modifier.getTypemod() != null) || (modifier.getSizemod() != null) ||
                         (modifier.getWordsizemod() != null)) {
                     continue;

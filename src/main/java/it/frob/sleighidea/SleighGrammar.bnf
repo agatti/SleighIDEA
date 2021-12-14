@@ -157,7 +157,7 @@ contextdef ::= KEY_DEFINE KEY_CONTEXT identifier contextfielddefs
 spacedef ::= KEY_DEFINE KEY_SPACE identifier spacemods {
 	methods = [ getName getPlaceholderText getPresentation getSize getType getWordSize isDefault ]
 }
-spacemods ::= spacemod *
+private spacemods ::= spacemod *
 spacemod ::= typemod | sizemod | wordsizemod | KEY_DEFAULT
 typemod ::= KEY_TYPE ASSIGN type
 type ::= identifier
