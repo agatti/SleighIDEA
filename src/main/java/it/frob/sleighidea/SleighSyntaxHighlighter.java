@@ -61,7 +61,6 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
             SleighTypes.KEY_DEC,
             SleighTypes.KEY_DEFAULT,
             SleighTypes.KEY_DEFINE,
-            SleighTypes.KEY_DEFINED,
             SleighTypes.KEY_ENDIAN,
             SleighTypes.KEY_EXPORT,
             SleighTypes.KEY_GOTO,

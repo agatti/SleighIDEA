@@ -89,7 +89,6 @@
 		KEY_DEC='dec'
 		KEY_DEFAULT='default'
 		KEY_DEFINE='define'
-		KEY_DEFINED='defined'
 		KEY_ENDIAN='endian'
 		KEY_EXPORT='export'
 		KEY_GOTO='goto'
