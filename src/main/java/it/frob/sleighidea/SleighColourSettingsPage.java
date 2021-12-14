@@ -24,6 +24,7 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Label", SleighSyntaxHighlighter.LABEL),
             new AttributesDescriptor("Macro and PcodeOp", SleighSyntaxHighlighter.MACRO),
             new AttributesDescriptor("Number", SleighSyntaxHighlighter.NUMBER),
+            new AttributesDescriptor("String", SleighSyntaxHighlighter.STRING)
     };
 
     private static final Map<String, TextAttributesKey> ATTRIBUTES_KEY_MAP = new HashMap<>();

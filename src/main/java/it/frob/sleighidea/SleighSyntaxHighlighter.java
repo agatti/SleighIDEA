@@ -36,11 +36,14 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
             createTextAttributesKey("IDENTIFIER", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE);
     public static final TextAttributesKey BUILT_IN_SYMBOL =
             createTextAttributesKey("BUILT_IN_SYMBOL", DefaultLanguageHighlighterColors.KEYWORD);
+    public static final TextAttributesKey STRING =
+            createTextAttributesKey("SLEIGH_STRING", DefaultLanguageHighlighterColors.STRING);
 
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
     private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD};
     private static final TextAttributesKey[] COMMENT_KEYS = new TextAttributesKey[]{COMMENT};
     private static final TextAttributesKey[] NUMBER_KEYS = new TextAttributesKey[]{NUMBER};
+    private static final TextAttributesKey[] STRING_KEYS = new TextAttributesKey[]{STRING};
     private static final TextAttributesKey[] EMPTY_KEYS = new TextAttributesKey[0];
 
     /**
@@ -112,6 +115,10 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
 
         if (tokenType.equals(SleighTypes.COMMENT)) {
             return COMMENT_KEYS;
+        }
+
+        if (tokenType.equals(SleighTypes.STRING)) {
+            return STRING_KEYS;
         }
 
         if (tokenType.equals(TokenType.BAD_CHARACTER)) {
