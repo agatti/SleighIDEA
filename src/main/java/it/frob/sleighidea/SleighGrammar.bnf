@@ -125,7 +125,8 @@
 spec ::= endiandef ( definition | constructorlike ) * <<eof>>
 
 endiandef ::= KEY_DEFINE KEY_ENDIAN ASSIGN endian SEMI
-endian ::= KEY_BIG | KEY_LITTLE
+endian ::= KEY_BIG
+         | KEY_LITTLE
 definition ::= ( aligndef
              | tokendef
              | contextdef
@@ -140,7 +141,7 @@ definition ::= ( aligndef
 aligndef ::= KEY_DEFINE KEY_ALIGNMENT ASSIGN <<parseGreaterThanZeroInteger>> {
     methods = [ getAlignment ]
 }
-tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN fielddefs {
+tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] fielddefs {
 	methods = [ getName getPlaceholderText getPresentation ]
 }
 fielddefs ::= fielddef *
