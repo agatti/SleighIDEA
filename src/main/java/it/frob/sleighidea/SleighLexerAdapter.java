@@ -6,6 +6,6 @@ import com.intellij.lexer.FlexAdapter;
 
 public class SleighLexerAdapter extends FlexAdapter {
     public SleighLexerAdapter() {
-        super(new SleighLexer(null));
+        super(new _SleighLexer(null));
     }
 }

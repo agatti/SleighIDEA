@@ -1,4 +1,5 @@
 .gradle
 build
 src/main/gen/*
+src/main/java/it/frob/sleighidea/_SleighLexer.flex
 .DS_Store
