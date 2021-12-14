@@ -4,7 +4,8 @@
 	parserUtilClass="it.frob.sleighidea.parser.SleighParserUtil"
 	parserClass="it.frob.sleighidea.parser.SleighParser"
 
-	extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    implements="it.frob.sleighidea.psi.SleighCompositeElement"
+    extends="it.frob.sleighidea.psi.impl.SleighCompositeElementImpl"
 
 	psiClassPrefix="Sleigh"
 	psiImplClassSuffix="Impl"
@@ -12,7 +13,7 @@
 	psiImplPackage="it.frob.sleighidea.psi.impl"
 
 	elementTypeHolderClass="it.frob.sleighidea.psi.SleighTypes"
-	elementTypeClass="it.frob.sleighidea.psi.SleighElementType"
+	elementTypeClass="it.frob.sleighidea.psi.SleighCompositeElementType"
 	tokenTypeClass="it.frob.sleighidea.psi.SleighTokenType"
 
 	psiImplUtilClass="it.frob.sleighidea.psi.impl.SleighPsiImplUtil"
