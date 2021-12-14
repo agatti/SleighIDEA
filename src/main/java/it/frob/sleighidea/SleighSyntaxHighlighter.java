@@ -25,20 +25,25 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey NUMBER =
             createTextAttributesKey("SLEIGH_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
     public static final TextAttributesKey LABEL =
-            createTextAttributesKey("LABEL", DefaultLanguageHighlighterColors.LABEL);
+            createTextAttributesKey("SLEIGH_LABEL", DefaultLanguageHighlighterColors.LABEL);
     public static final TextAttributesKey FUNCTION_CALL =
-            createTextAttributesKey("FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
+            createTextAttributesKey("SLEIGH_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
     public static final TextAttributesKey MACRO =
-            createTextAttributesKey("MACRO", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+            createTextAttributesKey("SLEIGH_MACRO", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
     public static final TextAttributesKey PCODEOP =
-            createTextAttributesKey("PCODEOP", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+            createTextAttributesKey("SLEIGH_PCODEOP", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
     public static final TextAttributesKey IDENTIFIER =
-            createTextAttributesKey("IDENTIFIER", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE);
+            createTextAttributesKey("SLEIGH_IDENTIFIER", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE);
     public static final TextAttributesKey BUILT_IN_SYMBOL =
-            createTextAttributesKey("BUILT_IN_SYMBOL", DefaultLanguageHighlighterColors.KEYWORD);
+            createTextAttributesKey("SLEIGH_BUILT_IN_SYMBOL", DefaultLanguageHighlighterColors.KEYWORD);
+    public static final TextAttributesKey DEFINITION =
+            createTextAttributesKey("SLEIGH_DEFINITION", DefaultLanguageHighlighterColors.MARKUP_TAG);
+    public static final TextAttributesKey PREPROCESSOR =
+            createTextAttributesKey("SLEIGH_PREPROCESSOR", DefaultLanguageHighlighterColors.METADATA);
     public static final TextAttributesKey STRING =
             createTextAttributesKey("SLEIGH_STRING", DefaultLanguageHighlighterColors.STRING);
 
+    private static final TextAttributesKey[] PREPROCESSOR_KEYS = new TextAttributesKey[]{PREPROCESSOR};
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
     private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD};
     private static final TextAttributesKey[] COMMENT_KEYS = new TextAttributesKey[]{COMMENT};
@@ -49,7 +54,7 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
     /**
      * Keyword tokens container.
      */
-    private static final TokenSet KEYWORDS = TokenSet.create(
+    private static final TokenSet KEYWORD_TOKENS = TokenSet.create(
             SleighTypes.RES_IF,
             SleighTypes.RES_IS,
             SleighTypes.RES_WITH,
@@ -90,10 +95,24 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
     /**
      * Number tokens container.
      */
-    private static final TokenSet NUMBERS = TokenSet.create(
+    private static final TokenSet NUMBER_TOKENS = TokenSet.create(
             SleighTypes.BINNUMBER,
             SleighTypes.DECNUMBER,
             SleighTypes.HEXNUMBER
+    );
+
+    /**
+     * Preprocessor tokens container.
+     */
+    private static final TokenSet PREPROCESSOR_TOKENS = TokenSet.create(
+            SleighTypes.KEY_ATDEFINE,
+            SleighTypes.KEY_ATELIF,
+            SleighTypes.KEY_ATELSE,
+            SleighTypes.KEY_ATENDIF,
+            SleighTypes.KEY_ATIF,
+            SleighTypes.KEY_ATIFDEF,
+            SleighTypes.KEY_ATIFNDEF,
+            SleighTypes.KEY_ATINCLUDE
     );
 
     @NotNull
@@ -105,11 +124,15 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
     @NotNull
     @Override
     public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
-        if (KEYWORDS.contains(tokenType)) {
+        if (KEYWORD_TOKENS.contains(tokenType)) {
             return KEYWORD_KEYS;
         }
 
-        if (NUMBERS.contains(tokenType)) {
+        if (PREPROCESSOR_TOKENS.contains(tokenType)) {
+            return PREPROCESSOR_KEYS;
+        }
+
+        if (NUMBER_TOKENS.contains(tokenType)) {
             return NUMBER_KEYS;
         }
 

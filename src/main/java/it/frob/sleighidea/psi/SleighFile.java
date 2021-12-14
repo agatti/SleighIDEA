@@ -42,4 +42,11 @@ public interface SleighFile extends PsiFile {
      * @return the {@link SleighTokendef} instances present in the file.
      */
     Collection<SleighTokendef> getTokens();
+
+    /**
+     * Get an immutable collection containing all the valid {@code import} definitions.
+     *
+     * @return the {@link SleighImport} instances present in the file.
+     */
+    Collection<SleighInclude> getIncludes();
 }

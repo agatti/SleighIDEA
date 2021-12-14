@@ -111,6 +111,19 @@
 		KEY_VARIABLES='variables'
 		KEY_WORDSIZE='wordsize'
 
+        // Preprocessor tokens
+
+        DOLLAR='$'
+
+        KEY_ATDEFINE='@define'
+        KEY_ATIF='@if'
+        KEY_ATIFDEF='@ifdef'
+        KEY_ATIFNDEF='@ifndef'
+        KEY_ATINCLUDE='@include'
+        KEY_ATELIF='@elif'
+        KEY_ATELSE='@else'
+        KEY_ATENDIF='@endif'
+
 		space='regexp:\s+'
 		comment='regexp:#.*'
 		decnumber='regexp:\d+'
@@ -122,12 +135,20 @@
 	]
 }
 
-spec ::= endiandef ( definition | constructorlike ) * <<eof>>
+spec ::= ( specelement ) * <<eof>>
 
-endiandef ::= KEY_DEFINE KEY_ENDIAN ASSIGN endian SEMI
+specelement ::= definition
+              | constructorlike
+              | include
+
+include ::= KEY_ATINCLUDE include_string
+include_string ::= qstring
+
+endiandef ::= KEY_DEFINE KEY_ENDIAN ASSIGN endian
 endian ::= KEY_BIG
          | KEY_LITTLE
-definition ::= ( aligndef
+definition ::= ( endiandef
+             | aligndef
              | tokendef
              | contextdef
              | spacedef

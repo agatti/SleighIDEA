@@ -140,6 +140,11 @@ public class SleighAnnotator implements Annotator, DumbAware {
             public void visitSpacedef(@NotNull SleighSpacedef visited) {
                 assignGutterIcon(visited, holder, PlatformIcons.ANONYMOUS_CLASS_ICON);
             }
+
+            @Override
+            public void visitInclude(@NotNull SleighInclude visited) {
+                assignGutterIcon(visited, holder, SleighIcons.FILE);
+            }
         });
     }
 

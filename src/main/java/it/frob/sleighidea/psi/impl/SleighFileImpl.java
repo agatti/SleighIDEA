@@ -76,6 +76,18 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     );
 
     /**
+     * All the {@code include} elements in the file, wrapped in a cache-aware container.
+     */
+    private final CachedValue<List<SleighInclude>> includes = createCachedValue(
+            new ValueProvider<>() {
+                @Override
+                protected @NotNull List<SleighInclude> computeValue() {
+                    return Collections.unmodifiableList(collectIncludes());
+                }
+            }
+    );
+
+    /**
      * Constructor.
      *
      * @param viewProvider the access class for the file's PSI elements.
@@ -117,6 +129,11 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     @Override
     public Collection<Space> getSpaces() {
         return spacesList.getValue();
+    }
+
+    @Override
+    public Collection<SleighInclude> getIncludes() {
+        return includes.getValue();
     }
 
     /**
@@ -214,5 +231,15 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
         });
 
         return spacesMap;
+    }
+
+    /**
+     * Extract all {@code include} elements in the file.
+     *
+     * @return a list containing the {@link SleighInclude} instances found in the file.
+     */
+    @NotNull
+    private List<SleighInclude> collectIncludes() {
+        return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighInclude.class));
     }
 }

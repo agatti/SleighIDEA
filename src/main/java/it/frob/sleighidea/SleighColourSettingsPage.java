@@ -24,6 +24,7 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Label", SleighSyntaxHighlighter.LABEL),
             new AttributesDescriptor("Macro and PcodeOp", SleighSyntaxHighlighter.MACRO),
             new AttributesDescriptor("Number", SleighSyntaxHighlighter.NUMBER),
+            new AttributesDescriptor("Preprocessor directive", SleighSyntaxHighlighter.PREPROCESSOR),
             new AttributesDescriptor("String", SleighSyntaxHighlighter.STRING)
     };
 
@@ -54,6 +55,7 @@ public class SleighColourSettingsPage implements ColorSettingsPage {
     @Override
     public String getDemoText() {
         return "# sleigh specification file\n" +
+                "@include \"file.sinc\"\n" +
                 "define endian=little;\n" +
                 "define alignment=1;\n" +
                 "define space RAM type=ram_space size=2 default;\n" +
