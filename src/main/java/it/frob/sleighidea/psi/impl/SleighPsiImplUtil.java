@@ -107,7 +107,7 @@ public class SleighPsiImplUtil {
      * @param integer the {@link SleighInteger} instance to convert.
      * @return the converted positive integer.
      */
-    public static int toPositiveInteger(@NotNull SleighInteger integer) {
+    public static int toInteger(@NotNull SleighInteger integer) {
         PsiElement binaryNumber = integer.getBinnumber();
         if (binaryNumber != null) {
             return Integer.parseInt(binaryNumber.getText().substring(2), 2);
@@ -138,41 +138,41 @@ public class SleighPsiImplUtil {
     public static int getAlignment(@NotNull SleighAligndef element) {
         SleighInteger integer = PsiTreeUtil.findChildOfType(element, SleighInteger.class);
         assert integer != null;
-        return integer.toPositiveInteger();
+        return integer.toInteger();
     }
 
-    // Accessors for SleighSpacedef elements (and their children)
+    // Accessors for SleighSpaceDefinition elements (and their children)
 
     /**
-     * Extract the name of a {@link SleighSpacedef} element.
+     * Extract the name of a {@link SleighSpaceDefinition} element.
      *
      * @param element the element to get the name of.
      * @return the space's name.
      */
     @NotNull
-    public static String getName(@NotNull SleighSpacedef element) {
+    public static String getName(@NotNull SleighSpaceDefinition element) {
         return element.getIdentifier().getText().trim();
     }
 
     /**
-     * Extract a placeholder text string from a {@link SleighSpacedef} element.
+     * Extract a placeholder text string from a {@link SleighSpaceDefinition} element.
      *
      * @param element the element to get the placeholder text for.
      * @return the placeholder text derived from the given element.
      */
     @NotNull
-    public static String getPlaceholderText(@NotNull SleighSpacedef element) throws ModelException {
+    public static String getPlaceholderText(@NotNull SleighSpaceDefinition element) throws ModelException {
         return String.format("%s (size: %d, word size: %d)", getName(element), getSize(element), getWordSize(element));
     }
 
     /**
-     * Create an {@link ItemPresentation} instance for the given {@link SleighSpacedef} element.
+     * Create an {@link ItemPresentation} instance for the given {@link SleighSpaceDefinition} element.
      *
-     * @param element the {@link SleighSpacedef} element to create an item presentation for.
+     * @param element the {@link SleighSpaceDefinition} element to create an item presentation for.
      * @return an {@link ItemPresentation} instance for the given element.
      */
     @NotNull
-    public static ItemPresentation getPresentation(@NotNull SleighSpacedef element) {
+    public static ItemPresentation getPresentation(@NotNull SleighSpaceDefinition element) {
         String placeholderText;
 
         try {
@@ -186,39 +186,40 @@ public class SleighPsiImplUtil {
     }
 
     /**
-     * Extract the size of a {@link SleighSpacedef} element.
+     * Extract the size of a {@link SleighSpaceDefinition} element.
      *
      * @param element the element to get the size of.
      * @return the space's size.
      * @throws it.frob.sleighidea.model.ModelException if the incorrect number of modifiers is found.
      */
-    public static int getSize(@NotNull SleighSpacedef element) throws ModelException {
-        SleighSizemod[] sizeModifiers = PsiTreeUtil.findChildrenOfType(element, SleighSizemod.class)
-                .toArray(new SleighSizemod[0]);
+    public static int getSize(@NotNull SleighSpaceDefinition element) throws ModelException {
+        SleighSpaceSizeModifier[] sizeModifiers = PsiTreeUtil.findChildrenOfType(element, SleighSpaceSizeModifier.class)
+                .toArray(new SleighSpaceSizeModifier[0]);
         if (sizeModifiers.length != 1) {
             throw new ModelException(String.format("Invalid size modifiers found for `%s`: %d.",
                     element.getText(), sizeModifiers.length));
         }
-        return sizeModifiers[0].getInteger().toPositiveInteger();
+        return sizeModifiers[0].getInteger().toInteger();
     }
 
     /**
-     * Extract the word size of a {@link SleighSpacedef} element.
+     * Extract the word size of a {@link SleighSpaceDefinition} element.
      *
      * @param element the element to get the word size of.
      * @return the space's word size, defaulting to {@code 1} if none is defined.
      * @throws it.frob.sleighidea.model.ModelException if the incorrect number of modifiers is found.
      */
-    public static int getWordSize(@NotNull SleighSpacedef element) throws ModelException {
-        SleighWordsizemod[] wordSizeModifiers = PsiTreeUtil.findChildrenOfType(element, SleighWordsizemod.class)
-                .toArray(new SleighWordsizemod[0]);
+    public static int getWordSize(@NotNull SleighSpaceDefinition element) throws ModelException {
+        SleighSpaceWordsizeModifier[] wordSizeModifiers =
+                PsiTreeUtil.findChildrenOfType(element, SleighSpaceWordsizeModifier.class)
+                        .toArray(new SleighSpaceWordsizeModifier[0]);
 
         switch (wordSizeModifiers.length) {
             case 0:
                 return 1;
 
             case 1:
-                return wordSizeModifiers[0].getInteger().toPositiveInteger();
+                return wordSizeModifiers[0].getInteger().toInteger();
 
             default:
                 throw new ModelException(String.format("Invalid word size modifiers found for `%s`: %d.",
@@ -227,21 +228,21 @@ public class SleighPsiImplUtil {
     }
 
     /**
-     * Extract the type of a {@link SleighSpacedef} element.
+     * Extract the type of a {@link SleighSpaceDefinition} element.
      *
      * @param element the element to get the type of.
      * @return the space's type, or {@code null} if none could be extracted.
      * @throws it.frob.sleighidea.model.ModelException if the incorrect number of modifiers is found.
      */
-    public static @Nullable String getType(@NotNull SleighSpacedef element) throws ModelException {
-        SleighTypemod[] typeModifiers = PsiTreeUtil.findChildrenOfType(element, SleighTypemod.class)
-                .toArray(new SleighTypemod[0]);
+    public static @Nullable String getType(@NotNull SleighSpaceDefinition element) throws ModelException {
+        SleighSpaceTypeModifier[] typeModifiers = PsiTreeUtil.findChildrenOfType(element, SleighSpaceTypeModifier.class)
+                .toArray(new SleighSpaceTypeModifier[0]);
         switch (typeModifiers.length) {
             case 0:
                 return null;
 
             case 1:
-                return typeModifiers[0].getType().getText();
+                return typeModifiers[0].getSpaceType().getText();
 
             default:
                 throw new ModelException(String.format("Invalid type modifiers found for `%s`: %d.",
@@ -250,37 +251,38 @@ public class SleighPsiImplUtil {
     }
 
     /**
-     * Extract the default flag of a {@link SleighSpacedef} element.
+     * Extract the default flag of a {@link SleighSpaceDefinition} element.
      *
      * @param element the element to get the default flag of.
      * @return {@code true} if the space acts as a default space, {@code false} otherwise.
      */
-    public static boolean isDefault(@NotNull SleighSpacedef element) {
-        return Arrays.stream(PsiTreeUtil.collectElements(PsiTreeUtil.findChildOfType(element, SleighSpacemod.class),
-                        spaceElement -> SleighTypes.KEY_DEFAULT.toString().equals(spaceElement.getText())))
+    public static boolean isDefault(@NotNull SleighSpaceDefinition element) {
+        return Arrays.stream(
+                        PsiTreeUtil.collectElements(PsiTreeUtil.findChildOfType(element, SleighSpaceModifier.class),
+                                spaceElement -> SleighTypes.KEY_DEFAULT.toString().equals(spaceElement.getText())))
                 .findAny()
                 .isPresent();
     }
 
     /**
-     * Extract the {@link SleighInteger} instance contained in the given {@link SleighSizemod}.
+     * Extract the {@link SleighInteger} instance contained in the given {@link SleighSpaceSizeModifier}.
      *
-     * @param modifier the {@link SleighSpacemod} element to extract data from.
+     * @param modifier the {@link SleighSpaceSizeModifier} element to extract data from.
      * @return the {@link SleighInteger} contained in the given element.
      */
     @NotNull
-    public static SleighInteger getInteger(@NotNull SleighSizemod modifier) {
+    public static SleighInteger getInteger(@NotNull SleighSpaceSizeModifier modifier) {
         return Objects.requireNonNull(PsiTreeUtil.findChildOfType(modifier, SleighInteger.class));
     }
 
     /**
-     * Extract the {@link SleighInteger} instance contained in the given {@link SleighWordsizemod}.
+     * Extract the {@link SleighInteger} instance contained in the given {@link SleighSpaceWordsizeModifier}.
      *
-     * @param modifier the {@link SleighWordsizemod} element to extract data from.
+     * @param modifier the {@link SleighSpaceWordsizeModifier} element to extract data from.
      * @return the {@link SleighInteger} contained in the given element.
      */
     @NotNull
-    public static SleighInteger getInteger(@NotNull SleighWordsizemod modifier) {
+    public static SleighInteger getInteger(@NotNull SleighSpaceWordsizeModifier modifier) {
         return Objects.requireNonNull(PsiTreeUtil.findChildOfType(modifier, SleighInteger.class));
     }
 
@@ -307,7 +309,7 @@ public class SleighPsiImplUtil {
      */
     public static int getOffset(@NotNull SleighVarnodedef varnode) {
         Collection<SleighInteger> integers = PsiTreeUtil.findChildrenOfType(varnode, SleighInteger.class);
-        return integers.toArray(new SleighInteger[0])[0].toPositiveInteger();
+        return integers.toArray(new SleighInteger[0])[0].toInteger();
     }
 
     /**
@@ -318,7 +320,7 @@ public class SleighPsiImplUtil {
      */
     public static int getSize(@NotNull SleighVarnodedef varnode) {
         Collection<SleighInteger> integers = PsiTreeUtil.findChildrenOfType(varnode, SleighInteger.class);
-        return integers.toArray(new SleighInteger[0])[1].toPositiveInteger();
+        return integers.toArray(new SleighInteger[0])[1].toInteger();
     }
 
     /**
@@ -332,47 +334,50 @@ public class SleighPsiImplUtil {
         return varnode.getIdentifier().getText().trim();
     }
 
-    // Accessors for SleighFielddef elements (and their children)
+    // Accessors for SleighTokenDefinition elements (and their children)
 
     /**
-     * Extract the name of a {@link SleighFielddef} element.
+     * Extract the name of a {@link SleighTokenFieldDefinition} element.
      *
      * @param element the element to get the name of.
      * @return the token's name, or null if none could be extracted.
      */
     @NotNull
-    public static String getFieldName(@NotNull SleighFielddef element) {
+    public static String getFieldName(@NotNull SleighTokenFieldDefinition element) {
         return element.getStrictId().getText();
     }
 
     /**
-     * Extract the start bit of a {@link SleighFielddef} element.
+     * Extract the start bit of a {@link SleighTokenFieldDefinition} element.
+     *
      * @param element the element to extract the start bit of.
      * @return the field's start bit.
      */
     @Nonnegative
-    public static int getFieldStart(@NotNull SleighFielddef element) {
-        return element.getIntegerList().get(0).toPositiveInteger();
+    public static int getFieldStart(@NotNull SleighTokenFieldDefinition element) {
+        return element.getIntegerList().get(0).toInteger();
     }
 
     /**
-     * Extract the end bit of a {@link SleighFielddef} element.
+     * Extract the end bit of a {@link SleighTokenFieldDefinition} element.
+     *
      * @param element the element to extract the end bit of.
      * @return the field's end bit.
      */
     @Nonnegative
-    public static int getFieldEnd(@NotNull SleighFielddef element) {
-        return element.getIntegerList().get(1).toPositiveInteger();
+    public static int getFieldEnd(@NotNull SleighTokenFieldDefinition element) {
+        return element.getIntegerList().get(1).toInteger();
     }
 
     /**
-     * Extract the signedness flag of a {@link SleighFielddef} element.
+     * Extract the signedness flag of a {@link SleighTokenFieldDefinition} element.
      *
      * @param element the element to get the default flag of.
      * @return {@code true} if the field is signed, {@code false} otherwise.
      */
-    public static boolean isSigned(@NotNull SleighFielddef element) {
-        return Arrays.stream(PsiTreeUtil.collectElements(PsiTreeUtil.findChildOfType(element, SleighFieldmod.class),
+    public static boolean isSigned(@NotNull SleighTokenFieldDefinition element) {
+        return Arrays.stream(PsiTreeUtil.collectElements(
+                        PsiTreeUtil.findChildOfType(element, SleighTokenFieldModifier.class),
                         fieldElement -> SleighTypes.KEY_SIGNED.toString().equals(fieldElement.getText())))
                 .findAny()
                 .isPresent();
@@ -381,36 +386,36 @@ public class SleighPsiImplUtil {
     // Accessors for SleighTokendef elements (and their children)
 
     /**
-     * Extract the name of a {@link SleighTokendef} element.
+     * Extract the name of a {@link SleighTokenDefinition} element.
      *
      * @param element the element to get the name of.
      * @return the token's name, or null if none could be extracted.
      */
     @Nullable
-    public static String getName(@NotNull SleighTokendef element) {
+    public static String getName(@NotNull SleighTokenDefinition element) {
         SleighIdentifier identifier = PsiTreeUtil.findChildOfType(element, SleighIdentifier.class);
         return identifier != null ? identifier.getText().trim() : null;
     }
 
     /**
-     * Extract a placeholder text string from a {@link SleighTokendef} element.
+     * Extract a placeholder text string from a {@link SleighTokenDefinition} element.
      *
      * @param element the element to get the placeholder text for.
      * @return the placeholder text derived from the given element.
      */
-    public static @Nullable String getPlaceholderText(@NotNull SleighTokendef element) {
+    public static @Nullable String getPlaceholderText(@NotNull SleighTokenDefinition element) {
         return getName(element);
     }
 
     /**
-     * Create an {@link ItemPresentation} instance for the given {@link SleighTokendef} element.
+     * Create an {@link ItemPresentation} instance for the given {@link SleighTokenDefinition} element.
      *
-     * @param element the {@link SleighTokendef} element to create an item presentation for.
+     * @param element the {@link SleighTokenDefinition} element to create an item presentation for.
      * @return an {@link ItemPresentation} instance for the given element.
      */
     @NotNull
-    public static ItemPresentation getPresentation(@NotNull SleighTokendef element) {
-        return new PresentationData(getPlaceholderText(element),  getContainingFile(element), PlatformIcons.CLASS_ICON,
+    public static ItemPresentation getPresentation(@NotNull SleighTokenDefinition element) {
+        return new PresentationData(getPlaceholderText(element), getContainingFile(element), PlatformIcons.CLASS_ICON,
                 null);
     }
 }

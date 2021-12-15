@@ -5,7 +5,7 @@ package it.frob.sleighidea.psi.impl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
-import it.frob.sleighidea.psi.SleighPrintpiece;
+import it.frob.sleighidea.psi.SleighPrintPiece;
 import it.frob.sleighidea.psi.SleighVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ class SleighDisplayPlaceholderVisitor extends SleighVisitor {
     private final List<PsiElement> arguments = new ArrayList<>();
 
     @Override
-    public void visitPrintpiece(@NotNull SleighPrintpiece visited) {
+    public void visitPrintPiece(@NotNull SleighPrintPiece visited) {
         switch (state) {
             case COLLECTING_NAME:
                 builder.append(visited.getText().trim());

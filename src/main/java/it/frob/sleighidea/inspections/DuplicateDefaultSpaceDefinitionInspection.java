@@ -6,8 +6,8 @@ import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import it.frob.sleighidea.psi.SleighSpacedef;
-import it.frob.sleighidea.psi.SleighSpacemod;
+import it.frob.sleighidea.psi.SleighSpaceDefinition;
+import it.frob.sleighidea.psi.SleighSpaceModifier;
 import it.frob.sleighidea.psi.SleighVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,10 +47,10 @@ public class DuplicateDefaultSpaceDefinitionInspection extends BaseInspection {
         }
 
         @Override
-        public void visitSpacedef(@NotNull SleighSpacedef visited) {
-            for (SleighSpacemod modifier : visited.getSpacemodList()) {
-                if ((modifier.getTypemod() != null) || (modifier.getSizemod() != null) ||
-                        (modifier.getWordsizemod() != null)) {
+        public void visitSpaceDefinition(@NotNull SleighSpaceDefinition visited) {
+            for (SleighSpaceModifier modifier : visited.getSpaceModifierList()) {
+                if ((modifier.getSpaceTypeModifier() != null) || (modifier.getSpaceSizeModifier() != null) ||
+                        (modifier.getSpaceWordsizeModifier() != null)) {
                     continue;
                 }
 

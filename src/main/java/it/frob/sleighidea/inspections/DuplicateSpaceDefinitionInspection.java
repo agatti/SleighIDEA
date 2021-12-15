@@ -6,7 +6,7 @@ import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import it.frob.sleighidea.psi.SleighSpacedef;
+import it.frob.sleighidea.psi.SleighSpaceDefinition;
 import it.frob.sleighidea.psi.SleighVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +48,7 @@ public class DuplicateSpaceDefinitionInspection extends BaseInspection {
         }
 
         @Override
-        public void visitSpacedef(@NotNull SleighSpacedef visited) {
+        public void visitSpaceDefinition(@NotNull SleighSpaceDefinition visited) {
             if (definedSpaces.contains(visited.getName())) {
                 holder.registerProblem(holder.getManager().createProblemDescriptor(visited.getIdentifier(),
                         String.format("Memory space \"%s\" is already defined", visited.getIdentifier().getText()),

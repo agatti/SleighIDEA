@@ -140,7 +140,7 @@ public class SleighSyntaxHighlighter extends SyntaxHighlighterBase {
             return COMMENT_KEYS;
         }
 
-        if (tokenType.equals(SleighTypes.STRING)) {
+        if (tokenType.equals(SleighTypes.QSTRING)) {
             return STRING_KEYS;
         }
 

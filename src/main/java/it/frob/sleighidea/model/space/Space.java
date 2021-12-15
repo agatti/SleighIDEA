@@ -3,7 +3,7 @@
 package it.frob.sleighidea.model.space;
 
 import it.frob.sleighidea.model.ModelException;
-import it.frob.sleighidea.psi.SleighSpacedef;
+import it.frob.sleighidea.psi.SleighSpaceDefinition;
 import it.frob.sleighidea.psi.SleighVarnodedef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +19,7 @@ public class Space {
     /**
      * The memory space definition element in the parse tree.
      */
-    private final SleighSpacedef definition;
+    private final SleighSpaceDefinition definition;
 
     /**
      * The memory space name.
@@ -57,12 +57,12 @@ public class Space {
     private final Map<String, Variable> variables = new HashMap<>();
 
     /**
-     * Use the given {@link SleighSpacedef} instance as a data source.
+     * Use the given {@link SleighSpaceDefinition} instance as a data source.
      *
      * @param definition the definition element to extract data from.
      * @throws ModelException if the extraction process failed.
      */
-    public Space(@NotNull SleighSpacedef definition, @NotNull Collection<SleighVarnodedef> variableDeclarations)
+    public Space(@NotNull SleighSpaceDefinition definition, @NotNull Collection<SleighVarnodedef> variableDeclarations)
             throws ModelException {
         SpaceVisitor visitor = new SpaceVisitor();
         definition.acceptChildren(visitor);
@@ -102,7 +102,7 @@ public class Space {
      * @return the memory space definition parse tree element.
      */
     @NotNull
-    public SleighSpacedef getDefinition() {
+    public SleighSpaceDefinition getDefinition() {
         return definition;
     }
 

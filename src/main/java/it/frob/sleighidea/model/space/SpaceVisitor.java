@@ -50,8 +50,8 @@ public class SpaceVisitor extends SleighVisitor {
     }
 
     @Override
-    public void visitTypemod(@NotNull SleighTypemod visited) {
-        SleighType typeNode = PsiTreeUtil.findChildOfType(visited, SleighType.class);
+    public void visitSpaceTypeModifier(@NotNull SleighSpaceTypeModifier visited) {
+        SleighSpaceType typeNode = PsiTreeUtil.findChildOfType(visited, SleighSpaceType.class);
         assert typeNode != null;
 
         if (type != null) {
@@ -64,7 +64,7 @@ public class SpaceVisitor extends SleighVisitor {
     }
 
     @Override
-    public void visitSizemod(@NotNull SleighSizemod visited) {
+    public void visitSpaceSizeModifier(@NotNull SleighSpaceSizeModifier visited) {
         SleighInteger sizeNode = PsiTreeUtil.findChildOfType(visited, SleighInteger.class);
         if (sizeNode == null) {
             // No integer is attached if the value was invalid to begin with.
@@ -77,11 +77,11 @@ public class SpaceVisitor extends SleighVisitor {
             return;
         }
 
-        size = sizeNode.toPositiveInteger();
+        size = sizeNode.toInteger();
     }
 
     @Override
-    public void visitWordsizemod(@NotNull SleighWordsizemod visited) {
+    public void visitSpaceWordsizeModifier(@NotNull SleighSpaceWordsizeModifier visited) {
         SleighInteger wordSizeNode = PsiTreeUtil.findChildOfType(visited, SleighInteger.class);
         if (wordSizeNode == null) {
             // No integer is attached if the value was invalid to begin with.
@@ -94,24 +94,24 @@ public class SpaceVisitor extends SleighVisitor {
             return;
         }
 
-        wordSize = wordSizeNode.toPositiveInteger();
+        wordSize = wordSizeNode.toInteger();
     }
 
     @Override
-    public void visitSpacemod(@NotNull SleighSpacemod visited) {
-        SleighTypemod typeModifier = visited.getTypemod();
+    public void visitSpaceModifier(@NotNull SleighSpaceModifier visited) {
+        SleighSpaceTypeModifier typeModifier = visited.getSpaceTypeModifier();
         if (typeModifier != null) {
             typeModifier.accept(this);
             return;
         }
 
-        SleighSizemod sizeModifier = visited.getSizemod();
+        SleighSpaceSizeModifier sizeModifier = visited.getSpaceSizeModifier();
         if (sizeModifier != null) {
             sizeModifier.accept(this);
             return;
         }
 
-        SleighWordsizemod wordSizeModifier = visited.getWordsizemod();
+        SleighSpaceWordsizeModifier wordSizeModifier = visited.getSpaceWordsizeModifier();
         if (wordSizeModifier != null) {
             wordSizeModifier.accept(this);
             return;

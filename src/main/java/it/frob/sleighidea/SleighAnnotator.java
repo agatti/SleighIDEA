@@ -84,7 +84,7 @@ public class SleighAnnotator implements Annotator, DumbAware {
             }
 
             @Override
-            public void visitTokendef(@NotNull SleighTokendef visited) {
+            public void visitTokenDefinition(@NotNull SleighTokenDefinition visited) {
                 assignGutterIcon(visited, holder, PlatformIcons.CLASS_ICON);
             }
 
@@ -137,7 +137,7 @@ public class SleighAnnotator implements Annotator, DumbAware {
             }
 
             @Override
-            public void visitSpacedef(@NotNull SleighSpacedef visited) {
+            public void visitSpaceDefinition(@NotNull SleighSpaceDefinition visited) {
                 assignGutterIcon(visited, holder, PlatformIcons.ANONYMOUS_CLASS_ICON);
             }
 

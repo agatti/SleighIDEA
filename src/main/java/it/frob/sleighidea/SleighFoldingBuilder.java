@@ -27,7 +27,8 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
         root.acceptChildren(new SleighVisitor() {
             @Override
             public void visitDefinition(@NotNull SleighDefinition visited) {
-                SleighTokendef tokenContainer = PsiTreeUtil.findChildOfType(visited, SleighTokendef.class);
+                SleighTokenDefinition tokenContainer =
+                        PsiTreeUtil.findChildOfType(visited, SleighTokenDefinition.class);
                 SleighIdentifier identifier = PsiTreeUtil.findChildOfType(tokenContainer, SleighIdentifier.class);
                 if (identifier != null) {
                     FoldingGroup group = FoldingGroup.newGroup(SleighAnnotator.SLEIGH_PREFIX_STRING);
@@ -44,7 +45,8 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
                     public void visitMacrodef(@NotNull SleighMacrodef visited) {
                         FoldingGroup group = FoldingGroup.newGroup(SleighAnnotator.SLEIGH_PREFIX_STRING);
                         PsiElement parent = visited.getParent();
-                        descriptors.add(new FoldingDescriptor(parent.getNode(), parent.getTextRange(), group, visited.getPlaceholderText()));
+                        descriptors.add(new FoldingDescriptor(parent.getNode(), parent.getTextRange(), group,
+                                visited.getPlaceholderText()));
                     }
 
                     @Override

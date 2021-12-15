@@ -30,10 +30,10 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     /**
      * All the {@code token} elements in the file, wrapped in a cache-aware container.
      */
-    private final CachedValue<List<SleighTokendef>> tokens = createCachedValue(
-            new ValueProvider<List<SleighTokendef>>() {
+    private final CachedValue<List<SleighTokenDefinition>> tokens = createCachedValue(
+            new ValueProvider<>() {
                 @Override
-                protected @NotNull List<SleighTokendef> computeValue() {
+                protected @NotNull List<SleighTokenDefinition> computeValue() {
                     return Collections.unmodifiableList(collectTokens());
                 }
             }
@@ -43,7 +43,7 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
      * All the {@code macro} elements in the file, wrapped in a cache-aware container.
      */
     private final CachedValue<List<SleighMacrodef>> macros = createCachedValue(
-            new ValueProvider<List<SleighMacrodef>>() {
+            new ValueProvider<>() {
                 @Override
                 protected @NotNull List<SleighMacrodef> computeValue() {
                     return Collections.unmodifiableList(collectMacros());
@@ -55,7 +55,7 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
      * All the {@code space} elements in the file, wrapped in a cache-aware linear container.
      */
     private final CachedValue<List<Space>> spacesList = createCachedValue(
-            new ValueProvider<List<Space>>() {
+            new ValueProvider<>() {
                 @Override
                 protected @NotNull List<Space> computeValue() {
                     return Collections.unmodifiableList(collectSpacesList());
@@ -67,7 +67,7 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
      * All the {@code space} elements in the file, wrapped in a cache-aware container.
      */
     private final CachedValue<Map<String, Space>> spacesMap = createCachedValue(
-            new ValueProvider<Map<String, Space>>() {
+            new ValueProvider<>() {
                 @Override
                 protected @NotNull Map<String, Space> computeValue() {
                     return Collections.unmodifiableMap(buildSpacesMap(spacesList.getValue()));
@@ -112,7 +112,7 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     }
 
     @Override
-    public Collection<SleighTokendef> getTokens() {
+    public Collection<SleighTokenDefinition> getTokens() {
         return tokens.getValue();
     }
 
@@ -172,11 +172,11 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     /**
      * Extract all {@code token} elements in the file.
      *
-     * @return a list containing the {@link SleighTokendef} instances found in the file.
+     * @return a list containing the {@link SleighTokenDefinition} instances found in the file.
      */
     @NotNull
-    private List<SleighTokendef> collectTokens() {
-        return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighTokendef.class));
+    private List<SleighTokenDefinition> collectTokens() {
+        return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighTokenDefinition.class));
     }
 
     /**
@@ -192,13 +192,14 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     /**
      * Extract all {@code space} elements in the file.
      *
-     * @return a map containing the {@link SleighSpacedef} instances found in the file, wrapped in their respective
-     * {@link Space} model container classes, indexed by their name.
+     * @return a map containing the {@link SleighSpaceDefinition} instances found in the file, wrapped in their
+     * respective {@link Space} model container classes, indexed by their name.
      */
     @NotNull
     private List<Space> collectSpacesList() {
-        Collection<SleighVarnodedef> variableDeclarations = PsiTreeUtil.collectElementsOfType(this, SleighVarnodedef.class);
-        return PsiTreeUtil.collectElementsOfType(this, SleighSpacedef.class)
+        Collection<SleighVarnodedef> variableDeclarations =
+                PsiTreeUtil.collectElementsOfType(this, SleighVarnodedef.class);
+        return PsiTreeUtil.collectElementsOfType(this, SleighSpaceDefinition.class)
                 .stream()
                 .map(space -> {
                     try {

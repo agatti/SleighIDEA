@@ -1,115 +1,115 @@
 // SPDX-License-Identifier: Apache-2.0
 
 {
-	parserUtilClass="it.frob.sleighidea.parser.SleighParserUtil"
-	parserClass="it.frob.sleighidea.parser.SleighParser"
+    parserUtilClass="it.frob.sleighidea.parser.SleighParserUtil"
+    parserClass="it.frob.sleighidea.parser.SleighParser"
 
     implements="it.frob.sleighidea.psi.SleighCompositeElement"
     extends="it.frob.sleighidea.psi.impl.SleighCompositeElementImpl"
 
-	psiClassPrefix="Sleigh"
-	psiImplClassSuffix="Impl"
-	psiPackage="it.frob.sleighidea.psi"
-	psiImplPackage="it.frob.sleighidea.psi.impl"
+    psiClassPrefix="Sleigh"
+    psiImplClassSuffix="Impl"
+    psiPackage="it.frob.sleighidea.psi"
+    psiImplPackage="it.frob.sleighidea.psi.impl"
 
-	elementTypeHolderClass="it.frob.sleighidea.psi.SleighTypes"
-	elementTypeClass="it.frob.sleighidea.psi.SleighCompositeElementType"
-	tokenTypeClass="it.frob.sleighidea.psi.SleighTokenType"
+    elementTypeHolderClass="it.frob.sleighidea.psi.SleighTypes"
+    elementTypeClass="it.frob.sleighidea.psi.SleighCompositeElementType"
+    tokenTypeClass="it.frob.sleighidea.psi.SleighTokenType"
 
-	psiImplUtilClass="it.frob.sleighidea.psi.impl.SleighPsiImplUtil"
+    psiImplUtilClass="it.frob.sleighidea.psi.impl.SleighPsiImplUtil"
 
-	tokens=[
-		ASTERISK='*'
-		ASSIGN='='
-		SEMI=';'
-		UNDERSCORE='_'
-		LPAREN='('
-		RPAREN=')'
-		COMMA=','
-		LBRACKET='['
-		RBRACKET=']'
-		LBRACE='{'
-		RBRACE='}'
-		COLON=':'
-		ELLIPSIS="..."
-		EXCLAIM="!"
-		TILDE="~"
-		EQUAL='=='
-		NOTEQUAL='!='
-		LESS='<'
-		GREAT='>'
-		LESSEQUAL='<='
-		GREATEQUAL='>='
-		BOOL_OR='||'
-		BOOL_XOR='^^'
-		BOOL_AND='&&'
-		PIPE='|'
-		CARET='^'
-		AMPERSAND='&'
-		LEFT='<<'
-		RIGHT='>>'
-		PLUS='+'
-		MINUS='-'
-		ASTERISK='*'
-		SLASH='/'
-		PERCENT='%'
-		SPEC_OR='$or'
-		SPEC_AND='$and'
-		SPEC_XOR='$xor'
-		FEQUAL='f=='
-		FNOTEQUAL='f!='
-		FLESS='f<'
-		FGREAT='f>'
-		FLESSEQUAL='f<='
-		FGREATEQUAL='f>='
-		FPLUS='f+'
-		FMINUS='f-'
-		FMULT='f*'
-		FDIV='f/'
-		SLESS='s<'
-		SGREAT='s>'
-		SLESSEQUAL='s<='
-		SGREATEQUAL='s>='
-		SRIGHT='s>>'
-		SDIV='s/'
-		SREM='s%'
+    tokens=[
+        ASTERISK='*'
+        ASSIGN='='
+        SEMI=';'
+        UNDERSCORE='_'
+        LPAREN='('
+        RPAREN=')'
+        COMMA=','
+        LBRACKET='['
+        RBRACKET=']'
+        LBRACE='{'
+        RBRACE='}'
+        COLON=':'
+        ELLIPSIS="..."
+        EXCLAIM="!"
+        TILDE="~"
+        EQUAL='=='
+        NOTEQUAL='!='
+        LESS='<'
+        GREAT='>'
+        LESSEQUAL='<='
+        GREATEQUAL='>='
+        BOOL_OR='||'
+        BOOL_XOR='^^'
+        BOOL_AND='&&'
+        PIPE='|'
+        CARET='^'
+        AMPERSAND='&'
+        LEFT='<<'
+        RIGHT='>>'
+        PLUS='+'
+        MINUS='-'
+        ASTERISK='*'
+        SLASH='/'
+        PERCENT='%'
+        SPEC_OR='$or'
+        SPEC_AND='$and'
+        SPEC_XOR='$xor'
+        FEQUAL='f=='
+        FNOTEQUAL='f!='
+        FLESS='f<'
+        FGREAT='f>'
+        FLESSEQUAL='f<='
+        FGREATEQUAL='f>='
+        FPLUS='f+'
+        FMINUS='f-'
+        FMULT='f*'
+        FDIV='f/'
+        SLESS='s<'
+        SGREAT='s>'
+        SLESSEQUAL='s<='
+        SGREATEQUAL='s>='
+        SRIGHT='s>>'
+        SDIV='s/'
+        SREM='s%'
 
-		RES_IF='if'
-		RES_IS='is'
-		RES_WITH='with'
+        RES_IF='if'
+        RES_IS='is'
+        RES_WITH='with'
 
-		KEY_ALIGNMENT='alignment'
-		KEY_ATTACH='attach'
-		KEY_BIG='big'
-		KEY_BITRANGE='bitrange'
-		KEY_BUILD='build'
-		KEY_CALL='call'
-		KEY_CONTEXT='context'
-		KEY_CROSSBUILD='crossbuild'
-		KEY_DEC='dec'
-		KEY_DEFAULT='default'
-		KEY_DEFINE='define'
-		KEY_ENDIAN='endian'
-		KEY_EXPORT='export'
-		KEY_GOTO='goto'
-		KEY_HEX='hex'
-		KEY_LITTLE='little'
-		KEY_LOCAL='local'
-		KEY_MACRO='macro'
-		KEY_NAMES='names'
-		KEY_NOFLOW='noflow'
-		KEY_OFFSET='offset'
-		KEY_PCODEOP='pcodeop'
-		KEY_RETURN='return'
-		KEY_SIGNED='signed'
-		KEY_SIZE='size'
-		KEY_SPACE='space'
-		KEY_TOKEN='token'
-		KEY_TYPE='type'
-		KEY_UNIMPL='unimpl'
-		KEY_VALUES='values'
-		KEY_VARIABLES='variables'
-		KEY_WORDSIZE='wordsize'
+        KEY_ALIGNMENT='alignment'
+        KEY_ATTACH='attach'
+        KEY_BIG='big'
+        KEY_BITRANGE='bitrange'
+        KEY_BUILD='build'
+        KEY_CALL='call'
+        KEY_CONTEXT='context'
+        KEY_CROSSBUILD='crossbuild'
+        KEY_DEC='dec'
+        KEY_DEFAULT='default'
+        KEY_DEFINE='define'
+        KEY_ENDIAN='endian'
+        KEY_EXPORT='export'
+        KEY_GOTO='goto'
+        KEY_HEX='hex'
+        KEY_LITTLE='little'
+        KEY_LOCAL='local'
+        KEY_MACRO='macro'
+        KEY_NAMES='names'
+        KEY_NOFLOW='noflow'
+        KEY_OFFSET='offset'
+        KEY_PCODEOP='pcodeop'
+        KEY_RETURN='return'
+        KEY_SIGNED='signed'
+        KEY_SIZE='size'
+        KEY_SPACE='space'
+        KEY_TOKEN='token'
+        KEY_TYPE='type'
+        KEY_UNIMPL='unimpl'
+        KEY_VALUES='values'
+        KEY_VARIABLES='variables'
+        KEY_WORDSIZE='wordsize'
 
         // Preprocessor tokens
 
@@ -123,110 +123,136 @@
         KEY_ATELIF='@elif'
         KEY_ATELSE='@else'
         KEY_ATENDIF='@endif'
+        KEY_DEFINED='defined'
 
-		space='regexp:\s+'
-		comment='regexp:#.*'
-		decnumber='regexp:\d+'
-		displaychar='regexp:[@$?]'
-		hexnumber='regexp:0x[\da-fA-F]+'
-		binnumber='regexp:0b[01]+'
-		symbol='regexp:[_a-zA-Z][a-zA-Z\d_.]*'
-		string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
-	]
+        space='regexp:\s+'
+        comment='regexp:#.*'
+        decnumber='regexp:\d+'
+        displaychar='regexp:[@$?]'
+        hexnumber='regexp:0x[\da-fA-F]+'
+        binnumber='regexp:0b[01]+'
+        symbol='regexp:[_a-zA-Z][a-zA-Z\d_.]*'
+        qstring="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+        whitespace='regexp:[ \t\r\n]'
+    ]
 }
 
-spec ::= ( specelement ) * <<eof>>
+spec ::= ( spec_element ) * <<eof>>
 
-specelement ::= definition
-              | constructorlike
-              | include
+spec_element ::= definition
+               | constructorlike
+               | include
 
 include ::= KEY_ATINCLUDE include_string
-include_string ::= qstring
+include_string ::= quoted_string
 
-endiandef ::= KEY_DEFINE KEY_ENDIAN ASSIGN endian
+definition ::= definition_kind SEMI
+private definition_kind ::= definition_container
+                          | attach_container
+private definition_container ::= KEY_DEFINE definition_statement
+private definition_statement ::= endiandef
+                               | aligndef
+                               | token_definition
+                               | context_definition
+                               | space_definition
+                               | varnodedef
+                               | bitrangedef
+                               | pcodeopdef
+private attach_container ::= KEY_ATTACH attach_statement
+private attach_statement ::= valueattach
+                           | nameattach
+                           | varattach
+
+endiandef ::= KEY_ENDIAN ASSIGN endian
 endian ::= KEY_BIG
          | KEY_LITTLE
-definition ::= ( endiandef
-             | aligndef
-             | tokendef
-             | contextdef
-             | spacedef
-             | varnodedef
-             | bitrangedef
-             | pcodeopdef
-             | valueattach
-             | nameattach
-             | varattach
-             ) SEMI
-aligndef ::= KEY_DEFINE KEY_ALIGNMENT ASSIGN <<parseGreaterThanZeroInteger>> {
+
+aligndef ::= KEY_ALIGNMENT ASSIGN <<parseGreaterThanZeroInteger>> {
     methods = [ getAlignment ]
 }
-tokendef ::= KEY_DEFINE KEY_TOKEN identifier LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] fielddefs {
-	methods = [ getName getPlaceholderText getPresentation ]
+
+token_definition ::= KEY_TOKEN identifier LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
+{ methods=[getName getPlaceholderText getPresentation] }
+private token_field_definitions ::= token_field_definition *
+token_field_definition ::= strict_id ASSIGN LPAREN integer COMMA integer RPAREN token_field_modifiers
+{ methods=[ getFieldName getFieldStart getFieldEnd isSigned ]}
+private token_field_modifiers ::= token_field_modifier *
+token_field_modifier ::= KEY_SIGNED
+                       | KEY_HEX
+                       | KEY_DEC
+
+context_definition ::= KEY_CONTEXT identifier context_field_definitions
+private context_field_definitions ::= context_field_definition *
+context_field_definition ::= identifier ASSIGN LPAREN integer COMMA integer RPAREN context_field_modifiers
+private context_field_modifiers ::= context_field_modifier *
+context_field_modifier ::= KEY_SIGNED
+                         | KEY_NOFLOW
+                         | KEY_HEX
+                         | KEY_DEC
+
+space_definition ::= KEY_SPACE identifier space_modifiers
+{ methods=[getName getPlaceholderText getPresentation getSize getType getWordSize isDefault]}
+private space_modifiers ::= space_modifier *
+space_modifier ::= space_type_modifier
+                 | space_size_modifier
+                 | space_wordsize_modifier
+                 | KEY_DEFAULT
+space_type_modifier ::= KEY_TYPE ASSIGN space_type
+space_type ::= identifier
+space_size_modifier ::= KEY_SIZE ASSIGN <<parseGreaterThanZeroInteger>>
+{ methods=[getInteger] }
+space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN <<parseGreaterThanZeroInteger>>
+{ methods=[getInteger] }
+
+varnodedef ::= identifier KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN <<parseGreaterThanZeroInteger>> identifierlist {
+    methods = [ getIdentifiers getOffset getSize getSpaceName ]
 }
-fielddefs ::= fielddef *
-fielddef ::= strict_id ASSIGN LPAREN integer COMMA integer RPAREN fieldmods {
-    methods = [ getFieldName getFieldStart getFieldEnd isSigned ]
-}
-fieldmods ::= fieldmod *
-fieldmod ::= KEY_SIGNED | KEY_HEX | KEY_DEC
-contextfielddefs ::= contextfielddef *
-contextfielddef ::= identifier ASSIGN LPAREN integer COMMA integer RPAREN contextfieldmods
-contextfieldmods ::= contextfieldmod *
-contextfieldmod ::= KEY_SIGNED | KEY_NOFLOW | KEY_HEX | KEY_DEC
-contextdef ::= KEY_DEFINE KEY_CONTEXT identifier contextfielddefs
-spacedef ::= KEY_DEFINE KEY_SPACE identifier spacemods {
-	methods = [ getName getPlaceholderText getPresentation getSize getType getWordSize isDefault ]
-}
-private spacemods ::= spacemod *
-spacemod ::= typemod | sizemod | wordsizemod | KEY_DEFAULT
-typemod ::= KEY_TYPE ASSIGN type
-type ::= identifier
-sizemod ::= KEY_SIZE ASSIGN <<parseGreaterThanZeroInteger>> {
-	methods = [ getInteger ]
-}
-wordsizemod ::= KEY_WORDSIZE ASSIGN <<parseGreaterThanZeroInteger>> {
-	methods = [ getInteger ]
-}
-varnodedef ::= KEY_DEFINE identifier KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN <<parseGreaterThanZeroInteger>> identifierlist {
-	methods = [ getIdentifiers getOffset getSize getSpaceName ]
-}
-bitrangedef ::= KEY_DEFINE KEY_BITRANGE bitranges
+bitrangedef ::= KEY_BITRANGE bitranges
 bitranges ::= bitrange +
 bitrange ::= identifier ASSIGN identifier LBRACKET integer COMMA integer RBRACKET
-pcodeopdef ::= KEY_DEFINE KEY_PCODEOP identifierlist
-valueattach ::= KEY_ATTACH KEY_VALUES identifierlist intblist
-nameattach ::= KEY_ATTACH KEY_NAMES identifierlist stringoridentlist
-varattach ::= KEY_ATTACH KEY_VARIABLES identifierlist identifierlist
-identifierlist ::= ( LBRACKET id_or_wild + RBRACKET )
-	             | id_or_wild
-stringoridentlist ::= ( LBRACKET stringorident + RBRACKET ) | stringorident
-stringorident ::= id_or_wild | qstring
-intblist ::= ( LBRACKET intbpart + RBRACKET ) | neginteger
-intbpart ::= neginteger | UNDERSCORE
-neginteger ::= integer | ( MINUS integer )
+pcodeopdef ::= KEY_PCODEOP identifierlist
+valueattach ::= KEY_VALUES identifierlist intblist
+nameattach ::= KEY_NAMES identifierlist stringoridentlist
+varattach ::= KEY_VARIABLES identifierlist identifierlist
+identifierlist ::= LBRACKET id_or_wild + RBRACKET
+                 | id_or_wild
+stringoridentlist ::= LBRACKET stringorident + RBRACKET
+                    | stringorident
+stringorident ::= id_or_wild
+                | quoted_string
+intblist ::= LBRACKET intbpart + RBRACKET
+           | neginteger
+intbpart ::= neginteger
+           | UNDERSCORE
+neginteger ::= integer
+             | MINUS integer
 
-constructorlike ::= macrodef | withblock | constructor
+constructorlike ::= macrodef
+                  | withblock
+                  | constructor
 macrodef ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody {
-	methods = [ getPlaceholderText getPresentation ]
+    methods = [ getPlaceholderText getPresentation ]
 }
 arguments ::= oplist *
 oplist ::= identifier ( COMMA identifier ) *
-withblock ::= RES_WITH id_or_nil COLON bitpat_or_nil contextblock LBRACE constructorlikelist RBRACE
+withblock ::= RES_WITH id_or_nil COLON bitpat_or_nil context_block LBRACE constructorlikelist RBRACE
 id_or_nil ::= identifier *
 bitpat_or_nil ::= bitpattern *
-def_or_conslike ::= definition | constructorlike
+def_or_conslike ::= definition
+                  | constructorlike
 constructorlikelist ::= def_or_conslike *
-constructor ::= ctorstart bitpattern contextblock ctorsemantic
-ctorsemantic ::= semanticbody | KEY_UNIMPL
+constructor ::= ctorstart bitpattern context_block ctorsemantic
+ctorsemantic ::= semanticbody
+               | KEY_UNIMPL
 bitpattern ::= pequation
-ctorstart ::= ( identifier display ) | display
-contextblock ::= ( LBRACKET ctxstmts RBRACKET ) *
-ctxstmts ::= ctxstmt *
-ctxstmt ::= ( ctxassign SEMI ) | ( pfuncall SEMI )
-ctxassign ::= ctxlval ASSIGN pexpression
-ctxlval ::= identifier
+ctorstart ::= [ identifier ] display
+context_block ::= ( LBRACKET context_statements RBRACKET ) *
+private context_statements ::= context_statement *
+context_statement ::= context_statement_kind SEMI
+private context_statement_kind ::= context_assignment
+                                 | pfuncall
+context_assignment ::= context_lvalue ASSIGN pexpression
+context_lvalue ::= identifier
 pfuncall ::= pexpression_apply
 pequation ::= pequation_or
 pequation_or ::= pequation_seq ( pequation_or_op pequation_seq ) *
@@ -235,30 +261,47 @@ pequation_seq ::= pequation_and ( pequation_seq_op pequation_and ) *
 pequation_seq_op ::= SEMI
 pequation_and ::= pequation_ellipsis ( pequation_and_op pequation_ellipsis ) *
 pequation_and_op ::= AMPERSAND
-pequation_ellipsis ::= ( ELLIPSIS pequation_ellipsis_right ) | pequation_ellipsis_right
-pequation_ellipsis_right ::= ( pequation_atomic ELLIPSIS ) | pequation_atomic
-pequation_atomic ::= constraint | ( LPAREN pequation RPAREN )
+pequation_ellipsis ::= [ ELLIPSIS ] pequation_ellipsis_right
+pequation_ellipsis_right ::= pequation_atomic [ ELLIPSIS ]
+pequation_atomic ::= constraint
+                   | LPAREN pequation RPAREN
 constraint ::= identifier [ constraint_op pexpression2 ]
-constraint_op ::= ASSIGN | NOTEQUAL | LESS | LESSEQUAL | GREAT | GREATEQUAL
+constraint_op ::= ASSIGN
+                | NOTEQUAL
+                | LESS
+                | LESSEQUAL
+                | GREAT
+                | GREATEQUAL
 pexpression ::= pexpression_or
 pexpression_or ::= pexpression_xor ( pexpression_or_op pexpression_xor ) *
-pexpression_or_op ::= PIPE | SPEC_OR
+pexpression_or_op ::= PIPE
+                    | SPEC_OR
 pexpression_xor ::= pexpression_and ( pexpression_xor_op pexpression_and ) *
-pexpression_xor_op ::= CARET | SPEC_XOR
+pexpression_xor_op ::= CARET
+                     | SPEC_XOR
 pexpression_and ::= pexpression_shift ( pexpression_and_op pexpression_shift ) *
-pexpression_and_op ::= AMPERSAND | SPEC_AND
+pexpression_and_op ::= AMPERSAND
+                     | SPEC_AND
 pexpression_shift ::= pexpression_add ( pexpression_shift_op pexpression_add ) *
-pexpression_shift_op ::= LEFT | RIGHT
+pexpression_shift_op ::= LEFT
+                       | RIGHT
 pexpression_add ::= pexpression_mult ( pexpression_add_op pexpression_mult ) *
-pexpression_add_op ::= PLUS | MINUS
+pexpression_add_op ::= PLUS
+                     | MINUS
 pexpression_mult ::= pexpression_unary ( pexpression_mult_op pexpression_unary ) *
-pexpression_mult_op ::= ASTERISK | SLASH
-pexpression_unary ::= ( pexpression_unary_op pexpression_term ) | pexpression_func
-pexpression_unary_op ::= MINUS | TILDE
-pexpression_func ::= pexpression_apply | pexpression_term
+pexpression_mult_op ::= ASTERISK
+                      | SLASH
+pexpression_unary ::= pexpression_unary_op pexpression_term
+                    | pexpression_func
+pexpression_unary_op ::= MINUS
+                       | TILDE
+pexpression_func ::= pexpression_apply
+                   | pexpression_term
 pexpression_apply ::= identifier pexpression_operands
 pexpression_operands ::= LPAREN [ pexpression ( COMMA pexpression ) * ] RPAREN
-pexpression_term ::= identifier | integer | ( LPAREN pexpression RPAREN )
+pexpression_term ::= identifier
+                   | integer
+                   | LPAREN pexpression RPAREN
 pexpression2 ::= pexpression2_or
 pexpression2_or ::= pexpression2_xor ( pexpression2_or_op pexpression2_xor ) *
 pexpression2_or_op ::= SPEC_OR
@@ -267,43 +310,72 @@ pexpression2_xor_op ::= SPEC_XOR
 pexpression2_and ::= pexpression2_shift ( pexpression2_and_op pexpression2_shift ) *
 pexpression2_and_op ::= SPEC_AND
 pexpression2_shift ::= pexpression2_add ( pexpression2_shift_op pexpression2_add ) *
-pexpression2_shift_op ::= LEFT | RIGHT
+pexpression2_shift_op ::= LEFT
+                        | RIGHT
 pexpression2_add ::= pexpression2_mult ( pexpression2_add_op pexpression2_mult ) *
-pexpression2_add_op ::= PLUS | MINUS
+pexpression2_add_op ::= PLUS
+                      | MINUS
 pexpression2_mult ::= pexpression2_unary ( pexpression2_mult_op pexpression2_unary ) *
-pexpression2_mult_op ::= ASTERISK | SLASH
-pexpression2_unary ::= ( pexpression2_unary_op pexpression2_term ) | pexpression2_func
-pexpression2_unary_op ::= MINUS | TILDE
-pexpression2_func ::= pexpression2_apply | pexpression2_term
+pexpression2_mult_op ::= ASTERISK
+                       | SLASH
+pexpression2_unary ::= pexpression2_unary_op pexpression2_term
+                     | pexpression2_func
+pexpression2_unary_op ::= MINUS
+                        | TILDE
+pexpression2_func ::= pexpression2_apply
+                    | pexpression2_term
 pexpression2_apply ::= identifier pexpression2_operands
 pexpression2_operands ::= LPAREN [ pexpression2 ( COMMA pexpression2 ) * ] RPAREN
-pexpression2_term ::= identifier | integer | ( LPAREN pexpression2 RPAREN )
+pexpression2_term ::= identifier
+                    | integer
+                    | LPAREN pexpression2 RPAREN
 
 semanticbody ::= LBRACE statement * RBRACE
 label ::= LESS identifier GREAT
 section_def ::= LEFT identifier RIGHT
-statement ::= ( ( assignment | declaration | funcall | build_stmt | crossbuild_stmt | goto_stmt | cond_stmt | call_stmt | export | return_stmt ) SEMI ) | label | section_def | outer_error
-outer_error ::= ( EQUAL | NOTEQUAL | FEQUAL | FNOTEQUAL | LESSEQUAL | GREATEQUAL | SLESS | SGREAT | SLESSEQUAL | SGREATEQUAL | FLESS | FLESSEQUAL | FGREAT | FGREATEQUAL | ASSIGN | COLON | COMMA | RBRACKET | BOOL_AND | BOOL_OR | BOOL_XOR | PIPE | CARET | AMPERSAND | SRIGHT | PLUS | MINUS | FPLUS | FMINUS | SLASH | PERCENT | SDIV | SREM | FDIV | TILDE | LPAREN | RPAREN )
-assignment ::= ( KEY_LOCAL lvalue ASSIGN expr ) | ( lvalue ASSIGN expr )
-declaration ::= ( KEY_LOCAL identifier COLON constant ) | ( KEY_LOCAL identifier )
-lvalue ::= sembitrange | ( identifier COLON constant ) | identifier | sizedstar expr
+statement ::= statement_kind SEMI
+            | label
+            | section_def
+private statement_kind ::= assignment
+                         | declaration
+                         | funcall
+                         | build_stmt
+                         | crossbuild_stmt
+                         | goto_stmt
+                         | cond_stmt
+                         | call_stmt
+                         | export
+                         | return_stmt
+assignment ::= [ KEY_LOCAL ] lvalue ASSIGN expr
+declaration ::= KEY_LOCAL identifier [ COLON constant ]
+lvalue ::= sembitrange
+         | identifier [ COLON constant ]
+         | sizedstar expr
 sembitrange ::= identifier LBRACKET constant COMMA constant RBRACKET
-sizedstar ::= ( ASTERISK LBRACKET identifier RBRACKET COLON constant ) | ( ASTERISK LBRACKET identifier RBRACKET ) | ( ASTERISK COLON constant ) | ASTERISK
+sizedstar ::= ASTERISK [ sized_star_element ]
+private sized_star_element ::= [ LBRACKET identifier RBRACKET ] [ COLON constant ]
 funcall ::= expr_apply
 build_stmt ::= KEY_BUILD identifier
-crossbuild_stmt ::= KEY_CROSSBUILD varnode COMMA identifier
+crossbuild_stmt ::= KEY_CROSSBUILD variable_node COMMA identifier
 goto_stmt ::= KEY_GOTO jumpdest
-jumpdest ::= identifier | ( LBRACKET expr RBRACKET ) | integer | constant | label
+jumpdest ::= identifier
+           | LBRACKET expr RBRACKET
+           | integer
+           | constant
+           | label
 cond_stmt ::= RES_IF expr goto_stmt
 call_stmt ::= KEY_CALL jumpdest
 return_stmt ::= KEY_RETURN LBRACKET expr RBRACKET
-sizedexport ::= sizedstar identifier
-export ::= ( KEY_EXPORT sizedexport ) | ( KEY_EXPORT varnode )
+sized_export ::= sizedstar identifier
+export ::= KEY_EXPORT export_item
+private export_item ::= sized_export
+                      | variable_node
 expr ::= expr_boolor
 expr_boolor ::= expr_booland ( expr_boolor_op expr_booland ) *
 expr_boolor_op ::= BOOL_OR
 expr_booland ::= expr_or ( booland_op expr_or ) *
-booland_op ::= BOOL_AND | BOOL_XOR
+booland_op ::= BOOL_AND
+             | BOOL_XOR
 expr_or ::= expr_xor ( expr_or_op expr_xor ) *
 expr_or_op ::= PIPE
 expr_xor ::= expr_and ( expr_xor_op expr_and ) *
@@ -311,99 +383,159 @@ expr_xor_op ::= CARET
 expr_and ::= expr_eq ( expr_and_op expr_eq ) *
 expr_and_op ::= AMPERSAND
 expr_eq ::= expr_comp ( eq_op expr_comp ) *
-eq_op ::= EQUAL | NOTEQUAL | FEQUAL | FNOTEQUAL
+eq_op ::= EQUAL
+        | NOTEQUAL
+        | FEQUAL
+        | FNOTEQUAL
 expr_comp ::= expr_shift ( compare_op expr_shift ) *
-compare_op ::= LESS | GREATEQUAL | LESSEQUAL | GREAT | SLESS | SGREATEQUAL | SLESSEQUAL | SGREAT | FLESS | FGREATEQUAL | FLESSEQUAL | FGREAT
+compare_op ::= LESS
+             | GREATEQUAL
+             | LESSEQUAL
+             | GREAT
+             | SLESS
+             | SGREATEQUAL
+             | SLESSEQUAL
+             | SGREAT
+             | FLESS
+             | FGREATEQUAL
+             | FLESSEQUAL
+             | FGREAT
 expr_shift ::= expr_add ( shift_op expr_add ) *
-shift_op ::= LEFT | RIGHT | SRIGHT
+shift_op ::= LEFT
+           | RIGHT
+           | SRIGHT
 expr_add ::= expr_mult ( add_op expr_mult ) *
-add_op ::= PLUS | MINUS | FPLUS | FMINUS
+add_op ::= PLUS
+         | MINUS
+         | FPLUS
+         | FMINUS
 expr_mult ::= expr_unary ( mult_op expr_unary ) *
-mult_op ::= ASTERISK | SLASH | PERCENT | SDIV | SREM | FMULT | FDIV
+mult_op ::= ASTERISK
+          | SLASH
+          | PERCENT
+          | SDIV
+          | SREM
+          | FMULT
+          | FDIV
 expr_unary ::= [ unary_op ] expr_func
-unary_op ::= EXCLAIM | TILDE | MINUS | FMINUS | sizedstar
-expr_func ::= expr_apply | expr_term
+unary_op ::= EXCLAIM
+           | TILDE
+           | MINUS
+           | FMINUS
+           | sizedstar
+expr_func ::= expr_apply
+            | expr_term
 expr_apply ::= identifier expr_operands
 expr_operands ::= LPAREN [ expr ( COMMA expr ) * ] RPAREN
-expr_term ::= ( LPAREN expr RPAREN ) | sembitrange | varnode
+expr_term ::= LPAREN expr RPAREN
+            | sembitrange
+            | variable_node
 
-varnode ::= ( identifier COLON constant ) | identifier | ( integer COLON constant ) | integer | ( AMPERSAND COLON constant varnode ) | ( AMPERSAND varnode )
+variable_node ::= identifier [ COLON constant ]
+                | integer [ COLON constant ]
+                | AMPERSAND [ COLON constant ] variable_node
 constant ::= integer
 
-display ::= COLON pieces RES_IS {
-	methods = [ getPlaceholderText ]
+display ::= COLON print_pieces RES_IS {
+    methods = [ getPlaceholderText ]
 }
-private pieces ::= printpiece *
-printpiece ::=
-	  identifier
-	| whitespace
-	| concatenate
-	| qstring
-	| special
-whitespace ::= WS
+private print_pieces ::= print_piece *
+print_piece ::= identifier
+              | white_space
+              | concatenate
+              | quoted_string
+              | special
+white_space ::= WHITESPACE
 concatenate ::= CARET
-special ::=
-	  DISPCHAR
-	| LINECOMMENT
-	| LBRACE
-	| RBRACE
-	| LBRACKET
-	| RBRACKET
-	| LPAREN
-	| RPAREN
-	| ELLIPSIS
-	| EQUAL
-	| NOTEQUAL
-	| LESS
-	| GREAT
-	| LESSEQUAL
-	| GREATEQUAL
-	| ASSIGN
-	| COLON
-	| COMMA
-	| ASTERISK
-	| BOOL_AND
-	| BOOL_OR
-	| BOOL_XOR
-	| PIPE
-	| AMPERSAND
-	| LEFT
-	| RIGHT
-	| PLUS
-	| MINUS
-	| SLASH
-	| PERCENT
-	| EXCLAIM
-	| TILDE
-	| SEMI
-	| SPEC_AND
-	| SPEC_OR
-	| SPEC_XOR
-	| DEC_INT
-	| HEX_INT
-	| BIN_INT
+special ::= DISPCHAR
+          | LINECOMMENT
+          | LBRACE
+          | RBRACE
+          | LBRACKET
+          | RBRACKET
+          | LPAREN
+          | RPAREN
+          | ELLIPSIS
+          | EQUAL
+          | NOTEQUAL
+          | LESS
+          | GREAT
+          | LESSEQUAL
+          | GREATEQUAL
+          | ASSIGN
+          | COLON
+          | COMMA
+          | ASTERISK
+          | BOOL_AND
+          | BOOL_OR
+          | BOOL_XOR
+          | PIPE
+          | AMPERSAND
+          | LEFT
+          | RIGHT
+          | PLUS
+          | MINUS
+          | SLASH
+          | PERCENT
+          | EXCLAIM
+          | TILDE
+          | SEMI
+          | SPEC_AND
+          | SPEC_OR
+          | SPEC_XOR
+          | DEC_INT
+          | HEX_INT
+          | BIN_INT
 
-qstring ::= QSTRING
+quoted_string ::= QSTRING
 
-id_or_wild ::= identifier | wildcard
+id_or_wild ::= identifier
+             | wildcard
 wildcard ::= UNDERSCORE
 
-identifier ::= strict_id | key_as_id
-key_as_id ::= KEY_ALIGNMENT | KEY_ATTACH | KEY_BIG | KEY_BITRANGE | KEY_BUILD | KEY_CALL | KEY_CONTEXT | KEY_CROSSBUILD | KEY_DEC | KEY_DEFAULT | KEY_DEFINE | KEY_ENDIAN | KEY_EXPORT | KEY_GOTO | KEY_HEX | KEY_LITTLE | KEY_LOCAL | KEY_MACRO | KEY_NAMES | KEY_NOFLOW | KEY_OFFSET | KEY_PCODEOP | KEY_RETURN | KEY_SIGNED | KEY_SIZE | KEY_SPACE | KEY_TOKEN | KEY_TYPE | KEY_UNIMPL | KEY_VALUES | KEY_VARIABLES | KEY_WORDSIZE
+identifier ::= strict_id
+             | key_as_id
+key_as_id ::= KEY_ALIGNMENT
+            | KEY_ATTACH
+            | KEY_BIG
+            | KEY_BITRANGE
+            | KEY_BUILD
+            | KEY_CALL
+            | KEY_CONTEXT
+            | KEY_CROSSBUILD
+            | KEY_DEC
+            | KEY_DEFAULT
+            | KEY_DEFINE
+            | KEY_ENDIAN
+            | KEY_EXPORT
+            | KEY_GOTO
+            | KEY_HEX
+            | KEY_LITTLE
+            | KEY_LOCAL
+            | KEY_MACRO
+            | KEY_NAMES
+            | KEY_NOFLOW
+            | KEY_OFFSET
+            | KEY_PCODEOP
+            | KEY_RETURN
+            | KEY_SIGNED
+            | KEY_SIZE
+            | KEY_SPACE
+            | KEY_TOKEN
+            | KEY_TYPE
+            | KEY_UNIMPL
+            | KEY_VALUES
+            | KEY_VARIABLES
+            | KEY_WORDSIZE
 strict_id ::= IDENTIFIER
 
 IDENTIFIER ::= symbol
 
-integer ::=
-	  hexnumber
-	| decnumber
-	| binnumber {
-	methods = [ toPositiveInteger ]
-}
+integer ::= hexnumber
+          | decnumber
+          | binnumber
+{ methods=[toInteger] }
 
-QSTRING ::= string
-
-WS ::= ' ' | '\t' | '\r' | '\n'
 DISPCHAR ::= displaychar
 LINECOMMENT ::= '#'
 DEC_INT ::= decnumber
