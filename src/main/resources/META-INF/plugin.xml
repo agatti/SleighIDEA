@@ -24,7 +24,7 @@
         <lang.syntaxHighlighterFactory language="Sleigh"
                                        implementationClass="it.frob.sleighidea.SleighSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="it.frob.sleighidea.SleighColourSettingsPage"/>
-        <annotator language="Sleigh" implementationClass="it.frob.sleighidea.SleighAnnotator"/>
+        <annotator language="Sleigh" implementationClass="it.frob.sleighidea.highlighting.LanguageAnnotator"/>
         <lang.foldingBuilder language="Sleigh"
                              implementationClass="it.frob.sleighidea.SleighFoldingBuilder"/>
         <lang.commenter language="Sleigh" implementationClass="it.frob.sleighidea.SleighCommenter"/>

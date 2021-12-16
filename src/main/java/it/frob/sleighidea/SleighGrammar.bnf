@@ -113,7 +113,7 @@
 
         // Preprocessor tokens
 
-        DOLLAR='$'
+        DEFINITION_START='$('
 
         KEY_ATDEFINE='@define'
         KEY_ATIF='@if'
@@ -131,7 +131,7 @@
         displaychar='regexp:[@$?]'
         hexnumber='regexp:0x[\da-fA-F]+'
         binnumber='regexp:0b[01]+'
-        symbol='regexp:[_a-zA-Z][a-zA-Z\d_.]*'
+        literalsymbol='regexp:[_a-zA-Z][a-zA-Z\d_.]*'
         qstring="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
         whitespace='regexp:[ \t\r\n]'
     ]
@@ -167,7 +167,7 @@ endiandef ::= KEY_ENDIAN ASSIGN endian
 endian ::= KEY_BIG
          | KEY_LITTLE
 
-aligndef ::= KEY_ALIGNMENT ASSIGN <<parseGreaterThanZeroInteger>> {
+aligndef ::= KEY_ALIGNMENT ASSIGN integer {
     methods = [ getAlignment ]
 }
 
@@ -191,20 +191,19 @@ context_field_modifier ::= KEY_SIGNED
                          | KEY_DEC
 
 space_definition ::= KEY_SPACE identifier space_modifiers
-{ methods=[getName getPlaceholderText getPresentation getSize getType getWordSize isDefault]}
+{ methods=[getName getPlaceholderText getPresentation getSize getType getWordSize getDefault] }
 private space_modifiers ::= space_modifier *
 space_modifier ::= space_type_modifier
                  | space_size_modifier
                  | space_wordsize_modifier
                  | KEY_DEFAULT
+{ generateTokenAccessors=true }
 space_type_modifier ::= KEY_TYPE ASSIGN space_type
 space_type ::= identifier
-space_size_modifier ::= KEY_SIZE ASSIGN <<parseGreaterThanZeroInteger>>
-{ methods=[getInteger] }
-space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN <<parseGreaterThanZeroInteger>>
-{ methods=[getInteger] }
+space_size_modifier ::= KEY_SIZE ASSIGN integer_value
+space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN integer_value
 
-varnodedef ::= identifier KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN <<parseGreaterThanZeroInteger>> identifierlist {
+varnodedef ::= identifier KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN integer identifierlist {
     methods = [ getIdentifiers getOffset getSize getSpaceName ]
 }
 bitrangedef ::= KEY_BITRANGE bitranges
@@ -530,6 +529,13 @@ key_as_id ::= KEY_ALIGNMENT
 strict_id ::= IDENTIFIER
 
 IDENTIFIER ::= symbol
+
+integer_value ::= external_definition
+                | integer
+
+external_definition ::= DEFINITION_START symbol RPAREN
+
+symbol ::= LITERALSYMBOL
 
 integer ::= hexnumber
           | decnumber

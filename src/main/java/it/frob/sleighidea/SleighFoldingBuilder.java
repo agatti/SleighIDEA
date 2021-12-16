@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.FoldingGroup;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import it.frob.sleighidea.highlighting.HelpersKt;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,7 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
                         PsiTreeUtil.findChildOfType(visited, SleighTokenDefinition.class);
                 SleighIdentifier identifier = PsiTreeUtil.findChildOfType(tokenContainer, SleighIdentifier.class);
                 if (identifier != null) {
-                    FoldingGroup group = FoldingGroup.newGroup(SleighAnnotator.SLEIGH_PREFIX_STRING);
+                    FoldingGroup group = FoldingGroup.newGroup(HelpersKt.SLEIGH_PREFIX_STRING);
                     descriptors.add(new FoldingDescriptor(visited.getNode(), visited.getTextRange(), group,
                             tokenContainer.getPlaceholderText()));
                 }
@@ -43,7 +44,7 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
 
                     @Override
                     public void visitMacrodef(@NotNull SleighMacrodef visited) {
-                        FoldingGroup group = FoldingGroup.newGroup(SleighAnnotator.SLEIGH_PREFIX_STRING);
+                        FoldingGroup group = FoldingGroup.newGroup(HelpersKt.SLEIGH_PREFIX_STRING);
                         PsiElement parent = visited.getParent();
                         descriptors.add(new FoldingDescriptor(parent.getNode(), parent.getTextRange(), group,
                                 visited.getPlaceholderText()));
@@ -57,7 +58,7 @@ public class SleighFoldingBuilder extends FoldingBuilderEx implements DumbAware 
                         }
 
                         if (container.getFirstChild() instanceof SleighDisplay) {
-                            FoldingGroup group = FoldingGroup.newGroup(SleighAnnotator.SLEIGH_PREFIX_STRING);
+                            FoldingGroup group = FoldingGroup.newGroup(HelpersKt.SLEIGH_PREFIX_STRING);
                             PsiElement parent = visited.getParent();
                             descriptors.add(new FoldingDescriptor(parent.getNode(), parent.getTextRange(), group,
                                     ((SleighDisplay) container.getFirstChild()).getPlaceholderText()));
