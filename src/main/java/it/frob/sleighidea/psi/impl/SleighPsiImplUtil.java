@@ -102,34 +102,6 @@ public class SleighPsiImplUtil {
                 PlatformIcons.FUNCTION_ICON, null);
     }
 
-    // Accessors for SleighInteger
-
-    /**
-     * Convert a {@link SleighInteger} instance to an integer, taking care of base conversion.
-     *
-     * @param integer the {@link SleighInteger} instance to convert.
-     * @return the converted positive integer.
-     */
-    public static int toInteger(@NotNull SleighInteger integer) {
-        PsiElement binaryNumber = integer.getBinnumber();
-        if (binaryNumber != null) {
-            return Integer.parseInt(binaryNumber.getText().substring(2), 2);
-        }
-
-        PsiElement decimalNumber = integer.getDecnumber();
-        if (decimalNumber != null) {
-            return Integer.parseInt(decimalNumber.getText(), 10);
-        }
-
-        PsiElement hexadecimalNumber = integer.getHexnumber();
-        if (hexadecimalNumber != null) {
-            return Integer.parseInt(hexadecimalNumber.getText().substring(2), 16);
-        }
-
-        // Handle SleighInteger elements that were constructed via meta rules.
-        return baseAwareIntegerParser(integer.getText());
-    }
-
     // Accessors for SleighSpaceDefinition elements (and their children)
 
     /**
@@ -151,20 +123,16 @@ public class SleighPsiImplUtil {
      */
     @NotNull
     public static String getPlaceholderText(@NotNull SleighSpaceDefinition element) throws ModelException {
-        SleighIntegerValue sizeElement = element.getSize().get(0).second;
-        String size = sizeElement.getExternalDefinition() != null ?
-                sizeElement.getExternalDefinition().getText() :
-                String.valueOf(Objects.requireNonNull(sizeElement.getInteger()).toInteger());
+        SleighPositiveIntegerValue sizeElement = element.getSize().get(0).second;
+        String size = sizeElement.isExternal() ? sizeElement.getText() : String.valueOf(sizeElement.toInteger());
 
         String wordSize;
-        List<Pair<@NotNull SleighSpaceWordsizeModifier, @NotNull SleighIntegerValue>> wordSizes = element.getWordSize();
+        List<Pair<@NotNull SleighSpaceWordsizeModifier, @NotNull SleighPositiveIntegerValue>> wordSizes = element.getWordSize();
         if (wordSizes.isEmpty()) {
             wordSize = size;
         } else {
-            SleighIntegerValue wordSizeValue = wordSizes.get(0).second;
-            wordSize = wordSizeValue.getExternalDefinition() != null ?
-                    wordSizeValue.getExternalDefinition().getText() :
-                    String.valueOf(Objects.requireNonNull(wordSizeValue.getInteger()).toInteger());
+            SleighPositiveIntegerValue wordSizeValue = wordSizes.get(0).second;
+            wordSize = wordSizeValue.isExternal() ? wordSizeValue.getText() : String.valueOf(wordSizeValue.toInteger());
         }
 
         return String.format("%s (size: %s, word size: %s)", getName(element), size, wordSize);
@@ -195,14 +163,14 @@ public class SleighPsiImplUtil {
      *
      * @param element the element to get the size modifiers of.
      * @return a list of {@code Pair} of {@link SleighSpaceSizeModifier} element, together with the associated
-     * {@link SleighIntegerValue}.
+     * {@link SleighPositiveIntegerValue}.
      */
     @NotNull
-    public static List<Pair<@NotNull SleighSpaceSizeModifier, @NotNull SleighIntegerValue>> getSize(@NotNull SleighSpaceDefinition element) {
+    public static List<Pair<@NotNull SleighSpaceSizeModifier, @NotNull SleighPositiveIntegerValue>> getSize(@NotNull SleighSpaceDefinition element) {
         return element.getSpaceModifierList().stream()
                 .map(SleighSpaceModifier::getSpaceSizeModifier)
                 .filter(Objects::nonNull)
-                .map(modifier -> Pair.create(modifier, modifier.getIntegerValue()))
+                .map(modifier -> Pair.create(modifier, modifier.getPositiveIntegerValue()))
                 .collect(Collectors.toList());
     }
 
@@ -211,14 +179,14 @@ public class SleighPsiImplUtil {
      *
      * @param element the element to get the word size modifiers of.
      * @return a list of {@code Pair} of {@link SleighSpaceWordsizeModifier} element, together with the associated
-     * {@link SleighIntegerValue}.
+     * {@link SleighPositiveIntegerValue}.
      */
     @NotNull
-    public static List<Pair<@NotNull SleighSpaceWordsizeModifier, @NotNull SleighIntegerValue>> getWordSize(@NotNull SleighSpaceDefinition element) {
+    public static List<Pair<@NotNull SleighSpaceWordsizeModifier, @NotNull SleighPositiveIntegerValue>> getWordSize(@NotNull SleighSpaceDefinition element) {
         return element.getSpaceModifierList().stream()
                 .map(SleighSpaceModifier::getSpaceWordsizeModifier)
                 .filter(Objects::nonNull)
-                .map(modifier -> Pair.create(modifier, modifier.getIntegerValue()))
+                .map(modifier -> Pair.create(modifier, modifier.getPositiveIntegerValue()))
                 .collect(Collectors.toList());
     }
 
@@ -249,28 +217,6 @@ public class SleighPsiImplUtil {
                 .map(SleighSpaceModifier::getKeyDefault)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Extract the {@link SleighInteger} instance contained in the given {@link SleighSpaceSizeModifier}.
-     *
-     * @param modifier the {@link SleighSpaceSizeModifier} element to extract data from.
-     * @return the {@link SleighInteger} contained in the given element.
-     */
-    @NotNull
-    public static SleighInteger getInteger(@NotNull SleighSpaceSizeModifier modifier) {
-        return Objects.requireNonNull(PsiTreeUtil.findChildOfType(modifier, SleighInteger.class));
-    }
-
-    /**
-     * Extract the {@link SleighInteger} instance contained in the given {@link SleighSpaceWordsizeModifier}.
-     *
-     * @param modifier the {@link SleighSpaceWordsizeModifier} element to extract data from.
-     * @return the {@link SleighInteger} contained in the given element.
-     */
-    @NotNull
-    public static SleighInteger getInteger(@NotNull SleighSpaceWordsizeModifier modifier) {
-        return Objects.requireNonNull(PsiTreeUtil.findChildOfType(modifier, SleighInteger.class));
     }
 
     // Accessors for SleighVariablesNodeDefinition elements (and their children)
@@ -402,16 +348,58 @@ public class SleighPsiImplUtil {
         return symbol.getExternalDefinition() != null;
     }
 
-    public static boolean isExternal(@NotNull SleighIntegerValue value) {
+    public static int toInteger(@NotNull SleighPositiveInteger value) {
+        return baseAwareIntegerParser(value.getText());
+    }
+
+    public static int toInteger(@NotNull SleighNegativeInteger value) {
+        return -baseAwareIntegerParser(value.getText().substring(1));
+    }
+
+    public static boolean isExternal(@NotNull SleighPositiveIntegerValue value) {
         return value.getExternalDefinition() != null;
+    }
+
+    public static boolean isExternal(@NotNull SleighNegativeIntegerValue value) {
+        return value.getExternalDefinition() != null;
+    }
+
+    public static boolean isExternal(@NotNull SleighIntegerValue value) {
+        if (value.getPositiveIntegerValue() != null) {
+            return value.getPositiveIntegerValue().isExternal();
+        }
+
+        return Objects.requireNonNull(value.getNegativeIntegerValue()).isExternal();
+    }
+
+    @Nullable
+    public static Integer toInteger(@NotNull SleighPositiveIntegerValue value) {
+        if (value.isExternal()) {
+            return null;
+        }
+
+        return Objects.requireNonNull(value.getPositiveInteger()).toInteger();
+    }
+
+    @Nullable
+    public static Integer toInteger(@NotNull SleighNegativeIntegerValue value) {
+        if (value.isExternal()) {
+            return null;
+        }
+
+        return Objects.requireNonNull(value.getNegativeInteger()).toInteger();
     }
 
     @Nullable
     public static Integer toInteger(@NotNull SleighIntegerValue value) {
-        if (value.getExternalDefinition() != null) {
+        if (value.isExternal()) {
             return null;
         }
 
-        return Objects.requireNonNull(value.getInteger()).toInteger();
+        if (value.getPositiveIntegerValue() != null) {
+            return value.getPositiveIntegerValue().toInteger();
+        } else {
+            return Objects.requireNonNull(value.getNegativeIntegerValue()).toInteger();
+        }
     }
 }

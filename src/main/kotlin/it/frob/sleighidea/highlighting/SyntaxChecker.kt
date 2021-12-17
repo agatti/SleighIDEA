@@ -95,8 +95,8 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
         when (visited.size.size) {
             0 -> markElementAsError(visited.parent, holder, "Memory space must have a size modifier.")
             1 -> visited.size.first().run {
-                second.integer?.let { integer ->
-                    if (integer.toInteger() <= 0) {
+                second.toInteger()?.let { integer ->
+                    if (integer <= 0) {
                         markElementAsError(first, holder, "Memory space size must be greater than zero.")
                     }
                 }
@@ -107,8 +107,8 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
         }
 
         if (visited.wordSize.size == 1) visited.wordSize.first().run {
-            second.integer?.let { integer ->
-                if (integer.toInteger() <= 0) {
+            second.toInteger()?.let { integer ->
+                if (integer <= 0) {
                     markElementAsError(first, holder, "Memory space word size must be greater than zero.")
                 }
             }
@@ -133,9 +133,9 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitAlignmentDefinition(visited: SleighAlignmentDefinition) {
         super.visitAlignmentDefinition(visited)
 
-        visited.integerValue.integer?.let { integer ->
-            if (integer.toInteger() <= 0) {
-                markElementAsError(visited.integerValue.parent, holder, "Alignment must be greater than zero.")
+        visited.positiveIntegerValue.toInteger()?.let { integer ->
+            if (integer <= 0) {
+                markElementAsError(visited.positiveIntegerValue.parent, holder, "Alignment must be greater than zero.")
             }
         }
     }
@@ -143,7 +143,7 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitVariablesNodeDefinition(visited: SleighVariablesNodeDefinition) {
         super.visitVariablesNodeDefinition(visited)
 
-        visited.size!!.integer?.let { integer ->
+        visited.size!!.positiveInteger?.let { integer ->
             if (integer.toInteger() <= 0) {
                 markElementAsError(
                     visited.keySize.textOffset,
@@ -189,28 +189,7 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitVariableAttach(visited: SleighVariableAttach) {
         super.visitVariableAttach(visited)
 
-        val valuesLength = visited.symbolOrWildcardList.size.toULong()
-
-        visited.symbolList.forEach { symbol ->
-            availableTokenFieldsMap[symbol.value]?.let { field ->
-                if (!field.bitStart.isExternal && !field.bitEnd!!.isExternal) {
-                    val fieldSize = abs(field.bitEnd!!.toInteger()!! - field.bitStart.toInteger()!!) + 1
-                    val expectedValuesLength = 2.toDouble().pow(fieldSize).toULong()
-
-                    if (expectedValuesLength != valuesLength) {
-                        markElementAsError(
-                            symbol, holder,
-                            "Field \"${symbol.value}\" has the wrong size ($expectedValuesLength vs $valuesLength)."
-                        )
-                    }
-                }
-                return@forEach
-            }
-
-            if (!symbol.isExternal) {
-                markElementAsError(symbol, holder, "Unknown field \"${symbol.value}\".")
-            }
-        }
+        checkSymbolListAssignment(visited.symbolList, visited.symbolOrWildcardList.size.toULong())
 
         visited.symbolOrWildcardList
             .mapNotNull { symbol -> symbol.symbol }
@@ -220,6 +199,12 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
                     markElementAsError(symbol, holder, "Unknown variable \"${symbol.value}\".")
                 }
             }
+    }
+
+    override fun visitValueAttach(visited: SleighValueAttach) {
+        super.visitValueAttach(visited)
+
+        checkSymbolListAssignment(visited.symbolList, visited.integerOrWildcardList.size.toULong())
     }
 
     private fun checkTokenFieldDefinition(token: SleighTokenDefinition, field: SleighTokenFieldDefinition) {
@@ -237,7 +222,7 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
             markElementAsError(field.bitStart, field.bitEnd!!, holder, "Invalid bit extent definition.")
         }
 
-        token.integerValue.toInteger()?.let { tokenBits ->
+        token.positiveIntegerValue.toInteger()?.let { tokenBits ->
             val extentBits = tokenBits - 1
 
             if (!field.bitStart.isExternal) {
@@ -293,5 +278,29 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
                     decSeen = true
                 }
             }
+    }
+
+    private fun checkSymbolListAssignment(symbolList: List<SleighSymbol>, valuesLength: ULong) {
+        symbolList.forEach { symbol ->
+            availableTokenFieldsMap[symbol.value]?.let { field ->
+                if (field.bitStart.isExternal || field.bitEnd!!.isExternal) {
+                    return@let
+                }
+
+                val fieldSize = abs(field.bitEnd!!.toInteger()!! - field.bitStart.toInteger()!!) + 1
+                val expectedValuesLength = 2.toDouble().pow(fieldSize).toULong()
+
+                if (expectedValuesLength != valuesLength) {
+                    markElementAsError(
+                        symbol, holder,
+                        "Field \"${symbol.value}\" has the wrong size ($expectedValuesLength vs $valuesLength)."
+                    )
+                }
+            } ?: run {
+                if (!symbol.isExternal) {
+                    markElementAsError(symbol, holder, "Unknown field \"${symbol.value}\".")
+                }
+            }
+        }
     }
 }

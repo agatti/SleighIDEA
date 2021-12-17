@@ -159,7 +159,7 @@ private definition_statement ::= endiandef
                                | bit_range_definition
                                | pcodeopdef
 private attach_container ::= KEY_ATTACH attach_statement
-private attach_statement ::= valueattach
+private attach_statement ::= value_attach
                            | nameattach
                            | variable_attach
 
@@ -169,13 +169,13 @@ endian ::= KEY_BIG
          | external_definition
 { generateTokenAccessors=true }
 
-alignment_definition ::= KEY_ALIGNMENT ASSIGN integer_value
+alignment_definition ::= KEY_ALIGNMENT ASSIGN positive_integer_value
 
-token_definition ::= KEY_TOKEN symbol LPAREN integer_value RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
+token_definition ::= KEY_TOKEN symbol LPAREN positive_integer_value RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
 { methods=[getEndianness getName getPlaceholderText getPresentation getSize] }
 private token_field_definitions ::= token_field_definition *
-token_field_definition ::= symbol ASSIGN LPAREN integer_value COMMA integer_value RPAREN token_field_modifiers
-{ methods=[bitStart="/integer_value[0]" bitEnd="/integer_value[1]" getDec getHex getSigned] }
+token_field_definition ::= symbol ASSIGN LPAREN positive_integer_value COMMA positive_integer_value RPAREN token_field_modifiers
+{ methods=[bitStart="/positive_integer_value[0]" bitEnd="/positive_integer_value[1]" getDec getHex getSigned] }
 private token_field_modifiers ::= token_field_modifier *
 token_field_modifier ::= KEY_SIGNED
                        | KEY_HEX
@@ -184,7 +184,7 @@ token_field_modifier ::= KEY_SIGNED
 
 context_definition ::= KEY_CONTEXT identifier context_field_definitions
 private context_field_definitions ::= context_field_definition *
-context_field_definition ::= identifier ASSIGN LPAREN integer COMMA integer RPAREN context_field_modifiers
+context_field_definition ::= identifier ASSIGN LPAREN positive_integer COMMA positive_integer RPAREN context_field_modifiers
 private context_field_modifiers ::= context_field_modifier *
 context_field_modifier ::= KEY_SIGNED
                          | KEY_NOFLOW
@@ -202,23 +202,28 @@ space_modifier ::= space_type_modifier
 { generateTokenAccessors=true }
 space_type_modifier ::= KEY_TYPE ASSIGN space_type
 space_type ::= identifier
-space_size_modifier ::= KEY_SIZE ASSIGN integer_value
-space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN integer_value
+space_size_modifier ::= KEY_SIZE ASSIGN positive_integer_value
+space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN positive_integer_value
 
-variables_node_definition ::= symbol KEY_OFFSET ASSIGN integer_value KEY_SIZE ASSIGN integer_value <<variable_list symbol_or_wildcard>>
+variables_node_definition ::= symbol KEY_OFFSET ASSIGN positive_integer_value KEY_SIZE ASSIGN positive_integer_value <<variable_list symbol_or_wildcard>>
 {
     generateTokenAccessors=true
-    methods=[offset="/integer_value[0]" size="/integer_value[1]" getSpace]
+    methods=[offset="/positive_integer_value[0]" size="/positive_integer_value[1]" getSpace]
 }
 
 bit_range_definition ::= KEY_BITRANGE bit_ranges
 private bit_ranges ::= bit_range +
-bit_range ::= identifierlist ASSIGN identifierlist LBRACKET integer_value COMMA integer_value RBRACKET
+bit_range ::= identifierlist ASSIGN identifierlist LBRACKET positive_integer_value COMMA positive_integer_value RBRACKET
 pcodeopdef ::= KEY_PCODEOP identifierlist
-valueattach ::= KEY_VALUES identifierlist intblist
+
+value_attach ::= KEY_VALUES <<variable_list symbol>> <<variable_list integer_or_wildcard>>
+
 nameattach ::= KEY_NAMES identifierlist stringoridentlist
 
 variable_attach ::= KEY_VARIABLES <<variable_list symbol>> <<variable_list symbol_or_wildcard>>
+
+integer_or_wildcard ::= integer_value
+                      | wildcard
 
 identifierlist ::= LBRACKET id_or_wild + RBRACKET
                  | id_or_wild
@@ -226,12 +231,6 @@ stringoridentlist ::= LBRACKET stringorident + RBRACKET
                     | stringorident
 stringorident ::= id_or_wild
                 | quoted_string
-intblist ::= LBRACKET intbpart + RBRACKET
-           | neginteger
-intbpart ::= neginteger
-           | UNDERSCORE
-neginteger ::= integer
-             | MINUS integer
 
 private meta variable_list ::= LBRACKET <<param>> + RBRACKET
                              | <<param>>
@@ -312,7 +311,7 @@ pexpression_func ::= pexpression_apply
 pexpression_apply ::= identifier pexpression_operands
 pexpression_operands ::= LPAREN [ pexpression ( COMMA pexpression ) * ] RPAREN
 pexpression_term ::= identifier
-                   | integer
+                   | positive_integer
                    | LPAREN pexpression RPAREN
 pexpression2 ::= pexpression2_or
 pexpression2_or ::= pexpression2_xor ( pexpression2_or_op pexpression2_xor ) *
@@ -339,7 +338,7 @@ pexpression2_func ::= pexpression2_apply
 pexpression2_apply ::= identifier pexpression2_operands
 pexpression2_operands ::= LPAREN [ pexpression2 ( COMMA pexpression2 ) * ] RPAREN
 pexpression2_term ::= identifier
-                    | integer
+                    | positive_integer
                     | LPAREN pexpression2 RPAREN
 
 semanticbody ::= LBRACE statement * RBRACE
@@ -372,7 +371,7 @@ crossbuild_stmt ::= KEY_CROSSBUILD variable_node COMMA identifier
 goto_stmt ::= KEY_GOTO jumpdest
 jumpdest ::= identifier
            | LBRACKET expr RBRACKET
-           | integer
+           | positive_integer
            | constant
            | label
 cond_stmt ::= RES_IF expr goto_stmt
@@ -444,9 +443,9 @@ expr_term ::= LPAREN expr RPAREN
             | variable_node
 
 variable_node ::= identifier [ COLON constant ]
-                | integer [ COLON constant ]
+                | positive_integer [ COLON constant ]
                 | AMPERSAND [ COLON constant ] variable_node
-constant ::= integer
+constant ::= positive_integer
 
 display ::= COLON print_pieces RES_IS {
     methods = [ getPlaceholderText ]
@@ -543,8 +542,16 @@ strict_id ::= IDENTIFIER
 
 IDENTIFIER ::= symbol_string
 
-integer_value ::= external_definition
-                | integer
+integer_value ::= positive_integer_value
+                | negative_integer_value
+{ methods=[isExternal toInteger] }
+
+negative_integer_value ::= external_definition
+                         | negative_integer
+{ methods=[isExternal toInteger] }
+
+positive_integer_value ::= external_definition
+                         | positive_integer
 { methods=[isExternal toInteger] }
 
 symbol ::= external_definition
@@ -555,9 +562,12 @@ external_definition ::= DEFINITION_START symbol_string RPAREN
 
 symbol_string ::= LITERALSYMBOL
 
-integer ::= hexnumber
-          | decnumber
-          | binnumber
+negative_integer ::= MINUS positive_integer
+{ methods=[toInteger] }
+
+positive_integer ::= hexnumber
+                   | decnumber
+                   | binnumber
 { methods=[toInteger] }
 
 DISPCHAR ::= displaychar

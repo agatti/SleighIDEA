@@ -65,7 +65,7 @@ public class SpaceVisitor extends SleighVisitor {
 
     @Override
     public void visitSpaceSizeModifier(@NotNull SleighSpaceSizeModifier visited) {
-        SleighInteger sizeNode = PsiTreeUtil.findChildOfType(visited, SleighInteger.class);
+        SleighPositiveInteger sizeNode = PsiTreeUtil.findChildOfType(visited, SleighPositiveInteger.class);
         if (sizeNode == null) {
             // No integer is attached if the value was invalid to begin with.
             return;
@@ -82,7 +82,7 @@ public class SpaceVisitor extends SleighVisitor {
 
     @Override
     public void visitSpaceWordsizeModifier(@NotNull SleighSpaceWordsizeModifier visited) {
-        SleighInteger wordSizeNode = PsiTreeUtil.findChildOfType(visited, SleighInteger.class);
+        SleighPositiveInteger wordSizeNode = PsiTreeUtil.findChildOfType(visited, SleighPositiveInteger.class);
         if (wordSizeNode == null) {
             // No integer is attached if the value was invalid to begin with.
             return;
