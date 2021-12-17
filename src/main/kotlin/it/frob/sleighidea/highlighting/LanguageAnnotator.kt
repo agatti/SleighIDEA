@@ -9,6 +9,6 @@ import com.intellij.psi.PsiElement
 
 class LanguageAnnotator : Annotator, DumbAware {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        element.accept(SyntaxChecker(holder))
+        element.accept(SyntaxChecker(element, holder))
     }
 }

@@ -2,12 +2,12 @@
 
 package it.frob.sleighidea.model.space;
 
-import it.frob.sleighidea.model.ModelException;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Memory space variables container class.
@@ -15,9 +15,9 @@ import java.util.List;
 public class VariablesContainer {
 
     /**
-     * The {@link SleighVarnodedef} element for the container.
+     * The {@link SleighVariablesNodeDefinition} element for the container.
      */
-    private final SleighVarnodedef definition;
+    private final SleighVariablesNodeDefinition definition;
 
     /**
      * A list of {@link Variable} instances that are present in the current container.
@@ -25,25 +25,17 @@ public class VariablesContainer {
     private final List<Variable> variables = new ArrayList<>();
 
     /**
-     * Use the given {@link SleighVarnodedef} instance as a data source.
+     * Use the given {@link SleighVariablesNodeDefinition} instance as a data source.
      *
      * @param definition the definition element to extract data from.
-     * @throws ModelException if the extraction process failed.
      */
-    public VariablesContainer(@NotNull SleighVarnodedef definition) throws ModelException {
+    public VariablesContainer(@NotNull SleighVariablesNodeDefinition definition) {
         this.definition = definition;
 
-        int offset = definition.getOffset();
-        int size = definition.getSize();
-        for (SleighIdOrWild element : definition.getIdentifierlist().getIdOrWildList()) {
-            SleighWildcard wildcard = element.getWildcard();
-            if (wildcard == null) {
-                SleighIdentifier identifier = element.getIdentifier();
-                assert identifier != null;
-                variables.add(new Variable(identifier, identifier.getText().trim(), size, offset));
-            }
-            offset += size;
-        }
+        variables.addAll(definition.getSymbolOrWildcardList().stream()
+                .filter(symbol -> symbol.getSymbol() != null)
+                .map(symbol -> new Variable(symbol.getSymbol(), symbol.getSymbol().getValue()))
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -51,7 +43,7 @@ public class VariablesContainer {
      *
      * @return the variables container parse tree element.
      */
-    public SleighVarnodedef getDefinition() {
+    public SleighVariablesNodeDefinition getDefinition() {
         return definition;
     }
 

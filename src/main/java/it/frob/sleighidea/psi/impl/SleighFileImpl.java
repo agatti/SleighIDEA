@@ -88,6 +88,18 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     );
 
     /**
+     * All the variables node definition elements in the file, wrapped in a cache-aware container.
+     */
+    private final CachedValue<List<SleighVariablesNodeDefinition>> variableDefinitions = createCachedValue(
+            new ValueProvider<>() {
+                @Override
+                protected @NotNull List<SleighVariablesNodeDefinition> computeValue() {
+                    return Collections.unmodifiableList(collectVariablesNodeDefinitions());
+                }
+            }
+    );
+
+    /**
      * Constructor.
      *
      * @param viewProvider the access class for the file's PSI elements.
@@ -134,6 +146,11 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     @Override
     public Collection<SleighInclude> getIncludes() {
         return includes.getValue();
+    }
+
+    @Override
+    public Collection<SleighVariablesNodeDefinition> getVariablesNodeDefinitions() {
+        return variableDefinitions.getValue();
     }
 
     /**
@@ -197,8 +214,8 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
      */
     @NotNull
     private List<Space> collectSpacesList() {
-        Collection<SleighVarnodedef> variableDeclarations =
-                PsiTreeUtil.collectElementsOfType(this, SleighVarnodedef.class);
+        Collection<SleighVariablesNodeDefinition> variableDeclarations =
+                PsiTreeUtil.collectElementsOfType(this, SleighVariablesNodeDefinition.class);
         return PsiTreeUtil.collectElementsOfType(this, SleighSpaceDefinition.class)
                 .stream()
                 .map(space -> {
@@ -242,5 +259,18 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     @NotNull
     private List<SleighInclude> collectIncludes() {
         return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighInclude.class));
+    }
+
+    /**
+     * Extract all variables node definition elements in the file.
+     *
+     * @return a list containing the {@link SleighVariablesNodeDefinition} instances found in the file.
+     */
+    @NotNull
+    private List<SleighVariablesNodeDefinition> collectVariablesNodeDefinitions() {
+        return PsiTreeUtil.collectElementsOfType(this, SleighDefinition.class).stream()
+                .map(child -> PsiTreeUtil.getChildrenOfTypeAsList(child, SleighVariablesNodeDefinition.class))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 }

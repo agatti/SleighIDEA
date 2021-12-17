@@ -8,12 +8,21 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import java.util.*
 import javax.swing.Icon
 
 internal fun markElementAsError(element: PsiElement, holder: AnnotationHolder, message: String) {
-    holder.newAnnotation(HighlightSeverity.ERROR, message).range(element).create()
+    holder.newAnnotation(HighlightSeverity.ERROR, message)
+        .range(element)
+        .create()
+}
+
+internal fun markElementAsError(textStart: Int, textEnd: Int, holder: AnnotationHolder, message: String) {
+    holder.newAnnotation(HighlightSeverity.ERROR, message)
+        .range(TextRange(textStart, textEnd))
+        .create()
 }
 
 /**

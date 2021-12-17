@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
+import it.frob.sleighidea.model.Endianness;
 import it.frob.sleighidea.model.ModelException;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
@@ -126,20 +127,6 @@ public class SleighPsiImplUtil {
 
         // Handle SleighInteger elements that were constructed via meta rules.
         return baseAwareIntegerParser(integer.getText());
-    }
-
-    // Accessors for SleighAligndef
-
-    /**
-     * Extract the alignment value from a {@link SleighAligndef} element.
-     *
-     * @param element the element to get the alignment value from.
-     * @return the alignment value.
-     */
-    public static int getAlignment(@NotNull SleighAligndef element) {
-        SleighInteger integer = PsiTreeUtil.findChildOfType(element, SleighInteger.class);
-        assert integer != null;
-        return integer.toInteger();
     }
 
     // Accessors for SleighSpaceDefinition elements (and their children)
@@ -285,52 +272,17 @@ public class SleighPsiImplUtil {
         return Objects.requireNonNull(PsiTreeUtil.findChildOfType(modifier, SleighInteger.class));
     }
 
-    // Accessors for SleighVarnodedef elements (and their children)
+    // Accessors for SleighVariablesNodeDefinition elements (and their children)
 
     /**
-     * Extract the identifiers list contained in the given {@link SleighVarnodedef}.
+     * Extract the given {@link SleighVariablesNodeDefinition}'s bound memory space symbol.
      *
-     * @param varnode the {@link SleighVarnodedef} instance to extract data from.
-     * @return a list of identifiers defined in the source element, in string form.
+     * @param node the {@link SleighVariablesNodeDefinition} instance to extract data from.
+     * @return the bound memory space symbol for the input element.
      */
     @NotNull
-    public static List<String> getIdentifiers(@NotNull SleighVarnodedef varnode) {
-        return varnode.getIdentifierlist().getIdOrWildList().stream()
-                .map(PsiElement::getText)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Extract the variables list's start offset for the given {@link SleighVarnodedef}.
-     *
-     * @param varnode the {@link SleighVarnodedef} instance to extract data from.
-     * @return the starting offset for the input {@link SleighVarnodedef}.
-     */
-    public static int getOffset(@NotNull SleighVarnodedef varnode) {
-        Collection<SleighInteger> integers = PsiTreeUtil.findChildrenOfType(varnode, SleighInteger.class);
-        return integers.toArray(new SleighInteger[0])[0].toInteger();
-    }
-
-    /**
-     * Extract the variables list's size for the given {@link SleighVarnodedef}.
-     *
-     * @param varnode the {@link SleighVarnodedef} instance to extract data from.
-     * @return the variables size for the input {@link SleighVarnodedef}.
-     */
-    public static int getSize(@NotNull SleighVarnodedef varnode) {
-        Collection<SleighInteger> integers = PsiTreeUtil.findChildrenOfType(varnode, SleighInteger.class);
-        return integers.toArray(new SleighInteger[0])[1].toInteger();
-    }
-
-    /**
-     * Extract the given {@link SleighVarnodedef}'s bound memory space name.
-     *
-     * @param varnode the {@link SleighVarnodedef} instance to extract data from.
-     * @return the bound memory space name for the input element.
-     */
-    @NotNull
-    public static String getSpaceName(@NotNull SleighVarnodedef varnode) {
-        return varnode.getIdentifier().getText().trim();
+    public static SleighSymbol getSpace(@NotNull SleighVariablesNodeDefinition node) {
+        return node.getSymbol();
     }
 
     // Accessors for SleighTokenDefinition elements (and their children)
@@ -388,12 +340,11 @@ public class SleighPsiImplUtil {
      * Extract the name of a {@link SleighTokenDefinition} element.
      *
      * @param element the element to get the name of.
-     * @return the token's name, or null if none could be extracted.
+     * @return the token's name.
      */
-    @Nullable
+    @NotNull
     public static String getName(@NotNull SleighTokenDefinition element) {
-        SleighIdentifier identifier = PsiTreeUtil.findChildOfType(element, SleighIdentifier.class);
-        return identifier != null ? identifier.getText().trim() : null;
+        return element.getSymbol().getValue();
     }
 
     /**
@@ -402,7 +353,8 @@ public class SleighPsiImplUtil {
      * @param element the element to get the placeholder text for.
      * @return the placeholder text derived from the given element.
      */
-    public static @Nullable String getPlaceholderText(@NotNull SleighTokenDefinition element) {
+    @NotNull
+    public static String getPlaceholderText(@NotNull SleighTokenDefinition element) {
         return getName(element);
     }
 
@@ -416,5 +368,52 @@ public class SleighPsiImplUtil {
     public static ItemPresentation getPresentation(@NotNull SleighTokenDefinition element) {
         return new PresentationData(getPlaceholderText(element), getContainingFile(element), PlatformIcons.CLASS_ICON,
                 null);
+    }
+
+    /**
+     * Extract the endianness of a {@link SleighTokenDefinition} element.
+     *
+     * @param element the element to get the endianness for.
+     * @return a member of the {@link Endianness} enumeration indicating the element's endianness.
+     */
+    @NotNull
+    public static Endianness getEndianness(@NotNull SleighTokenDefinition element) {
+        SleighEndian endianness = element.getEndian();
+        if (endianness == null) {
+            return Endianness.DEFAULT;
+        }
+
+        if (endianness.getExternalDefinition() != null) {
+            return Endianness.EXTERNAL;
+        }
+
+        if (endianness.getKeyBig() != null) {
+            return Endianness.BIG;
+        }
+
+        return Endianness.LITTLE;
+    }
+
+    @NotNull
+    public static String getValue(@NotNull SleighSymbol symbol) {
+        if (symbol.getExternalDefinition() != null) {
+            return symbol.getExternalDefinition().getText();
+        }
+
+        assert symbol.getSymbolString() != null;
+        return symbol.getSymbolString().getText();
+    }
+
+    public static boolean isExternal(@NotNull SleighSymbol symbol) {
+        return symbol.getExternalDefinition() != null;
+    }
+
+    @Nullable
+    public static Integer toInteger(@NotNull SleighIntegerValue value) {
+        if (value.getExternalDefinition() != null) {
+            return null;
+        }
+
+        return Objects.requireNonNull(value.getInteger()).toInteger();
     }
 }

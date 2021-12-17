@@ -151,12 +151,12 @@ private definition_kind ::= definition_container
                           | attach_container
 private definition_container ::= KEY_DEFINE definition_statement
 private definition_statement ::= endiandef
-                               | aligndef
+                               | alignment_definition
                                | token_definition
                                | context_definition
                                | space_definition
-                               | varnodedef
-                               | bitrangedef
+                               | variables_node_definition
+                               | bit_range_definition
                                | pcodeopdef
 private attach_container ::= KEY_ATTACH attach_statement
 private attach_statement ::= valueattach
@@ -166,13 +166,13 @@ private attach_statement ::= valueattach
 endiandef ::= KEY_ENDIAN ASSIGN endian
 endian ::= KEY_BIG
          | KEY_LITTLE
+         | external_definition
+{ generateTokenAccessors=true }
 
-aligndef ::= KEY_ALIGNMENT ASSIGN integer {
-    methods = [ getAlignment ]
-}
+alignment_definition ::= KEY_ALIGNMENT ASSIGN integer_value
 
-token_definition ::= KEY_TOKEN identifier LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
-{ methods=[getName getPlaceholderText getPresentation] }
+token_definition ::= KEY_TOKEN symbol LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
+{ methods=[getEndianness getName getPlaceholderText getPresentation getSize] }
 private token_field_definitions ::= token_field_definition *
 token_field_definition ::= strict_id ASSIGN LPAREN integer COMMA integer RPAREN token_field_modifiers
 { methods=[ getFieldName getFieldStart getFieldEnd isSigned ]}
@@ -180,6 +180,7 @@ private token_field_modifiers ::= token_field_modifier *
 token_field_modifier ::= KEY_SIGNED
                        | KEY_HEX
                        | KEY_DEC
+{ generateTokenAccessors=true }
 
 context_definition ::= KEY_CONTEXT identifier context_field_definitions
 private context_field_definitions ::= context_field_definition *
@@ -189,6 +190,7 @@ context_field_modifier ::= KEY_SIGNED
                          | KEY_NOFLOW
                          | KEY_HEX
                          | KEY_DEC
+{ generateTokenAccessors=true }
 
 space_definition ::= KEY_SPACE identifier space_modifiers
 { methods=[getName getPlaceholderText getPresentation getSize getType getWordSize getDefault] }
@@ -203,12 +205,15 @@ space_type ::= identifier
 space_size_modifier ::= KEY_SIZE ASSIGN integer_value
 space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN integer_value
 
-varnodedef ::= identifier KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN integer identifierlist {
-    methods = [ getIdentifiers getOffset getSize getSpaceName ]
+variables_node_definition ::= symbol KEY_OFFSET ASSIGN integer_value KEY_SIZE ASSIGN integer_value variable_identifiers_list
+{
+    generateTokenAccessors=true
+    methods=[offset="/integer_value[0]" size="/integer_value[1]" getSpace]
 }
-bitrangedef ::= KEY_BITRANGE bitranges
-bitranges ::= bitrange +
-bitrange ::= identifier ASSIGN identifier LBRACKET integer COMMA integer RBRACKET
+
+bit_range_definition ::= KEY_BITRANGE bit_ranges
+private bit_ranges ::= bit_range +
+bit_range ::= identifierlist ASSIGN identifierlist LBRACKET integer_value COMMA integer_value RBRACKET
 pcodeopdef ::= KEY_PCODEOP identifierlist
 valueattach ::= KEY_VALUES identifierlist intblist
 nameattach ::= KEY_NAMES identifierlist stringoridentlist
@@ -225,6 +230,12 @@ intbpart ::= neginteger
            | UNDERSCORE
 neginteger ::= integer
              | MINUS integer
+
+private variable_identifiers_list ::= LBRACKET symbol_or_wildcard + RBRACKET
+                                    | symbol_or_wildcard
+
+symbol_or_wildcard ::= symbol
+                     | UNDERSCORE
 
 constructorlike ::= macrodef
                   | withblock
@@ -528,14 +539,19 @@ key_as_id ::= KEY_ALIGNMENT
             | KEY_WORDSIZE
 strict_id ::= IDENTIFIER
 
-IDENTIFIER ::= symbol
+IDENTIFIER ::= symbol_string
 
 integer_value ::= external_definition
                 | integer
+{ methods=[toInteger] }
 
-external_definition ::= DEFINITION_START symbol RPAREN
+symbol ::= external_definition
+         | symbol_string
+{ methods=[getValue isExternal] }
 
-symbol ::= LITERALSYMBOL
+external_definition ::= DEFINITION_START symbol_string RPAREN
+
+symbol_string ::= LITERALSYMBOL
 
 integer ::= hexnumber
           | decnumber

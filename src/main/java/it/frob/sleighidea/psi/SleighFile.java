@@ -49,4 +49,11 @@ public interface SleighFile extends PsiFile {
      * @return the {@link SleighInclude} instances present in the file.
      */
     Collection<SleighInclude> getIncludes();
+
+    /**
+     * Get an immutable collection containing all the valid variable definition nodes.
+     *
+     * @return the {@link SleighVariablesNodeDefinition} instances present in the file.
+     */
+    Collection<SleighVariablesNodeDefinition> getVariablesNodeDefinitions();
 }

@@ -4,7 +4,7 @@ package it.frob.sleighidea.model.space;
 
 import it.frob.sleighidea.model.ModelException;
 import it.frob.sleighidea.psi.SleighSpaceDefinition;
-import it.frob.sleighidea.psi.SleighVarnodedef;
+import it.frob.sleighidea.psi.SleighVariablesNodeDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +62,7 @@ public class Space {
      * @param definition the definition element to extract data from.
      * @throws ModelException if the extraction process failed.
      */
-    public Space(@NotNull SleighSpaceDefinition definition, @NotNull Collection<SleighVarnodedef> variableDeclarations)
+    public Space(@NotNull SleighSpaceDefinition definition, @NotNull Collection<SleighVariablesNodeDefinition> variableDeclarations)
             throws ModelException {
         SpaceVisitor visitor = new SpaceVisitor();
         definition.acceptChildren(visitor);
@@ -71,8 +71,8 @@ public class Space {
             throw new ModelException("Invalid space definition found.");
         }
 
-        for (SleighVarnodedef declaration : variableDeclarations) {
-            if (declaration.getSpaceName().equals(visitor.getName())) {
+        for (SleighVariablesNodeDefinition declaration : variableDeclarations) {
+            if (declaration.getSymbol().getValue().equals(visitor.getName())) {
                 VariablesContainer variablesContainer = new VariablesContainer(declaration);
 
                 for (Variable variable : variablesContainer.getVariables()) {

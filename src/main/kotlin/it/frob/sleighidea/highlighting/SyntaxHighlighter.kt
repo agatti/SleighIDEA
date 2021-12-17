@@ -47,15 +47,10 @@ open class SyntaxHighlighter(protected val holder: AnnotationHolder) : SleighVis
         }
     }
 
-    override fun visitIdentifierlist(visited: SleighIdentifierlist) {
-        PsiTreeUtil.collectElementsOfType(visited, SleighIdentifier::class.java)
-            .forEach { identifier: SleighIdentifier ->
-                highlight(
-                    identifier,
-                    holder,
-                    SleighSyntaxHighlighter.IDENTIFIER
-                )
-            }
+    override fun visitSymbolOrWildcard(visited: SleighSymbolOrWildcard) {
+        if (visited.symbol?.isExternal == true) {
+            highlight(visited, holder, SleighSyntaxHighlighter.IDENTIFIER)
+        }
     }
 
     override fun visitJumpdest(visited: SleighJumpdest) {

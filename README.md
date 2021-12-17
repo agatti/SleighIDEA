@@ -11,7 +11,6 @@ a [Sleigh](https://ghidra.re/courses/languages/html/sleigh.html) plugin for Inte
 * Some token colouring in the editor view
 * Simple colour customisation support
 * Gutter icons for tables and opcodes
-* Few syntax inspections
 * Basic structure view support for opcodes
 * Basic folding support.
 
@@ -26,20 +25,8 @@ Pretty much everything else:
 * Full syntax colouring
 * Autocompletion support
 * Handling of `.ldefs`, `.cspec`, `.pspec`, and `.opinion` files
-* More inspections
+* Syntax inspections
 * etc.
-
-## Implemented inspections
-
-### Memory spaces
-
-* Duplicate name
-* Multiple default spaces
-
-### Variable definitions
-
-* Memory space validity
-* Duplicate variable definition
 
 ## FAQ
 
