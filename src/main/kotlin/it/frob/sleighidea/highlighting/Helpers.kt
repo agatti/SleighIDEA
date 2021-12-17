@@ -25,6 +25,17 @@ internal fun markElementAsError(textStart: Int, textEnd: Int, holder: Annotation
         .create()
 }
 
+internal fun markElementAsError(
+    startElement: PsiElement,
+    endElement: PsiElement,
+    holder: AnnotationHolder,
+    message: String
+) {
+    holder.newAnnotation(HighlightSeverity.ERROR, message)
+        .range(TextRange(startElement.textOffset, endElement.textOffset + endElement.textLength))
+        .create()
+}
+
 /**
  * Set a custom highlight rule for the given element.
  *

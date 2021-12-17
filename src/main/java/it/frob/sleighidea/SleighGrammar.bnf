@@ -171,11 +171,11 @@ endian ::= KEY_BIG
 
 alignment_definition ::= KEY_ALIGNMENT ASSIGN integer_value
 
-token_definition ::= KEY_TOKEN symbol LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
+token_definition ::= KEY_TOKEN symbol LPAREN integer_value RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
 { methods=[getEndianness getName getPlaceholderText getPresentation getSize] }
 private token_field_definitions ::= token_field_definition *
-token_field_definition ::= strict_id ASSIGN LPAREN integer COMMA integer RPAREN token_field_modifiers
-{ methods=[ getFieldName getFieldStart getFieldEnd isSigned ]}
+token_field_definition ::= symbol ASSIGN LPAREN integer_value COMMA integer_value RPAREN token_field_modifiers
+{ methods=[bitStart="/integer_value[0]" bitEnd="/integer_value[1]" getDec getHex getSigned] }
 private token_field_modifiers ::= token_field_modifier *
 token_field_modifier ::= KEY_SIGNED
                        | KEY_HEX
@@ -543,7 +543,7 @@ IDENTIFIER ::= symbol_string
 
 integer_value ::= external_definition
                 | integer
-{ methods=[toInteger] }
+{ methods=[isExternal toInteger] }
 
 symbol ::= external_definition
          | symbol_string

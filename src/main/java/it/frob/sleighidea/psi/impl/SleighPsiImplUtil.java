@@ -15,8 +15,9 @@ import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnegative;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SleighPsiImplUtil {
@@ -288,55 +289,6 @@ public class SleighPsiImplUtil {
     // Accessors for SleighTokenDefinition elements (and their children)
 
     /**
-     * Extract the name of a {@link SleighTokenFieldDefinition} element.
-     *
-     * @param element the element to get the name of.
-     * @return the token's name, or null if none could be extracted.
-     */
-    @NotNull
-    public static String getFieldName(@NotNull SleighTokenFieldDefinition element) {
-        return element.getStrictId().getText();
-    }
-
-    /**
-     * Extract the start bit of a {@link SleighTokenFieldDefinition} element.
-     *
-     * @param element the element to extract the start bit of.
-     * @return the field's start bit.
-     */
-    @Nonnegative
-    public static int getFieldStart(@NotNull SleighTokenFieldDefinition element) {
-        return element.getIntegerList().get(0).toInteger();
-    }
-
-    /**
-     * Extract the end bit of a {@link SleighTokenFieldDefinition} element.
-     *
-     * @param element the element to extract the end bit of.
-     * @return the field's end bit.
-     */
-    @Nonnegative
-    public static int getFieldEnd(@NotNull SleighTokenFieldDefinition element) {
-        return element.getIntegerList().get(1).toInteger();
-    }
-
-    /**
-     * Extract the signedness flag of a {@link SleighTokenFieldDefinition} element.
-     *
-     * @param element the element to get the default flag of.
-     * @return {@code true} if the field is signed, {@code false} otherwise.
-     */
-    public static boolean isSigned(@NotNull SleighTokenFieldDefinition element) {
-        return Arrays.stream(PsiTreeUtil.collectElements(
-                        PsiTreeUtil.findChildOfType(element, SleighTokenFieldModifier.class),
-                        fieldElement -> SleighTypes.KEY_SIGNED.toString().equals(fieldElement.getText())))
-                .findAny()
-                .isPresent();
-    }
-
-    // Accessors for SleighTokendef elements (and their children)
-
-    /**
      * Extract the name of a {@link SleighTokenDefinition} element.
      *
      * @param element the element to get the name of.
@@ -394,6 +346,48 @@ public class SleighPsiImplUtil {
         return Endianness.LITTLE;
     }
 
+    /**
+     * Extract the hexadecimal base flags of a {@link SleighTokenFieldDefinition} element.
+     *
+     * @param element the element to get the hexadecimal base of.
+     * @return a list of {@code PsiElement} containing the hexadecimal base elements.
+     */
+    @NotNull
+    public static List<PsiElement> getHex(@NotNull SleighTokenFieldDefinition element) {
+        return element.getTokenFieldModifierList().stream()
+                .map(SleighTokenFieldModifier::getKeyHex)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Extract the decimal base flags of a {@link SleighTokenFieldDefinition} element.
+     *
+     * @param element the element to get the decimal base of.
+     * @return a list of {@code PsiElement} containing the decimal base elements.
+     */
+    @NotNull
+    public static List<PsiElement> getDec(@NotNull SleighTokenFieldDefinition element) {
+        return element.getTokenFieldModifierList().stream()
+                .map(SleighTokenFieldModifier::getKeyDec)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Extract the signed flags of a {@link SleighTokenFieldDefinition} element.
+     *
+     * @param element the element to get the signed of.
+     * @return a list of {@code PsiElement} containing the signed elements.
+     */
+    @NotNull
+    public static List<PsiElement> getSigned(@NotNull SleighTokenFieldDefinition element) {
+        return element.getTokenFieldModifierList().stream()
+                .map(SleighTokenFieldModifier::getKeySigned)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
     @NotNull
     public static String getValue(@NotNull SleighSymbol symbol) {
         if (symbol.getExternalDefinition() != null) {
@@ -406,6 +400,10 @@ public class SleighPsiImplUtil {
 
     public static boolean isExternal(@NotNull SleighSymbol symbol) {
         return symbol.getExternalDefinition() != null;
+    }
+
+    public static boolean isExternal(@NotNull SleighIntegerValue value) {
+        return value.getExternalDefinition() != null;
     }
 
     @Nullable
