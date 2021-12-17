@@ -7,6 +7,8 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import it.frob.sleighidea.psi.*
+import kotlin.math.abs
+import kotlin.math.pow
 
 class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighlighter(holder) {
 
@@ -46,6 +48,18 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
         availableTokens.map { token -> token.tokenFieldDefinitionList }
             .flatten()
             .toList()
+    }
+
+    private val availableTokenFieldsMap: Map<String, SleighTokenFieldDefinition> by lazy {
+        val fields: MutableMap<String, SleighTokenFieldDefinition> = mutableMapOf()
+
+        availableTokenFields.forEach { field ->
+            if (!fields.contains(field.symbol.value)) {
+                fields[field.symbol.value] = field
+            }
+        }
+
+        fields
     }
 
     private val definedTokenFields: Map<String, List<SleighTokenFieldDefinition>> by lazy {
@@ -170,6 +184,42 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
         visited.tokenFieldDefinitionList.forEach { field ->
             checkTokenFieldDefinition(visited, field)
         }
+    }
+
+    override fun visitVariableAttach(visited: SleighVariableAttach) {
+        super.visitVariableAttach(visited)
+
+        val valuesLength = visited.symbolOrWildcardList.size.toULong()
+
+        visited.symbolList.forEach { symbol ->
+            availableTokenFieldsMap[symbol.value]?.let { field ->
+                if (!field.bitStart.isExternal && !field.bitEnd!!.isExternal) {
+                    val fieldSize = abs(field.bitEnd!!.toInteger()!! - field.bitStart.toInteger()!!) + 1
+                    val expectedValuesLength = 2.toDouble().pow(fieldSize).toULong()
+
+                    if (expectedValuesLength != valuesLength) {
+                        markElementAsError(
+                            symbol, holder,
+                            "Field \"${symbol.value}\" has the wrong size ($expectedValuesLength vs $valuesLength)."
+                        )
+                    }
+                }
+                return@forEach
+            }
+
+            if (!symbol.isExternal) {
+                markElementAsError(symbol, holder, "Unknown field \"${symbol.value}\".")
+            }
+        }
+
+        visited.symbolOrWildcardList
+            .mapNotNull { symbol -> symbol.symbol }
+            .filter { symbol -> !symbol.isExternal }
+            .forEach { symbol ->
+                if (!definedVariables.contains(symbol.value)) {
+                    markElementAsError(symbol, holder, "Unknown variable \"${symbol.value}\".")
+                }
+            }
     }
 
     private fun checkTokenFieldDefinition(token: SleighTokenDefinition, field: SleighTokenFieldDefinition) {

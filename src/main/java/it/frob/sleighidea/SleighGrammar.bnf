@@ -161,7 +161,7 @@ private definition_statement ::= endiandef
 private attach_container ::= KEY_ATTACH attach_statement
 private attach_statement ::= valueattach
                            | nameattach
-                           | varattach
+                           | variable_attach
 
 endiandef ::= KEY_ENDIAN ASSIGN endian
 endian ::= KEY_BIG
@@ -205,7 +205,7 @@ space_type ::= identifier
 space_size_modifier ::= KEY_SIZE ASSIGN integer_value
 space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN integer_value
 
-variables_node_definition ::= symbol KEY_OFFSET ASSIGN integer_value KEY_SIZE ASSIGN integer_value variable_identifiers_list
+variables_node_definition ::= symbol KEY_OFFSET ASSIGN integer_value KEY_SIZE ASSIGN integer_value <<variable_list symbol_or_wildcard>>
 {
     generateTokenAccessors=true
     methods=[offset="/integer_value[0]" size="/integer_value[1]" getSpace]
@@ -217,7 +217,9 @@ bit_range ::= identifierlist ASSIGN identifierlist LBRACKET integer_value COMMA 
 pcodeopdef ::= KEY_PCODEOP identifierlist
 valueattach ::= KEY_VALUES identifierlist intblist
 nameattach ::= KEY_NAMES identifierlist stringoridentlist
-varattach ::= KEY_VARIABLES identifierlist identifierlist
+
+variable_attach ::= KEY_VARIABLES <<variable_list symbol>> <<variable_list symbol_or_wildcard>>
+
 identifierlist ::= LBRACKET id_or_wild + RBRACKET
                  | id_or_wild
 stringoridentlist ::= LBRACKET stringorident + RBRACKET
@@ -231,8 +233,8 @@ intbpart ::= neginteger
 neginteger ::= integer
              | MINUS integer
 
-private variable_identifiers_list ::= LBRACKET symbol_or_wildcard + RBRACKET
-                                    | symbol_or_wildcard
+private meta variable_list ::= LBRACKET <<param>> + RBRACKET
+                             | <<param>>
 
 symbol_or_wildcard ::= symbol
                      | UNDERSCORE
