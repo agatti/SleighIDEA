@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
 import it.frob.sleighidea.model.Endianness;
-import it.frob.sleighidea.model.ModelException;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,7 +121,7 @@ public class SleighPsiImplUtil {
      * @return the placeholder text derived from the given element.
      */
     @NotNull
-    public static String getPlaceholderText(@NotNull SleighSpaceDefinition element) throws ModelException {
+    public static String getPlaceholderText(@NotNull SleighSpaceDefinition element) {
         SleighPositiveIntegerValue sizeElement = element.getSize().get(0).second;
         String size = sizeElement.isExternal() ? sizeElement.getText() : String.valueOf(sizeElement.toInteger());
 
@@ -146,16 +145,8 @@ public class SleighPsiImplUtil {
      */
     @NotNull
     public static ItemPresentation getPresentation(@NotNull SleighSpaceDefinition element) {
-        String placeholderText;
-
-        try {
-            placeholderText = getPlaceholderText(element);
-        } catch (ModelException ignored) {
-            placeholderText = "";
-        }
-
-        return new PresentationData(placeholderText, getContainingFile(element), PlatformIcons.ANONYMOUS_CLASS_ICON,
-                null);
+        return new PresentationData(getPlaceholderText(element), getContainingFile(element),
+                PlatformIcons.ANONYMOUS_CLASS_ICON, null);
     }
 
     /**
@@ -201,7 +192,7 @@ public class SleighPsiImplUtil {
         return element.getSpaceModifierList().stream()
                 .map(SleighSpaceModifier::getSpaceTypeModifier)
                 .filter(Objects::nonNull)
-                .map(modifier -> Pair.create(modifier, modifier.getSpaceType().getText()))
+                .map(modifier -> Pair.create(modifier, modifier.getSpaceTypeIdentifier().getText()))
                 .collect(Collectors.toList());
     }
 

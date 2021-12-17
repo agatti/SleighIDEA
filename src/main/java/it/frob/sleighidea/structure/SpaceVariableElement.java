@@ -10,7 +10,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.PlatformIcons;
-import it.frob.sleighidea.model.space.Variable;
+import it.frob.sleighidea.psi.SleighSymbol;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,14 +21,14 @@ public class SpaceVariableElement implements StructureViewTreeElement, SortableT
     /**
      * The memory space variable to wrap.
      */
-    private final Variable variable;
+    private final SleighSymbol variable;
 
     /**
-     * Create a {@code SpaceVariableElement} wrapping the given {@link Variable} instance.
+     * Create a {@code SpaceVariableElement} wrapping the given {@link SleighSymbol} instance.
      *
-     * @param variable the {@link Variable} instance to wrap.
+     * @param variable the {@link SleighSymbol} instance to wrap.
      */
-    public SpaceVariableElement(@NotNull Variable variable) {
+    public SpaceVariableElement(@NotNull SleighSymbol variable) {
         this.variable = variable;
     }
 
@@ -39,15 +39,15 @@ public class SpaceVariableElement implements StructureViewTreeElement, SortableT
 
     @Override
     public @NotNull String getAlphaSortKey() {
-        return variable.getName();
+        return variable.getValue();
     }
 
     @Override
     public @NotNull ItemPresentation getPresentation() {
-        PsiFile containingFile = variable.getElement().getContainingFile();
+        PsiFile containingFile = variable.getContainingFile();
         String location = containingFile == null ? "" : containingFile.getName();
 
-        return new PresentationData(variable.getName(), location, PlatformIcons.VARIABLE_ICON, null);
+        return new PresentationData(variable.getValue(), location, PlatformIcons.VARIABLE_ICON, null);
     }
 
     @Override
@@ -57,16 +57,16 @@ public class SpaceVariableElement implements StructureViewTreeElement, SortableT
 
     @Override
     public void navigate(boolean requestFocus) {
-        ((NavigatablePsiElement) variable.getElement()).navigate(requestFocus);
+        ((NavigatablePsiElement) variable).navigate(requestFocus);
     }
 
     @Override
     public boolean canNavigate() {
-        return ((NavigatablePsiElement) variable.getElement()).canNavigate();
+        return ((NavigatablePsiElement) variable).canNavigate();
     }
 
     @Override
     public boolean canNavigateToSource() {
-        return ((NavigatablePsiElement) variable.getElement()).canNavigateToSource();
+        return ((NavigatablePsiElement) variable).canNavigateToSource();
     }
 }

@@ -13,8 +13,6 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import it.frob.sleighidea.SleighFileType;
 import it.frob.sleighidea.SleighLanguage;
-import it.frob.sleighidea.model.ModelException;
-import it.frob.sleighidea.model.space.Space;
 import it.frob.sleighidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,23 +52,11 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     /**
      * All the {@code space} elements in the file, wrapped in a cache-aware linear container.
      */
-    private final CachedValue<List<Space>> spacesList = createCachedValue(
+    private final CachedValue<List<SleighSpaceDefinition>> spaces = createCachedValue(
             new ValueProvider<>() {
                 @Override
-                protected @NotNull List<Space> computeValue() {
-                    return Collections.unmodifiableList(collectSpacesList());
-                }
-            }
-    );
-
-    /**
-     * All the {@code space} elements in the file, wrapped in a cache-aware container.
-     */
-    private final CachedValue<Map<String, Space>> spacesMap = createCachedValue(
-            new ValueProvider<>() {
-                @Override
-                protected @NotNull Map<String, Space> computeValue() {
-                    return Collections.unmodifiableMap(buildSpacesMap(spacesList.getValue()));
+                protected @NotNull List<SleighSpaceDefinition> computeValue() {
+                    return Collections.unmodifiableList(collectSpaces());
                 }
             }
     );
@@ -134,13 +120,8 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     }
 
     @Override
-    public @Nullable Space getSpaceForName(@NotNull String name) {
-        return spacesMap.getValue().getOrDefault(name, null);
-    }
-
-    @Override
-    public Collection<Space> getSpaces() {
-        return spacesList.getValue();
+    public Collection<SleighSpaceDefinition> getSpaces() {
+        return spaces.getValue();
     }
 
     @Override
@@ -209,46 +190,11 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     /**
      * Extract all {@code space} elements in the file.
      *
-     * @return a map containing the {@link SleighSpaceDefinition} instances found in the file, wrapped in their
-     * respective {@link Space} model container classes, indexed by their name.
+     * @return a list containing the {@link SleighSpaceDefinition} instances found in the file.
      */
     @NotNull
-    private List<Space> collectSpacesList() {
-        Collection<SleighVariablesNodeDefinition> variableDeclarations =
-                PsiTreeUtil.collectElementsOfType(this, SleighVariablesNodeDefinition.class);
-        return PsiTreeUtil.collectElementsOfType(this, SleighSpaceDefinition.class)
-                .stream()
-                .map(space -> {
-                    try {
-                        return new Space(space, variableDeclarations);
-                    } catch (ModelException ignored) {
-                        // TODO: Figure out how to handle this case.
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Build a map out of the given {@link Space} list container.
-     *
-     * @param spaces the instances to build a map with.
-     * @return a map containing the given instances, indexed by their assigned name.
-     */
-    @NotNull
-    private Map<String, Space> buildSpacesMap(@NotNull List<Space> spaces) {
-        Map<String, Space> spacesMap = new HashMap<>();
-
-        spaces.forEach(space -> {
-            if (spacesMap.containsKey(space.getName())) {
-                // TODO: Figure out how to handle duplicate spaces.
-                return;
-            }
-            spacesMap.put(space.getName(), space);
-        });
-
-        return spacesMap;
+    private List<SleighSpaceDefinition> collectSpaces() {
+        return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighSpaceDefinition.class));
     }
 
     /**

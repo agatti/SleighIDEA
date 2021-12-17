@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-package it.frob.sleighidea.highlighting
+package it.frob.sleighidea.syntax
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.util.PsiTreeUtil
@@ -25,7 +25,7 @@ open class SyntaxHighlighter(protected val holder: AnnotationHolder) : SleighVis
         assignGutterIcon(visited, holder, PlatformIcons.CLASS_ICON)
     }
 
-    override fun visitPcodeopdef(visited: SleighPcodeopdef) {
+    override fun visitPcodeopDefinition(visited: SleighPcodeopDefinition) {
         PsiTreeUtil.findChildOfType(visited, SleighIdentifier::class.java)
             ?.let { element -> highlight(element, holder, SleighSyntaxHighlighter.PCODEOP) }
     }
@@ -67,5 +67,10 @@ open class SyntaxHighlighter(protected val holder: AnnotationHolder) : SleighVis
 
     override fun visitInclude(visited: SleighInclude) {
         assignGutterIcon(visited, holder, SleighIcons.FILE)
+    }
+
+    override fun visitSpaceTypeIdentifier(visited: SleighSpaceTypeIdentifier) {
+        visited.externalDefinition?.let { return }
+        highlight(visited, holder, SleighSyntaxHighlighter.BUILT_IN_SYMBOL)
     }
 }

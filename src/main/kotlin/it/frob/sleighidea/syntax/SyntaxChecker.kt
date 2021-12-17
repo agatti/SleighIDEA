@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-package it.frob.sleighidea.highlighting
+package it.frob.sleighidea.syntax
 
 import com.intellij.grazie.utils.toLinkedSet
 import com.intellij.lang.annotation.AnnotationHolder
@@ -205,6 +205,12 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
         super.visitValueAttach(visited)
 
         checkSymbolListAssignment(visited.symbolList, visited.integerOrWildcardList.size.toULong())
+    }
+
+    override fun visitNameAttach(visited: SleighNameAttach) {
+        super.visitNameAttach(visited)
+
+        checkSymbolListAssignment(visited.symbolList, visited.nameOrWildcardList.size.toULong())
     }
 
     private fun checkTokenFieldDefinition(token: SleighTokenDefinition, field: SleighTokenFieldDefinition) {

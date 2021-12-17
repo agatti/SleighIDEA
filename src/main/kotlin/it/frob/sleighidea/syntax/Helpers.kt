@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-package it.frob.sleighidea.highlighting
+package it.frob.sleighidea.syntax
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.HighlightSeverity

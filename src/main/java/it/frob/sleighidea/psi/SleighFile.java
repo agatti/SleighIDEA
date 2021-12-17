@@ -3,9 +3,6 @@
 package it.frob.sleighidea.psi;
 
 import com.intellij.psi.PsiFile;
-import it.frob.sleighidea.model.space.Space;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -22,19 +19,11 @@ public interface SleighFile extends PsiFile {
     Collection<SleighMacrodef> getMacros();
 
     /**
-     * Get the {@link Space} instance registered under the given name.
+     * Get an immutable collection containing all the {@link SleighSpaceDefinition} instances in the file.
      *
-     * @param name the memory space name to look up.
-     * @return the matching {@link Space} instance or {@code null} if none is found.
+     * @return the {@link SleighSpaceDefinition} instances present in the file.
      */
-    @Nullable Space getSpaceForName(@NotNull String name);
-
-    /**
-     * Get an immutable collection containing all the {@link Space} instances in the file.
-     *
-     * @return the {@link Space} instances present in the file.
-     */
-    Collection<Space> getSpaces();
+    Collection<SleighSpaceDefinition> getSpaces();
 
     /**
      * Get an immutable collection containing all the valid {@code token} definition tokens.

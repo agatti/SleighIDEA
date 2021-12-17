@@ -111,6 +111,10 @@
         KEY_VARIABLES='variables'
         KEY_WORDSIZE='wordsize'
 
+        BUILTIN_RAM_SPACE='ram_space'
+        BUILTIN_ROM_SPACE='rom_space'
+        BUILTIN_REGISTER_SPACE='register_space'
+
         // Preprocessor tokens
 
         DEFINITION_START='$('
@@ -150,20 +154,20 @@ definition ::= definition_kind SEMI
 private definition_kind ::= definition_container
                           | attach_container
 private definition_container ::= KEY_DEFINE definition_statement
-private definition_statement ::= endiandef
+private definition_statement ::= endian_definition
                                | alignment_definition
                                | token_definition
                                | context_definition
                                | space_definition
                                | variables_node_definition
                                | bit_range_definition
-                               | pcodeopdef
+                               | pcodeop_definition
 private attach_container ::= KEY_ATTACH attach_statement
 private attach_statement ::= value_attach
-                           | nameattach
+                           | name_attach
                            | variable_attach
 
-endiandef ::= KEY_ENDIAN ASSIGN endian
+endian_definition ::= KEY_ENDIAN ASSIGN endian
 endian ::= KEY_BIG
          | KEY_LITTLE
          | external_definition
@@ -200,8 +204,12 @@ space_modifier ::= space_type_modifier
                  | space_wordsize_modifier
                  | KEY_DEFAULT
 { generateTokenAccessors=true }
-space_type_modifier ::= KEY_TYPE ASSIGN space_type
-space_type ::= identifier
+space_type_modifier ::= KEY_TYPE ASSIGN space_type_identifier
+space_type_identifier ::= BUILTIN_RAM_SPACE
+                        | BUILTIN_ROM_SPACE
+                        | BUILTIN_REGISTER_SPACE
+                        | external_definition
+{ generateTokenAccessors=true }
 space_size_modifier ::= KEY_SIZE ASSIGN positive_integer_value
 space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN positive_integer_value
 
@@ -213,24 +221,23 @@ variables_node_definition ::= symbol KEY_OFFSET ASSIGN positive_integer_value KE
 
 bit_range_definition ::= KEY_BITRANGE bit_ranges
 private bit_ranges ::= bit_range +
-bit_range ::= identifierlist ASSIGN identifierlist LBRACKET positive_integer_value COMMA positive_integer_value RBRACKET
-pcodeopdef ::= KEY_PCODEOP identifierlist
+bit_range ::= symbol ASSIGN symbol LBRACKET positive_integer_value COMMA positive_integer_value RBRACKET
+{ methods=[lValue="/symbol[0]" rValue="/symbol[1]" start="/positive_integer_value[0]" length="/positive_integer_value[1]"] }
+
+pcodeop_definition ::= KEY_PCODEOP symbol
 
 value_attach ::= KEY_VALUES <<variable_list symbol>> <<variable_list integer_or_wildcard>>
 
-nameattach ::= KEY_NAMES identifierlist stringoridentlist
+name_attach ::= KEY_NAMES <<variable_list symbol>> <<variable_list name_or_wildcard>>
 
 variable_attach ::= KEY_VARIABLES <<variable_list symbol>> <<variable_list symbol_or_wildcard>>
 
 integer_or_wildcard ::= integer_value
                       | wildcard
 
-identifierlist ::= LBRACKET id_or_wild + RBRACKET
-                 | id_or_wild
-stringoridentlist ::= LBRACKET stringorident + RBRACKET
-                    | stringorident
-stringorident ::= id_or_wild
-                | quoted_string
+name_or_wildcard ::= symbol
+                   | quoted_string
+                   | wildcard
 
 private meta variable_list ::= LBRACKET <<param>> + RBRACKET
                              | <<param>>
@@ -500,8 +507,6 @@ special ::= DISPCHAR
 
 quoted_string ::= QSTRING
 
-id_or_wild ::= identifier
-             | wildcard
 wildcard ::= UNDERSCORE
 
 identifier ::= strict_id
