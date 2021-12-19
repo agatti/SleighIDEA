@@ -255,8 +255,13 @@ public class SleighPsiImplUtil {
      */
     @NotNull
     public static ItemPresentation getPresentation(@NotNull SleighTokenDefinition element) {
-        return new PresentationData(getPlaceholderText(element), getContainingFile(element), PlatformIcons.CLASS_ICON,
+        return new PresentationData(getPlaceholderText(element) + " (" + element.getSize() + ")", getContainingFile(element), PlatformIcons.CLASS_ICON,
                 null);
+    }
+
+    @Nullable
+    public static Integer getSize(@NotNull SleighTokenDefinition element) {
+        return element.getPositiveIntegerValue().toInteger();
     }
 
     /**
@@ -323,6 +328,18 @@ public class SleighPsiImplUtil {
                 .map(SleighTokenFieldModifier::getKeySigned)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    @NotNull
+    public static ItemPresentation getPresentation(@NotNull SleighTokenFieldDefinition element) {
+        Integer startBit = element.getBitStart().toInteger();
+        Integer endBit = Objects.requireNonNull(element.getBitEnd()).toInteger();
+
+        return new PresentationData(
+                String.format("%s (%s, %s)", element.getSymbol().getValue(),
+                        startBit != null ? startBit.toString() : "?", endBit != null ? endBit.toString() : "?"),
+                getContainingFile(element), PlatformIcons.CLASS_ICON,
+                null);
     }
 
     @NotNull

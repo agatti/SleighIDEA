@@ -7,5 +7,5 @@ import it.frob.sleighidea.SleighLanguage
 import org.jetbrains.annotations.NonNls
 
 class SleighTokenType(debugName: @NonNls String) : IElementType(debugName, SleighLanguage.INSTANCE) {
-    override fun toString(): String = "SleighTokenType." + super.toString()
+    override fun toString(): String = "SleighTokenType.${super.toString()}"
 }

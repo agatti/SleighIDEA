@@ -49,7 +49,7 @@ class ViewElement(private val element: NavigatablePsiElement) : StructureViewTre
                 }
                 .toList())
             viewElements.addAll(file.tokens
-                .map { token: SleighTokenDefinition -> ViewElement(token as NavigatablePsiElement) }
+                .map { token: SleighTokenDefinition -> TokenViewElement(token) }
                 .toList())
             viewElements.addAll(file.macros
                 .map { macro: SleighMacrodef -> ViewElement(macro as NavigatablePsiElement) }
@@ -67,11 +67,7 @@ class ViewElement(private val element: NavigatablePsiElement) : StructureViewTre
         element.navigate(requestFocus)
     }
 
-    override fun canNavigate(): Boolean {
-        return element.canNavigate()
-    }
+    override fun canNavigate(): Boolean = element.canNavigate()
 
-    override fun canNavigateToSource(): Boolean {
-        return element.canNavigateToSource()
-    }
+    override fun canNavigateToSource(): Boolean = element.canNavigateToSource()
 }

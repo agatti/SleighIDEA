@@ -179,7 +179,7 @@ token_definition ::= KEY_TOKEN symbol LPAREN positive_integer_value RPAREN [ KEY
 { methods=[getEndianness getName getPlaceholderText getPresentation getSize] }
 private token_field_definitions ::= token_field_definition *
 token_field_definition ::= symbol ASSIGN LPAREN positive_integer_value COMMA positive_integer_value RPAREN token_field_modifiers
-{ methods=[bitStart="/positive_integer_value[0]" bitEnd="/positive_integer_value[1]" getDec getHex getSigned] }
+{ methods=[bitStart="/positive_integer_value[0]" bitEnd="/positive_integer_value[1]" getDec getHex getPresentation getSigned] }
 private token_field_modifiers ::= token_field_modifier *
 token_field_modifier ::= KEY_SIGNED
                        | KEY_HEX
