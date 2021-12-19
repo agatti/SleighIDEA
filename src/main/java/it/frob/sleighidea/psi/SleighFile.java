@@ -14,9 +14,9 @@ public interface SleighFile extends PsiFile {
     /**
      * Get an immutable collection containing all the valid {@code macro} definition tokens.
      *
-     * @return the {@link SleighMacrodef} instances present in the file.
+     * @return the {@link SleighMacroDefinition} instances present in the file.
      */
-    Collection<SleighMacrodef> getMacros();
+    Collection<SleighMacroDefinition> getMacros();
 
     /**
      * Get an immutable collection containing all the {@link SleighSpaceDefinition} instances in the file.

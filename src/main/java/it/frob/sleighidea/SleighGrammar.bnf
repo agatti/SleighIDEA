@@ -245,12 +245,11 @@ private meta variable_list ::= LBRACKET <<param>> + RBRACKET
 symbol_or_wildcard ::= symbol
                      | UNDERSCORE
 
-constructor_like ::= macrodef
+constructor_like ::= macro_definition
                    | withblock
                    | constructor
-macrodef ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody {
-    methods = [ getPlaceholderText getPresentation ]
-}
+macro_definition ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody
+{ methods=[getPlaceholderText getPresentation] }
 arguments ::= oplist *
 oplist ::= identifier ( COMMA identifier ) *
 withblock ::= RES_WITH id_or_nil COLON bit_patterns context_block LBRACE constructor_like_list RBRACE

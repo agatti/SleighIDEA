@@ -40,10 +40,10 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     /**
      * All the {@code macro} elements in the file, wrapped in a cache-aware container.
      */
-    private final CachedValue<List<SleighMacrodef>> macros = createCachedValue(
+    private final CachedValue<List<SleighMacroDefinition>> macros = createCachedValue(
             new ValueProvider<>() {
                 @Override
-                protected @NotNull List<SleighMacrodef> computeValue() {
+                protected @NotNull List<SleighMacroDefinition> computeValue() {
                     return Collections.unmodifiableList(collectMacros());
                 }
             }
@@ -127,7 +127,7 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     }
 
     @Override
-    public Collection<SleighMacrodef> getMacros() {
+    public Collection<SleighMacroDefinition> getMacros() {
         return macros.getValue();
     }
 
@@ -197,11 +197,11 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     /**
      * Extract all {@code macro} elements in the file.
      *
-     * @return a list containing the {@link SleighMacrodef} instances found in the file.
+     * @return a list containing the {@link SleighMacroDefinition} instances found in the file.
      */
     @NotNull
-    private List<SleighMacrodef> collectMacros() {
-        return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighMacrodef.class));
+    private List<SleighMacroDefinition> collectMacros() {
+        return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighMacroDefinition.class));
     }
 
     /**

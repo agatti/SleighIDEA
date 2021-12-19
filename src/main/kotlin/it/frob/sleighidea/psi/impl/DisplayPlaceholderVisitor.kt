@@ -9,7 +9,7 @@ import it.frob.sleighidea.psi.SleighPrintPiece
 import it.frob.sleighidea.psi.SleighVisitor
 import java.util.stream.Collectors
 
-internal class SleighDisplayPlaceholderVisitor : SleighVisitor() {
+internal class DisplayPlaceholderVisitor : SleighVisitor() {
     private enum class SleighDisplayVisitingState {
         COLLECTING_NAME, COLLECTING_ARGUMENTS
     }

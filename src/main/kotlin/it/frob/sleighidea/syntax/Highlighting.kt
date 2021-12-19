@@ -177,7 +177,7 @@ open class SyntaxHighlightingVisitor(protected val holder: AnnotationHolder) : S
         highlight(visited, holder, SyntaxHighlighting.LABEL)
     }
 
-    override fun visitMacrodef(visited: SleighMacrodef) {
+    override fun visitMacroDefinition(visited: SleighMacroDefinition) {
         PsiTreeUtil.findChildOfType(visited, SleighIdentifier::class.java)?.let { element ->
             highlight(element, holder, SyntaxHighlighting.MACRO)
             assignGutterIcon(visited, holder, PlatformIcons.FUNCTION_ICON)

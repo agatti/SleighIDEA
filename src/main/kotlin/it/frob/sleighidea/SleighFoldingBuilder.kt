@@ -15,56 +15,32 @@ import it.frob.sleighidea.syntax.SLEIGH_PREFIX_STRING
 
 class SleighFoldingBuilder : FoldingBuilderEx(), DumbAware {
 
-    override fun buildFoldRegions(
-        root: PsiElement, document: Document,
-        quick: Boolean
-    ): Array<FoldingDescriptor> {
+    override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean): Array<FoldingDescriptor> {
         val descriptors: MutableList<FoldingDescriptor> = mutableListOf()
-        root.acceptChildren(object : SleighVisitor() {
-            override fun visitDefinition(visited: SleighDefinition) {
-                PsiTreeUtil.findChildOfType(visited, SleighTokenDefinition::class.java)?.let { container ->
-                    PsiTreeUtil.findChildOfType(container, SleighIdentifier::class.java)?.let {
-                        descriptors.add(
-                            FoldingDescriptor(
-                                visited.node,
-                                visited.textRange,
-                                FoldingGroup.newGroup(SLEIGH_PREFIX_STRING),
-                                container.placeholderText
-                            )
-                        )
-                    }
-                }
-            }
 
-            override fun visitConstructorLike(visited: SleighConstructorLike) {
-                visited.acceptChildren(object : SleighVisitor() {
-                    override fun visitMacrodef(visited: SleighMacrodef) {
-                        descriptors.add(
-                            FoldingDescriptor(
-                                visited.parent.node,
-                                visited.parent.textRange,
-                                FoldingGroup.newGroup(SLEIGH_PREFIX_STRING),
-                                visited.placeholderText!!
-                            )
-                        )
-                    }
-
-                    override fun visitConstructor(visited: SleighConstructor) {
-                        val container = PsiTreeUtil.findChildOfType(visited, SleighConstructorStart::class.java) ?: return
-                        if (container.firstChild is SleighDisplay) {
-                            descriptors.add(
-                                FoldingDescriptor(
-                                    visited.parent.node,
-                                    visited.parent.textRange,
-                                    FoldingGroup.newGroup(SLEIGH_PREFIX_STRING),
-                                    (container.firstChild as SleighDisplay).placeholderText
-                                )
-                            )
-                        }
-                    }
-                })
-            }
+        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighMacroDefinition::class.java).map { element ->
+            FoldingDescriptor(
+                element.parent.node, element.parent.textRange, FoldingGroup.newGroup(SLEIGH_PREFIX_STRING)
+            )
         })
+
+        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighTokenDefinition::class.java).map { element ->
+            FoldingDescriptor(
+                element.parent.node, element.parent.textRange, FoldingGroup.newGroup(SLEIGH_PREFIX_STRING)
+            )
+        })
+
+        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighConstructor::class.java).filter { element ->
+            element.constructorStart.identifier == null
+        }.map { element ->
+            FoldingDescriptor(
+                element.node,
+                element.textRange,
+                FoldingGroup.newGroup(SLEIGH_PREFIX_STRING),
+                element.constructorStart.display.placeholderText
+            )
+        })
+
         return descriptors.toTypedArray()
     }
 

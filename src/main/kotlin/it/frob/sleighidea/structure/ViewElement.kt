@@ -12,8 +12,6 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import it.frob.sleighidea.SleighIcons
 import it.frob.sleighidea.psi.*
 
 class ViewModel(psiFile: PsiFile?) : StructureViewModelBase(psiFile!!, ViewElement(psiFile)),
@@ -62,7 +60,7 @@ class ViewElement(private val element: NavigatablePsiElement) : StructureViewTre
             .map { token: SleighTokenDefinition -> TokenViewElement(token) }
             .toList())
         viewElements.addAll(file.macros
-            .map { macro: SleighMacrodef -> ViewElement(macro as NavigatablePsiElement) }
+            .map { macro: SleighMacroDefinition -> ViewElement(macro as NavigatablePsiElement) }
             .toList())
 
         viewElements.addAll(extractTableConstructors(file).values.map { tables -> TableViewElement(tables) }.toList())
