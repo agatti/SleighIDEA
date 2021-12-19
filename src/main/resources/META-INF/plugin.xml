@@ -24,7 +24,7 @@
         <lang.psiStructureViewFactory language="Sleigh"
                                       implementationClass="it.frob.sleighidea.structure.ViewFactory"/>
         <lang.syntaxHighlighterFactory language="Sleigh"
-                                       implementationClass="it.frob.sleighidea.SleighSyntaxHighlighterFactory"/>
+                                       implementationClass="it.frob.sleighidea.syntax.SyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="it.frob.sleighidea.SleighColourSettingsPage"/>
         <annotator language="Sleigh" implementationClass="it.frob.sleighidea.syntax.LanguageAnnotator"/>
         <lang.foldingBuilder language="Sleigh"

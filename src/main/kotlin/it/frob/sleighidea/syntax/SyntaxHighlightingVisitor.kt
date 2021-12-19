@@ -6,17 +6,16 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PlatformIcons
 import it.frob.sleighidea.SleighIcons
-import it.frob.sleighidea.SleighSyntaxHighlighter
 import it.frob.sleighidea.psi.*
 
-open class SyntaxHighlighter(protected val holder: AnnotationHolder) : SleighVisitor() {
+open class SyntaxHighlightingVisitor(protected val holder: AnnotationHolder) : SleighVisitor() {
     override fun visitLabel(visited: SleighLabel) {
-        highlight(visited, holder, SleighSyntaxHighlighter.LABEL)
+        highlight(visited, holder, SyntaxHighlighting.LABEL)
     }
 
     override fun visitMacrodef(visited: SleighMacrodef) {
         PsiTreeUtil.findChildOfType(visited, SleighIdentifier::class.java)?.let { element ->
-            highlight(element, holder, SleighSyntaxHighlighter.MACRO)
+            highlight(element, holder, SyntaxHighlighting.MACRO)
             assignGutterIcon(visited, holder, PlatformIcons.FUNCTION_ICON)
         }
     }
@@ -27,12 +26,12 @@ open class SyntaxHighlighter(protected val holder: AnnotationHolder) : SleighVis
 
     override fun visitPcodeopDefinition(visited: SleighPcodeopDefinition) {
         PsiTreeUtil.findChildOfType(visited, SleighIdentifier::class.java)
-            ?.let { element -> highlight(element, holder, SleighSyntaxHighlighter.PCODEOP) }
+            ?.let { element -> highlight(element, holder, SyntaxHighlighting.PCODEOP) }
     }
 
     override fun visitExprApply(visited: SleighExprApply) {
         if (STD_LIBRARY_CALL.contains(visited.firstChild.text)) {
-            highlight(visited.firstChild, holder, SleighSyntaxHighlighter.FUNCTION_CALL)
+            highlight(visited.firstChild, holder, SyntaxHighlighting.FUNCTION_CALL)
         }
     }
 
@@ -49,7 +48,7 @@ open class SyntaxHighlighter(protected val holder: AnnotationHolder) : SleighVis
 
     override fun visitSymbolOrWildcard(visited: SleighSymbolOrWildcard) {
         if (visited.symbol?.isExternal == true) {
-            highlight(visited, holder, SleighSyntaxHighlighter.IDENTIFIER)
+            highlight(visited, holder, SyntaxHighlighting.IDENTIFIER)
         }
     }
 
@@ -57,7 +56,7 @@ open class SyntaxHighlighter(protected val holder: AnnotationHolder) : SleighVis
         val jumpTarget = PsiTreeUtil.getChildOfType(visited, SleighIdentifier::class.java) ?: return
         val jumpTargetString = jumpTarget.text
         if (jumpTargetString == "inst_next" || jumpTargetString == "inst_start") {
-            highlight(jumpTarget, holder, SleighSyntaxHighlighter.BUILT_IN_SYMBOL)
+            highlight(jumpTarget, holder, SyntaxHighlighting.BUILT_IN_SYMBOL)
         }
     }
 
@@ -71,6 +70,6 @@ open class SyntaxHighlighter(protected val holder: AnnotationHolder) : SleighVis
 
     override fun visitSpaceTypeIdentifier(visited: SleighSpaceTypeIdentifier) {
         visited.externalDefinition?.let { return }
-        highlight(visited, holder, SleighSyntaxHighlighter.BUILT_IN_SYMBOL)
+        highlight(visited, holder, SyntaxHighlighting.BUILT_IN_SYMBOL)
     }
 }

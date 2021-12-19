@@ -2,7 +2,6 @@
 
 package it.frob.sleighidea.syntax
 
-import com.intellij.grazie.utils.toLinkedSet
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -10,17 +9,13 @@ import it.frob.sleighidea.psi.*
 import kotlin.math.abs
 import kotlin.math.pow
 
-class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighlighter(holder) {
+class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighlightingVisitor(holder) {
 
     private val availableSpaces: List<SleighSpaceDefinition> by lazy {
         PsiTreeUtil.collectElementsOfType(
             root.containingFile,
             SleighSpaceDefinition::class.java
         ).toList()
-    }
-
-    private val availableSpaceNames: List<String> by lazy {
-        availableSpaces.map { space -> space.name }.toList()
     }
 
     private val availableTokens: List<SleighTokenDefinition> by lazy {
@@ -30,67 +25,32 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
         ).toList()
     }
 
-    private val definedTokens: Map<String, List<SleighTokenDefinition>> by lazy {
-        val tokens: MutableMap<String, MutableList<SleighTokenDefinition>> = mutableMapOf()
-
-        availableTokens.forEach { token ->
-            if (tokens.contains(token.name)) {
-                tokens[token.name]!!.add(token)
-            } else {
-                tokens[token.name] = mutableListOf()
-            }
-        }
-
-        tokens
-    }
-
     private val availableTokenFields: List<SleighTokenFieldDefinition> by lazy {
         availableTokens.map { token -> token.tokenFieldDefinitionList }
             .flatten()
             .toList()
     }
 
-    private val availableTokenFieldsMap: Map<String, SleighTokenFieldDefinition> by lazy {
-        val fields: MutableMap<String, SleighTokenFieldDefinition> = mutableMapOf()
-
-        availableTokenFields.forEach { field ->
-            if (!fields.contains(field.symbol.value)) {
-                fields[field.symbol.value] = field
-            }
-        }
-
-        fields
-    }
-
-    private val definedTokenFields: Map<String, List<SleighTokenFieldDefinition>> by lazy {
-        val fields: MutableMap<String, MutableList<SleighTokenFieldDefinition>> = mutableMapOf()
-
-        availableTokenFields.forEach { field ->
-            if (fields.contains(field.symbol.value)) {
-                fields[field.symbol.value]!!.add(field)
-            } else {
-                fields[field.symbol.value] = mutableListOf()
-            }
-        }
-
-        fields
-    }
-
-    private val firstDefaultSpace: SleighSpaceDefinition? by lazy {
-        availableSpaces.first { space -> space.default.isNotEmpty() }
-    }
-
-    private val definedVariables: List<String> by lazy {
+    private val availableVariables: List<SleighSymbolOrWildcard> by lazy {
         PsiTreeUtil.collectElementsOfType(root.containingFile, SleighVariablesNodeDefinition::class.java)
             .map { node -> node.symbolOrWildcardList }
             .flatten()
-            .mapNotNull { symbol -> symbol.symbol?.value }
-            .toLinkedSet()
+            .filter { symbol -> symbol.symbol != null }
             .toList()
     }
 
     override fun visitSpaceDefinition(visited: SleighSpaceDefinition) {
         super.visitSpaceDefinition(visited)
+
+        val knownSpaces =
+            availableSpaces.takeWhile { token -> (token.textOffset + token.textLength) < visited.textOffset }
+                .map { token -> token.name }
+                .toList()
+
+        if (knownSpaces.contains(visited.name)) {
+            markElementAsError(visited.identifier, holder, "Memory space \"${visited.name}\" already defined.")
+            return
+        }
 
         when (visited.size.size) {
             0 -> markElementAsError(visited.parent, holder, "Memory space must have a size modifier.")
@@ -125,6 +85,10 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
             markElementAsError(element, holder, "Memory space already has a default flag set.")
         }
 
+        val firstDefaultSpace =
+            availableSpaces.takeWhile { token -> (token.textOffset + token.textLength) < visited.textOffset }
+                .firstOrNull { space -> space.default.isNotEmpty() }
+
         if (visited.default.isNotEmpty() && firstDefaultSpace != null && visited != firstDefaultSpace) {
             markElementAsError(visited.default.first(), holder, "There is already another default memory space set.")
         }
@@ -154,20 +118,28 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
             }
         }
 
-        val seenVariablesList = definedVariables.toMutableList()
+        val seenVariablesList =
+            availableVariables.takeWhile { variable -> (variable.textOffset + variable.textLength) < visited.textOffset }
+                .mapNotNull { symbol -> symbol.symbol?.value }
+                .toMutableList()
 
         visited.symbolOrWildcardList.mapNotNull { item -> item.symbol }
             .forEach { symbol ->
                 val variableName = symbol.value
 
                 if (seenVariablesList.contains(variableName)) {
-                    seenVariablesList.remove(variableName)
-                } else {
                     markElementAsError(symbol, holder, "Variable \"$variableName\" already defined.")
+                } else {
+                    seenVariablesList.add(variableName)
                 }
             }
 
-        if (!availableSpaceNames.contains(visited.symbol.value)) {
+        val knownSpaces =
+            availableSpaces.takeWhile { token -> (token.textOffset + token.textLength) < visited.textOffset }
+                .map { token -> token.name }
+                .toList()
+
+        if (!knownSpaces.contains(visited.symbol.value)) {
             markElementAsError(visited.symbol, holder, "Unknown memory space \"${visited.symbol.value}\".")
         }
     }
@@ -175,27 +147,43 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitTokenDefinition(visited: SleighTokenDefinition) {
         super.visitTokenDefinition(visited)
 
-        definedTokens[visited.name]?.let { duplicates ->
-            if (duplicates.contains(visited)) {
-                markElementAsError(visited.symbol, holder, "Token \"${visited.name}\" already defined.")
-            }
+        val seenTokens = availableTokens.asSequence()
+            .takeWhile { token -> (token.textOffset + token.textLength) < visited.textOffset }
+            .map { token -> token.name }
+            .toList()
+
+        if (seenTokens.contains(visited.name)) {
+            markElementAsError(visited.symbol, holder, "Token \"${visited.name}\" already defined.")
+            return
         }
 
+        val seenFields = availableTokens.asSequence()
+            .takeWhile { token -> (token.textOffset + token.textLength) < visited.textOffset }
+            .map { token -> token.tokenFieldDefinitionList }
+            .flatten()
+            .map { token -> token.symbol.value }
+            .toList()
+
         visited.tokenFieldDefinitionList.forEach { field ->
-            checkTokenFieldDefinition(visited, field)
+            checkTokenFieldDefinition(visited, field, seenFields)
         }
     }
 
     override fun visitVariableAttach(visited: SleighVariableAttach) {
         super.visitVariableAttach(visited)
 
-        checkSymbolListAssignment(visited.symbolList, visited.symbolOrWildcardList.size.toULong())
+        checkSymbolListAssignment(visited, visited.symbolList, visited.symbolOrWildcardList.size.toULong())
+
+        val seenVariablesList =
+            availableVariables.takeWhile { variable -> (variable.textOffset + variable.textLength) < visited.textOffset }
+                .mapNotNull { symbol -> symbol.symbol?.value }
+                .toList()
 
         visited.symbolOrWildcardList
             .mapNotNull { symbol -> symbol.symbol }
             .filter { symbol -> !symbol.isExternal }
             .forEach { symbol ->
-                if (!definedVariables.contains(symbol.value)) {
+                if (!seenVariablesList.contains(symbol.value)) {
                     markElementAsError(symbol, holder, "Unknown variable \"${symbol.value}\".")
                 }
             }
@@ -204,22 +192,23 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitValueAttach(visited: SleighValueAttach) {
         super.visitValueAttach(visited)
 
-        checkSymbolListAssignment(visited.symbolList, visited.integerOrWildcardList.size.toULong())
+        checkSymbolListAssignment(visited, visited.symbolList, visited.integerOrWildcardList.size.toULong())
     }
 
     override fun visitNameAttach(visited: SleighNameAttach) {
         super.visitNameAttach(visited)
 
-        checkSymbolListAssignment(visited.symbolList, visited.nameOrWildcardList.size.toULong())
+        checkSymbolListAssignment(visited, visited.symbolList, visited.nameOrWildcardList.size.toULong())
     }
 
-    private fun checkTokenFieldDefinition(token: SleighTokenDefinition, field: SleighTokenFieldDefinition) {
-        val fieldName = field.symbol.value
-
-        definedTokenFields[fieldName]?.let { duplicates ->
-            if (duplicates.contains(field)) {
-                markElementAsError(field, holder, "Field \"$fieldName\" already defined.")
-            }
+    private fun checkTokenFieldDefinition(
+        token: SleighTokenDefinition,
+        field: SleighTokenFieldDefinition,
+        seenFields: List<String>
+    ) {
+        if (seenFields.contains(field.symbol.value)) {
+            markElementAsError(field, holder, "Field \"${field.symbol.value}\" already defined.")
+            return
         }
 
         if (!field.bitStart.isExternal && !field.bitEnd!!.isExternal &&
@@ -286,16 +275,29 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
             }
     }
 
-    private fun checkSymbolListAssignment(symbolList: List<SleighSymbol>, valuesLength: ULong) {
+    private fun checkSymbolListAssignment(element: PsiElement, symbolList: List<SleighSymbol>, valuesLength: ULong) {
+        val availableFields =
+            availableTokenFields
+                .asSequence()
+                .map { field -> field.symbol }
+                .takeWhile { symbol -> (symbol.textOffset + symbol.textLength) < element.textOffset }
+                .filter { symbol -> !symbol.isExternal }
+                .map { symbol -> symbol.value }
+                .toList()
+
         symbolList.forEach { symbol ->
-            availableTokenFieldsMap[symbol.value]?.let { field ->
+            if (symbol.isExternal || !availableFields.contains(symbol.value)) {
+                markElementAsError(symbol, holder, "Unknown field \"${symbol.value}\".")
+                return@forEach
+            }
+
+            availableTokenFields.find { field -> field.symbol.value == symbol.value }?.let { field ->
                 if (field.bitStart.isExternal || field.bitEnd!!.isExternal) {
-                    return@let
+                    return@forEach
                 }
 
                 val fieldSize = abs(field.bitEnd!!.toInteger()!! - field.bitStart.toInteger()!!) + 1
                 val expectedValuesLength = 2.toDouble().pow(fieldSize).toULong()
-
                 if (expectedValuesLength != valuesLength) {
                     markElementAsError(
                         symbol, holder,
@@ -303,9 +305,7 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
                     )
                 }
             } ?: run {
-                if (!symbol.isExternal) {
-                    markElementAsError(symbol, holder, "Unknown field \"${symbol.value}\".")
-                }
+                throw RuntimeException("Cannot find field for \"${symbol.value}\".")
             }
         }
     }
