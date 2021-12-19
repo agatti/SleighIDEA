@@ -12,7 +12,7 @@ import javax.swing.Icon
 
 class SleighColourSettingsPage : ColorSettingsPage {
 
-    override fun getIcon(): Icon? = SleighIcons.FILE
+    override fun getIcon(): Icon = SleighIcons.FILE
 
     override fun getHighlighter(): SyntaxHighlighter = SyntaxHighlighting()
 

@@ -7,7 +7,6 @@ import com.intellij.ide.util.treeView.smartTree.SortableTreeElement
 import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.NavigatablePsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import it.frob.sleighidea.psi.*
 import it.frob.sleighidea.psi.impl.SleighPsiImplUtil
 

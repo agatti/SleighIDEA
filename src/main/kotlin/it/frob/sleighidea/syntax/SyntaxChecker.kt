@@ -11,6 +11,10 @@ import kotlin.math.pow
 
 class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighlightingVisitor(holder) {
 
+    private val firstDefinedAlignment: SleighAlignmentDefinition? by lazy {
+        PsiTreeUtil.findChildOfType(root.containingFile, SleighAlignmentDefinition::class.java)
+    }
+
     private val availableSpaces: List<SleighSpaceDefinition> by lazy {
         PsiTreeUtil.collectElementsOfType(
             root.containingFile,
@@ -96,6 +100,11 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
 
     override fun visitAlignmentDefinition(visited: SleighAlignmentDefinition) {
         super.visitAlignmentDefinition(visited)
+
+        if (firstDefinedAlignment != visited) {
+            markElementAsError(visited, holder, "There is already another alignment directive being defined.")
+            return
+        }
 
         visited.positiveIntegerValue.toInteger()?.let { integer ->
             if (integer <= 0) {
