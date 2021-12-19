@@ -36,7 +36,7 @@ class SleighFoldingBuilder : FoldingBuilderEx(), DumbAware {
                 }
             }
 
-            override fun visitConstructorlike(visited: SleighConstructorlike) {
+            override fun visitConstructorLike(visited: SleighConstructorLike) {
                 visited.acceptChildren(object : SleighVisitor() {
                     override fun visitMacrodef(visited: SleighMacrodef) {
                         descriptors.add(
@@ -50,7 +50,7 @@ class SleighFoldingBuilder : FoldingBuilderEx(), DumbAware {
                     }
 
                     override fun visitConstructor(visited: SleighConstructor) {
-                        val container = PsiTreeUtil.findChildOfType(visited, SleighCtorstart::class.java) ?: return
+                        val container = PsiTreeUtil.findChildOfType(visited, SleighConstructorStart::class.java) ?: return
                         if (container.firstChild is SleighDisplay) {
                             descriptors.add(
                                 FoldingDescriptor(

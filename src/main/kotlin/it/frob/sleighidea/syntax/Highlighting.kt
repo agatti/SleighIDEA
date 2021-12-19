@@ -199,7 +199,7 @@ open class SyntaxHighlightingVisitor(protected val holder: AnnotationHolder) : S
         }
     }
 
-    override fun visitCtorstart(visited: SleighCtorstart) {
+    override fun visitConstructorStart(visited: SleighConstructorStart) {
         val firstChild = visited.firstChild
         if (firstChild is SleighIdentifier) {
             assignGutterIcon(visited, holder, SleighIcons.TABLE_GO)

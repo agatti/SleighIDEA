@@ -45,4 +45,6 @@ public interface SleighFile extends PsiFile {
      * @return the {@link SleighVariablesNodeDefinition} instances present in the file.
      */
     Collection<SleighVariablesNodeDefinition> getVariablesNodeDefinitions();
+
+    Collection<SleighConstructorStart> getConstructorStarts();
 }

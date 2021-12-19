@@ -144,7 +144,7 @@
 spec ::= ( spec_element ) * <<eof>>
 
 spec_element ::= definition
-               | constructorlike
+               | constructor_like
                | include
 
 include ::= KEY_ATINCLUDE include_string
@@ -245,25 +245,25 @@ private meta variable_list ::= LBRACKET <<param>> + RBRACKET
 symbol_or_wildcard ::= symbol
                      | UNDERSCORE
 
-constructorlike ::= macrodef
-                  | withblock
-                  | constructor
+constructor_like ::= macrodef
+                   | withblock
+                   | constructor
 macrodef ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody {
     methods = [ getPlaceholderText getPresentation ]
 }
 arguments ::= oplist *
 oplist ::= identifier ( COMMA identifier ) *
-withblock ::= RES_WITH id_or_nil COLON bitpat_or_nil context_block LBRACE constructorlikelist RBRACE
+withblock ::= RES_WITH id_or_nil COLON bit_patterns context_block LBRACE constructor_like_list RBRACE
 id_or_nil ::= identifier *
-bitpat_or_nil ::= bitpattern *
-def_or_conslike ::= definition
-                  | constructorlike
-constructorlikelist ::= def_or_conslike *
-constructor ::= ctorstart bitpattern context_block ctorsemantic
+bit_patterns ::= bit_pattern *
+definition_or_constructor_like ::= definition
+                                 | constructor_like
+constructor_like_list ::= definition_or_constructor_like *
+constructor ::= constructor_start bit_pattern context_block ctorsemantic
 ctorsemantic ::= semanticbody
                | KEY_UNIMPL
-bitpattern ::= pequation
-ctorstart ::= [ identifier ] display
+bit_pattern ::= pequation
+constructor_start ::= [ identifier ] display
 context_block ::= ( LBRACKET context_statements RBRACKET ) *
 private context_statements ::= context_statement *
 context_statement ::= context_statement_kind SEMI
@@ -454,9 +454,8 @@ variable_node ::= identifier [ COLON constant ]
                 | AMPERSAND [ COLON constant ] variable_node
 constant ::= positive_integer
 
-display ::= COLON print_pieces RES_IS {
-    methods = [ getPlaceholderText ]
-}
+display ::= COLON print_pieces RES_IS
+{ methods=[getPlaceholderText] }
 private print_pieces ::= print_piece *
 print_piece ::= identifier
               | white_space

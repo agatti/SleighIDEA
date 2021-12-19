@@ -21,7 +21,7 @@ class ViewModel(psiFile: PsiFile?) : StructureViewModelBase(psiFile!!, ViewEleme
     override fun getSorters(): Array<Sorter> = arrayOf(Sorter.ALPHA_SORTER)
 
     override fun isAlwaysShowsPlus(element: StructureViewTreeElement): Boolean =
-        (element is SpaceViewElement || element is TokenViewElement) && element.children.isNotEmpty()
+        (element is SpaceViewElement || element is TokenViewElement || element is TableViewElement) && element.children.isNotEmpty()
 
     override fun isAlwaysLeaf(element: StructureViewTreeElement): Boolean =
         element.value is SleighIdentifier || element.value is SleighDisplay
@@ -46,18 +46,7 @@ class ViewElement(private val element: NavigatablePsiElement) : StructureViewTre
     override fun getAlphaSortKey(): String = element.name ?: ""
 
     override fun getPresentation(): ItemPresentation =
-        element.presentation?.let { presentation -> return presentation } ?: run {
-            return if (element is SleighCtorstart && element.getFirstChild() is SleighDisplay) {
-                return PresentationData(
-                    (element.getFirstChild() as SleighDisplay).placeholderText,
-                    "",
-                    SleighIcons.TABLE,
-                    null
-                )
-            } else {
-                PresentationData()
-            }
-        }
+        element.presentation ?: PresentationData()
 
     override fun getChildren(): Array<TreeElement> {
         if (element !is SleighFile) {
@@ -75,11 +64,25 @@ class ViewElement(private val element: NavigatablePsiElement) : StructureViewTre
         viewElements.addAll(file.macros
             .map { macro: SleighMacrodef -> ViewElement(macro as NavigatablePsiElement) }
             .toList())
-        viewElements.addAll(PsiTreeUtil.collectElementsOfType(element, SleighCtorstart::class.java)
-            .filter { constructor: SleighCtorstart -> constructor.firstChild is SleighDisplay }
-            .map { constructor: SleighCtorstart -> ViewElement(constructor as NavigatablePsiElement) }
-            .toList())
+
+        viewElements.addAll(extractTableConstructors(file).values.map { tables -> TableViewElement(tables) }.toList())
+
+        viewElements.addAll(file.constructorStarts.filter { constructor -> constructor.identifier == null }
+            .map { opcode -> OpcodeViewElement(opcode) }.toList())
+
         return viewElements.toTypedArray()
+    }
+
+    private fun extractTableConstructors(file: SleighFile): Map<String, List<SleighConstructorStart>> {
+        val constructors: MutableMap<String, MutableList<SleighConstructorStart>> = linkedMapOf()
+
+        file.constructorStarts
+            .filter { constructor -> constructor.identifier != null }
+            .forEach { constructor ->
+                constructors.computeIfAbsent(constructor.identifier!!.text) { mutableListOf() }.add(constructor)
+            }
+
+        return constructors
     }
 
     override fun navigate(requestFocus: Boolean) {

@@ -86,6 +86,18 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     );
 
     /**
+     * All the constructor start elements in the file, wrapped in a cache-aware container.
+     */
+    private final CachedValue<List<SleighConstructorStart>> constructorStarts = createCachedValue(
+            new ValueProvider<>() {
+                @Override
+                protected @NotNull List<SleighConstructorStart> computeValue() {
+                    return Collections.unmodifiableList(collectConstructorStarts());
+                }
+            }
+    );
+
+    /**
      * Constructor.
      *
      * @param viewProvider the access class for the file's PSI elements.
@@ -132,6 +144,11 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
     @Override
     public Collection<SleighVariablesNodeDefinition> getVariablesNodeDefinitions() {
         return variableDefinitions.getValue();
+    }
+
+    @Override
+    public Collection<SleighConstructorStart> getConstructorStarts() {
+        return constructorStarts.getValue();
     }
 
     /**
@@ -218,5 +235,15 @@ public class SleighFileImpl extends PsiFileBase implements SleighFile, PsiNameId
                 .map(child -> PsiTreeUtil.getChildrenOfTypeAsList(child, SleighVariablesNodeDefinition.class))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Extract all constructor start elements in the file.
+     *
+     * @return a list containing the {@link SleighConstructorStart} instances found in the file.
+     */
+    @NotNull
+    private List<SleighConstructorStart> collectConstructorStarts() {
+        return new ArrayList<>(PsiTreeUtil.collectElementsOfType(this, SleighConstructorStart.class));
     }
 }

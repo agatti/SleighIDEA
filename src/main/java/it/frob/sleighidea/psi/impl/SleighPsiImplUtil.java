@@ -28,7 +28,7 @@ public class SleighPsiImplUtil {
      * @return the containing file name as a string or {@code null} if none could be obtained.
      */
     @Nullable
-    private static String getContainingFile(@NotNull PsiElement element) {
+    public static String getContainingFile(@NotNull PsiElement element) {
         PsiFile containingFile = element.getContainingFile();
         return containingFile == null ? null : containingFile.getName();
     }
