@@ -30,13 +30,14 @@ object SleighPsiImplUtil {
      * @return the converted positive integer.
      */
     private fun baseAwareIntegerParser(integer: String): Int {
-        val lowerCase = integer.lowercase().trim { it <= ' ' }
-        if (lowerCase.startsWith("0b")) {
-            return integer.substring(2).toInt(2)
+        val text = integer.lowercase().trim()
+        return when {
+            text.startsWith("-0b") -> -(text.substring(3).toInt(2))
+            text.startsWith("-0x") -> -(text.substring(3).toInt(16))
+            text.startsWith("0b") -> text.substring(2).toInt(2)
+            text.startsWith("0x") -> text.substring(2).toInt(16)
+            else -> text.toInt(10)
         }
-        return if (lowerCase.startsWith("0x")) {
-            integer.substring(2).toInt(16)
-        } else integer.toInt(10)
     }
 
     /**
@@ -96,14 +97,14 @@ object SleighPsiImplUtil {
      * @return the placeholder text derived from the given element.
      */
     fun getPlaceholderText(element: SleighSpaceDefinition): String {
-        val sizeElement = element.size[0].second
+        val sizeElement = element.size.first().second
         val size = if (sizeElement.isExternal) sizeElement.text else sizeElement.toInteger().toString()
         val wordSize: String
         val wordSizes = element.wordSize
         wordSize = if (wordSizes.isEmpty()) {
             size
         } else {
-            val wordSizeValue = wordSizes[0].second
+            val wordSizeValue = wordSizes.first().second
             if (wordSizeValue.isExternal) wordSizeValue.text else wordSizeValue.toInteger().toString()
         }
         return "${getName(element)} (size: $size, word size: $wordSize)"
@@ -126,13 +127,19 @@ object SleighPsiImplUtil {
      *
      * @param element the element to get the size modifiers of.
      * @return a list of `Pair` of [SleighSpaceSizeModifier] element, together with the associated
-     * [SleighPositiveIntegerValue].
+     * [SleighInteger].
      */
     @JvmStatic
-    fun getSize(element: SleighSpaceDefinition): List<Pair<SleighSpaceSizeModifier?, SleighPositiveIntegerValue>> =
+    fun getSize(element: SleighSpaceDefinition): List<Pair<SleighSpaceSizeModifier?, SleighInteger>> =
         element.spaceModifierList
-            .mapNotNull { obj: SleighSpaceModifier -> obj.spaceSizeModifier }
-            .map { modifier: SleighSpaceSizeModifier? -> Pair.create(modifier, modifier!!.positiveIntegerValue) }
+            .mapNotNull { obj: SleighSpaceModifier ->
+                obj.spaceSizeModifier?.let { modifier ->
+                    return@mapNotNull Pair.create(
+                        modifier,
+                        modifier.integer
+                    )
+                }
+            }
             .toList()
 
     /**
@@ -140,13 +147,19 @@ object SleighPsiImplUtil {
      *
      * @param element the element to get the word size modifiers of.
      * @return a list of `Pair` of [SleighSpaceWordsizeModifier] element, together with the associated
-     * [SleighPositiveIntegerValue].
+     * [SleighInteger].
      */
     @JvmStatic
-    fun getWordSize(element: SleighSpaceDefinition): List<Pair<SleighSpaceWordsizeModifier?, SleighPositiveIntegerValue>> =
+    fun getWordSize(element: SleighSpaceDefinition): List<Pair<SleighSpaceWordsizeModifier?, SleighInteger>> =
         element.spaceModifierList
-            .mapNotNull { obj: SleighSpaceModifier -> obj.spaceWordsizeModifier }
-            .map { modifier: SleighSpaceWordsizeModifier? -> Pair.create(modifier, modifier!!.positiveIntegerValue) }
+            .mapNotNull { obj: SleighSpaceModifier ->
+                obj.spaceWordsizeModifier?.let { modifier ->
+                    return@mapNotNull Pair.create(
+                        modifier,
+                        modifier.integer
+                    )
+                }
+            }
             .toList()
 
     /**
@@ -158,8 +171,14 @@ object SleighPsiImplUtil {
     @JvmStatic
     fun getType(element: SleighSpaceDefinition): List<Pair<SleighSpaceTypeModifier?, String?>> =
         element.spaceModifierList
-            .mapNotNull { obj: SleighSpaceModifier -> obj.spaceTypeModifier }
-            .map { modifier: SleighSpaceTypeModifier? -> Pair.create(modifier, modifier!!.spaceTypeIdentifier.text) }
+            .mapNotNull { obj: SleighSpaceModifier ->
+                obj.spaceTypeModifier?.let { modifier ->
+                    Pair.create(
+                        modifier,
+                        modifier.spaceTypeIdentifier.text
+                    )
+                }
+            }
             .toList()
 
     /**
@@ -214,7 +233,7 @@ object SleighPsiImplUtil {
     )
 
     @JvmStatic
-    fun getSize(element: SleighTokenDefinition): Int? = element.positiveIntegerValue.toInteger()
+    fun getSize(element: SleighTokenDefinition): Int? = element.integer.toInteger()
 
     /**
      * Extract the endianness of a [SleighTokenDefinition] element.
@@ -276,44 +295,14 @@ object SleighPsiImplUtil {
     }
 
     @JvmStatic
-    fun toInteger(value: SleighIntegerValue): Int? =
-        value.positiveIntegerValue?.toInteger() ?: value.negativeIntegerValue?.toInteger()
-
-    @JvmStatic
-    fun isExternal(value: SleighIntegerValue): Boolean =
-        value.positiveIntegerValue?.let { element -> return element.isExternal } ?: run {
-            value.negativeIntegerValue?.let { element -> return element.isExternal } ?: run {
-                throw RuntimeException("Integer value is neither positive nor negative.")
-            }
-        }
-
-    @JvmStatic
-    fun isExternal(value: SleighNegativeIntegerValue): Boolean = value.externalDefinition != null
-
-    @JvmStatic
-    fun toInteger(value: SleighNegativeIntegerValue): Int? = if (value.isExternal) {
-        null
-    } else value.negativeInteger!!.toInteger()
-
-    @JvmStatic
-    fun isExternal(value: SleighPositiveIntegerValue): Boolean = value.externalDefinition != null
-
-    @JvmStatic
-    fun toInteger(value: SleighPositiveIntegerValue): Int? = if (value.isExternal) {
-        null
-    } else value.positiveInteger!!.toInteger()
-
-    @JvmStatic
-    fun getValue(symbol: SleighSymbol): String = if (symbol.externalDefinition != null) {
-        symbol.externalDefinition!!.text
-    } else symbol.symbolString!!.text
+    fun getValue(symbol: SleighSymbol): String = symbol.externalDefinition?.text ?: symbol.symbolString!!.text
 
     @JvmStatic
     fun isExternal(symbol: SleighSymbol): Boolean = symbol.externalDefinition != null
 
     @JvmStatic
-    fun toInteger(value: SleighNegativeInteger): Int = baseAwareIntegerParser(value.text)
+    fun toInteger(value: SleighInteger): Int? = if (value.isExternal) null else baseAwareIntegerParser(value.text)
 
     @JvmStatic
-    fun toInteger(value: SleighPositiveInteger): Int = baseAwareIntegerParser(value.text)
+    fun isExternal(element: SleighInteger): Boolean = element.externalDefinition != null
 }

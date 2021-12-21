@@ -103,12 +103,11 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
 
         if (firstDefinedAlignment != visited) {
             markElementAsError(visited, holder, "There is already another alignment directive being defined.")
-            return
         }
 
-        visited.positiveIntegerValue.toInteger()?.let { integer ->
+        visited.integer.toInteger()?.let { integer ->
             if (integer <= 0) {
-                markElementAsError(visited.positiveIntegerValue.parent, holder, "Alignment must be greater than zero.")
+                markElementAsError(visited.integer.parent, holder, "Alignment must be greater than zero.")
             }
         }
     }
@@ -116,13 +115,24 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitVariablesNodeDefinition(visited: SleighVariablesNodeDefinition) {
         super.visitVariablesNodeDefinition(visited)
 
-        visited.size!!.positiveInteger?.let { integer ->
-            if (integer.toInteger() <= 0) {
+        visited.size?.toInteger()?.let { integer ->
+            if (integer <= 0) {
                 markElementAsError(
                     visited.keySize.textOffset,
                     visited.size!!.textOffset + visited.size!!.textLength,
                     holder,
                     "Variables' size must be greater than zero."
+                )
+            }
+        }
+
+        visited.offset.toInteger()?.let { integer ->
+            if (integer < 0) {
+                markElementAsError(
+                    visited.offset.textOffset,
+                    visited.offset.textOffset + visited.offset.textLength,
+                    holder,
+                    "Variables' offset must not be negative."
                 )
             }
         }
@@ -156,6 +166,12 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitTokenDefinition(visited: SleighTokenDefinition) {
         super.visitTokenDefinition(visited)
 
+        visited.size?.let { size ->
+            if (size < 0) {
+                markElementAsError(visited.integer, holder, "Token size must be zero or greater.")
+            }
+        }
+
         val seenTokens = availableTokens.asSequence()
             .takeWhile { token -> (token.textOffset + token.textLength) < visited.textOffset }
             .map { token -> token.name }
@@ -163,7 +179,6 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
 
         if (seenTokens.contains(visited.name)) {
             markElementAsError(visited.symbol, holder, "Token \"${visited.name}\" already defined.")
-            return
         }
 
         val seenFields = availableTokens.asSequence()
@@ -217,16 +232,23 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     ) {
         if (seenFields.contains(field.symbol.value)) {
             markElementAsError(field, holder, "Field \"${field.symbol.value}\" already defined.")
-            return
+        }
+
+        if (!field.bitStart.isExternal && field.bitStart.toInteger()!! < 0) {
+            markElementAsError(field.bitStart, holder, "Bit extents must not be negative.")
+        }
+
+        if (!field.bitEnd!!.isExternal && field.bitEnd!!.toInteger()!! < 0) {
+            markElementAsError(field.bitEnd!!, holder, "Bit extents must not be negative.")
         }
 
         if (!field.bitStart.isExternal && !field.bitEnd!!.isExternal &&
             field.bitStart.toInteger()!! > field.bitEnd!!.toInteger()!!
         ) {
-            markElementAsError(field.bitStart, field.bitEnd!!, holder, "Invalid bit extent definition.")
+            markElementAsError(field.bitStart, field.bitEnd!!, holder, "Invalid bit extent order definition.")
         }
 
-        token.positiveIntegerValue.toInteger()?.let { tokenBits ->
+        token.integer.toInteger()?.let { tokenBits ->
             val extentBits = tokenBits - 1
 
             if (!field.bitStart.isExternal) {
