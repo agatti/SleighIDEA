@@ -18,28 +18,30 @@ class SleighFoldingBuilder : FoldingBuilderEx(), DumbAware {
     override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean): Array<FoldingDescriptor> {
         val descriptors: MutableList<FoldingDescriptor> = mutableListOf()
 
-        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighMacroDefinition::class.java).map { element ->
-            FoldingDescriptor(
-                element.parent.node, element.parent.textRange, FoldingGroup.newGroup(SLEIGH_PREFIX_STRING)
-            )
-        })
+        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighMacroDefinition::class.java)
+            .map { element ->
+                FoldingDescriptor(
+                    element.parent.node, element.parent.textRange, FoldingGroup.newGroup(SLEIGH_PREFIX_STRING)
+                )
+            })
 
-        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighTokenDefinition::class.java).map { element ->
-            FoldingDescriptor(
-                element.parent.node, element.parent.textRange, FoldingGroup.newGroup(SLEIGH_PREFIX_STRING)
-            )
-        })
+        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighTokenDefinition::class.java)
+            .map { element ->
+                FoldingDescriptor(
+                    element.parent.node, element.parent.textRange, FoldingGroup.newGroup(SLEIGH_PREFIX_STRING)
+                )
+            })
 
-        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighConstructor::class.java).filter { element ->
-            element.constructorStart.identifier == null
-        }.map { element ->
-            FoldingDescriptor(
-                element.node,
-                element.textRange,
-                FoldingGroup.newGroup(SLEIGH_PREFIX_STRING),
-                element.constructorStart.display.placeholderText
-            )
-        })
+        descriptors.addAll(PsiTreeUtil.findChildrenOfType(root, SleighConstructor::class.java)
+            .filter { element -> element.constructorStart.identifier == null }
+            .map { element ->
+                FoldingDescriptor(
+                    element.node,
+                    element.textRange,
+                    FoldingGroup.newGroup(SLEIGH_PREFIX_STRING),
+                    element.constructorStart.display.placeholderText
+                )
+            })
 
         return descriptors.toTypedArray()
     }
