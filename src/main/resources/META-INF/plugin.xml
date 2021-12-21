@@ -30,6 +30,20 @@
         <lang.foldingBuilder language="Sleigh"
                              implementationClass="it.frob.sleighidea.SleighFoldingBuilder"/>
         <lang.commenter language="Sleigh" implementationClass="it.frob.sleighidea.SleighCommenter"/>
+
+        <intentionAction>
+            <className>it.frob.sleighidea.intention.ConvertToBinaryIntention</className>
+            <category>Sleigh</category>
+        </intentionAction>
+        <intentionAction>
+            <className>it.frob.sleighidea.intention.ConvertToDecimalIntention</className>
+            <category>Sleigh</category>
+        </intentionAction>
+        <intentionAction>
+            <className>it.frob.sleighidea.intention.ConvertToHexadecimalIntention</className>
+            <category>Sleigh</category>
+        </intentionAction>
+
     </extensions>
 
     <actions>
