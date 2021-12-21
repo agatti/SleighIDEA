@@ -15,8 +15,8 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import it.frob.sleighidea.parser.SleighParser
+import it.frob.sleighidea.psi.SleighFile
 import it.frob.sleighidea.psi.SleighTypes
-import it.frob.sleighidea.psi.impl.SleighFileImpl
 
 class SleighParserDefinition : ParserDefinition {
 
@@ -37,7 +37,7 @@ class SleighParserDefinition : ParserDefinition {
 
     override fun createElement(node: ASTNode): PsiElement = SleighTypes.Factory.createElement(node)
 
-    override fun createFile(viewProvider: FileViewProvider): PsiFile = SleighFileImpl(viewProvider)
+    override fun createFile(viewProvider: FileViewProvider): PsiFile = SleighFile(viewProvider)
 
     companion object {
         val WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE)
