@@ -97,6 +97,7 @@ object SleighPsiImplUtil {
      * @param element the element to get the placeholder text for.
      * @return the placeholder text derived from the given element.
      */
+    @JvmStatic
     fun getPlaceholderText(element: SleighSpaceDefinition): String {
         val sizeElement = element.size.first().second
         val size = if (sizeElement.isExternal) sizeElement.text else sizeElement.toInteger().toString()

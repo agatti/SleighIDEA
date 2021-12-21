@@ -3,6 +3,7 @@
 package it.frob.sleighidea.syntax
 
 import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.HighlighterColors
@@ -235,5 +236,11 @@ open class SyntaxHighlightingVisitor(protected val holder: AnnotationHolder) : S
     override fun visitSpaceTypeIdentifier(visited: SleighSpaceTypeIdentifier) {
         visited.externalDefinition?.let { return }
         highlight(visited, holder, SyntaxHighlighting.BUILT_IN_SYMBOL)
+    }
+
+    override fun visitConstructor(visited: SleighConstructor) {
+        visited.constructorSemantic.keyUnimpl?.let {
+            holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "Table is not implemented.").create()
+        }
     }
 }
