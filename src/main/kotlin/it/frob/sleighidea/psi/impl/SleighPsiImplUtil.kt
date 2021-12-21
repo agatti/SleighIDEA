@@ -12,6 +12,7 @@ import it.frob.sleighidea.model.Endianness
 import it.frob.sleighidea.psi.*
 
 object SleighPsiImplUtil {
+
     /**
      * Get the file name of the given element's containing file.
      *
@@ -225,8 +226,9 @@ object SleighPsiImplUtil {
      * @param element the [SleighTokenDefinition] element to create an item presentation for.
      * @return an [ItemPresentation] instance for the given element.
      */
+    @JvmStatic
     fun getPresentation(element: SleighTokenDefinition): ItemPresentation = PresentationData(
-        "${getPlaceholderText(element)} (${element.size})",
+        "${getPlaceholderText(element)} (${element.size ?: "?"})",
         getContainingFile(element),
         PlatformIcons.CLASS_ICON,
         null
@@ -275,7 +277,7 @@ object SleighPsiImplUtil {
     /**
      * Extract the signed flags of a [SleighTokenFieldDefinition] element.
      *
-     * @param element the element to get the signed of.
+     * @param element the element to get the signed flag of.
      * @return a list of `PsiElement` containing the signed elements.
      */
     @JvmStatic
