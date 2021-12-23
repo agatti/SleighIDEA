@@ -33,6 +33,31 @@ class ViewFactory : PsiStructureViewFactory {
 }
 
 /**
+ * Structure view element wrapper for macros.
+ *
+ * @param macro the [SleighMacroDefinition] instance to wrap.
+ * @constructor Create a `TokenViewElement` wrapping the given [SleighMacroDefinition] instance.
+ */
+class MacroViewElement(private val macro: SleighMacroDefinition) : StructureViewTreeElement, SortableTreeElement {
+
+    override fun getValue(): SleighMacroDefinition = macro
+
+    override fun getAlphaSortKey(): String = macro.placeholderText
+
+    override fun getPresentation(): ItemPresentation = macro.presentation
+
+    override fun getChildren(): Array<TreeElement> = emptyArray()
+
+    override fun navigate(requestFocus: Boolean) {
+        (macro as NavigatablePsiElement).navigate(requestFocus)
+    }
+
+    override fun canNavigate(): Boolean = (macro as NavigatablePsiElement).canNavigate()
+
+    override fun canNavigateToSource(): Boolean = (macro as NavigatablePsiElement).canNavigateToSource()
+}
+
+/**
  * Create a new structure view element wrapping the given PSI element.
  *
  * @param element the PSI element to wrap.
@@ -60,7 +85,7 @@ class ViewElement(private val element: NavigatablePsiElement) : StructureViewTre
             .map { token: SleighTokenDefinition -> TokenViewElement(token) }
             .toList())
         viewElements.addAll(file.macros
-            .map { macro: SleighMacroDefinition -> ViewElement(macro as NavigatablePsiElement) }
+            .map { macro: SleighMacroDefinition -> MacroViewElement(macro) }
             .toList())
 
         viewElements.addAll(extractTableConstructors(file).values.map { tables -> TableViewElement(tables) }.toList())

@@ -58,10 +58,6 @@ sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
 }
 
-/*
-
-// TODO: Figure out why the Grammar-Kit plugin cannot find it.frob.sleighidea.psi.impl.SleighPsiImplUtil
-
 apply plugin: 'org.jetbrains.grammarkit'
 
 grammarKit {
@@ -73,9 +69,9 @@ import org.jetbrains.grammarkit.tasks.GenerateLexer
 import org.jetbrains.grammarkit.tasks.GenerateParser
 
 task generateLexer(type: GenerateLexer) {
-    source = "src/main/grammar/_SleighLexer.flex"
-    targetDir = "src/main/gen/it/frob/sleighidea/parser"
-    targetClass = "_SleighLexer"
+    source = "src/main/grammar/SleighLexer.flex"
+    targetDir = "src/main/gen/it/frob/sleighidea/lexer"
+    targetClass = "SleighLexer"
     purgeOldFiles = true
 }
 
@@ -96,5 +92,3 @@ compileKotlin {
     dependsOn generateLexer
     dependsOn generateParser
 }
-
-*/

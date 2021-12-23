@@ -14,8 +14,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
+import it.frob.sleighidea.lexer.SleighLexer
 import it.frob.sleighidea.parser.SleighParser
-import it.frob.sleighidea.parser._SleighLexer
 import it.frob.sleighidea.psi.SleighFile
 import it.frob.sleighidea.psi.SleighTypes
 import javax.swing.Icon
@@ -44,7 +44,7 @@ open class SleighFileType protected constructor() : LanguageFileType(SleighLangu
     }
 }
 
-class SleighLexerAdapter : FlexAdapter(_SleighLexer(null))
+class SleighLexerAdapter : FlexAdapter(SleighLexer(null))
 
 class SleighParserDefinition : ParserDefinition {
 

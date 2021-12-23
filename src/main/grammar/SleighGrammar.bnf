@@ -16,8 +16,6 @@
     elementTypeClass="it.frob.sleighidea.psi.SleighCompositeElementType"
     tokenTypeClass="it.frob.sleighidea.psi.SleighTokenType"
 
-    psiImplUtilClass="it.frob.sleighidea.psi.impl.SleighPsiImplUtil"
-
     tokens=[
         ASTERISK='*'
         ASSIGN='='
@@ -176,10 +174,8 @@ endian ::= KEY_BIG
 alignment_definition ::= KEY_ALIGNMENT ASSIGN integer
 
 token_definition ::= KEY_TOKEN symbol LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
-{ methods=[getEndianness getName getPlaceholderText getPresentation getSize] }
 private token_field_definitions ::= token_field_definition *
 token_field_definition ::= symbol ASSIGN range_pair token_field_modifiers
-{ methods=[bitStart="range_pair/integer[0]" bitEnd="range_pair/integer[1]" getDec getHex getPresentation getSigned] }
 private token_field_modifiers ::= token_field_modifier *
 token_field_modifier ::= KEY_SIGNED
                        | KEY_HEX
@@ -199,7 +195,6 @@ context_field_modifier ::= KEY_SIGNED
 range_pair ::= LPAREN integer COMMA integer RPAREN
 
 space_definition ::= KEY_SPACE identifier space_modifiers
-{ methods=[getName getPlaceholderText getPresentation getSize getType getWordSize getDefault] }
 private space_modifiers ::= space_modifier *
 space_modifier ::= space_type_modifier
                  | space_size_modifier
@@ -216,15 +211,11 @@ space_size_modifier ::= KEY_SIZE ASSIGN integer
 space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN integer
 
 variables_node_definition ::= symbol KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN integer <<variable_list symbol_or_wildcard>>
-{
-    generateTokenAccessors=true
-    methods=[offset="/integer[0]" size="/integer[1]" getSpace]
-}
+{ generateTokenAccessors=true }
 
 bit_range_definition ::= KEY_BITRANGE bit_ranges
 private bit_ranges ::= bit_range +
 bit_range ::= symbol ASSIGN symbol LBRACKET integer COMMA integer RBRACKET
-{ methods=[lValue="/symbol[0]" rValue="/symbol[1]" start="/integer[0]" length="/integer[1]"] }
 
 pcodeop_definition ::= KEY_PCODEOP symbol
 
@@ -251,7 +242,6 @@ constructor_like ::= macro_definition
                    | withblock
                    | constructor
 macro_definition ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody
-{ methods=[getPlaceholderText getPresentation] }
 arguments ::= oplist *
 oplist ::= identifier ( COMMA identifier ) *
 withblock ::= RES_WITH id_or_nil COLON bit_patterns context_block LBRACE constructor_like_list RBRACE
@@ -457,7 +447,6 @@ variable_node ::= symbol [ COLON constant ]
 constant ::= integer
 
 display ::= COLON print_pieces RES_IS
-{ methods=[getPlaceholderText] }
 private print_pieces ::= print_piece *
 print_piece ::= identifier
               | white_space
@@ -550,10 +539,7 @@ IDENTIFIER ::= symbol_string
 
 integer ::= external_definition
           | [ MINUS ] positive_integer
-{
-    generateTokenAccessors=true
-    methods=[isExternal toInteger]
-}
+{ generateTokenAccessors=true }
 
 private positive_integer ::= hexnumber
                            | decnumber
@@ -561,7 +547,6 @@ private positive_integer ::= hexnumber
 
 symbol ::= external_definition
          | symbol_string
-{ methods=[getValue isExternal] }
 
 external_definition ::= DEFINITION_START symbol_string RPAREN
 

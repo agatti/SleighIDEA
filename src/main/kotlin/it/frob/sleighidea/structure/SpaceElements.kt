@@ -2,7 +2,6 @@
 
 package it.frob.sleighidea.structure
 
-import it.frob.sleighidea.psi.SleighSymbol
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.util.treeView.smartTree.SortableTreeElement
 import com.intellij.navigation.ItemPresentation
@@ -11,10 +10,7 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.util.PlatformIcons
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import it.frob.sleighidea.psi.SleighSpaceDefinition
-import it.frob.sleighidea.psi.SleighSymbolOrWildcard
-import it.frob.sleighidea.psi.SleighVariablesNodeDefinition
-import it.frob.sleighidea.psi.impl.SleighPsiImplUtil
+import it.frob.sleighidea.psi.*
 
 /**
  * Structure view element wrapper for memory spaces.
@@ -28,7 +24,7 @@ class SpaceViewElement(private val space: SleighSpaceDefinition) : StructureView
 
     override fun getAlphaSortKey(): String = space.name
 
-    override fun getPresentation(): ItemPresentation = SleighPsiImplUtil.getPresentation(space)
+    override fun getPresentation(): ItemPresentation = space.presentation
 
     override fun getChildren(): Array<TreeElement> =
         PsiTreeUtil.collectElementsOfType(space.containingFile, SleighVariablesNodeDefinition::class.java)

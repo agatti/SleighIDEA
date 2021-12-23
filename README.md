@@ -45,25 +45,19 @@ in parsing or there are some original constructs that cannot be mapped 1:1 from 
 * Install the [Grammar-Kit plugin](https://plugins.jetbrains.com/plugin/6606-grammar-kit/), then restart the IDE if
   requested.
 * Import the project
-* Find `SleighGrammar.bnf`, right click on it and select **Generate Parser Code**, it should ask you to save a file
-  called `_SleighLexer.flex` in the same directory as the .bnf file - do not change the file name and let it proceed
-* Right click on the `_SleighLexer.flex` file you just generated and select **Run JFlex Generator**.
+* Find `SleighGrammar.bnf`, right click on it and select **Generate Parser Code**
+* Find `SleighLexer.flex`, right click on it and select **Run JFlex Generator**.
 
 ### Can't you just generate the parser and lexer files when building?
 
-The Grammar-Kit plugin for Gradle fails to generate a parser for the project as it triggers the same error
-as https://github.com/JetBrains/gradle-grammar-kit-plugin/issues/48. Now, the workaround
-at https://github.com/JetBrains/ForTea/commit/3edee0f78b15c1bb5d903cc0898f08c80c5b4552 solves that particular problem,
-but for some other reason grammar elements' accessor methods are not generated. The class mentioned in the
-grammar's `psiImplUtilClass` configuration key is found correctly from the IntelliJ plugin but not from Gradle, no real
-idea why.
+That's also another option. The Gradle build script is supposed to regenerate both the lexer and the parser files on
+every build (as in, compilation depends on regenerating the lexer and the parser files), it should just work.
 
 ### How do I run this?
 
 Right now the plugin is simply not complete enough to be put on the JetBrains plugin market, so for now unless you plan
 to test this or work on it, just hold on until things are ready. That said, once you can successfully build the plugin
-using the instructions in the appropriate section, executing the `runIde` Gradle task from the Gradle tasks list should
-do the trick.
+using the instructions in the appropriate section, executing the `runIde` Gradle task should do the trick.
 
 ### Screenshot?
 

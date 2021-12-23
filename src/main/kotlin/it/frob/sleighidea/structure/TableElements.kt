@@ -10,7 +10,6 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.NavigatablePsiElement
 import it.frob.sleighidea.SleighIcons
 import it.frob.sleighidea.psi.*
-import it.frob.sleighidea.psi.impl.SleighPsiImplUtil
 
 /**
  * Structure view element wrapper for tables.
@@ -34,7 +33,7 @@ class TableViewElement(private val tables: List<SleighConstructorStart>) : Struc
 
         return PresentationData(
             presentationText,
-            SleighPsiImplUtil.getContainingFile(tables.first()),
+            getContainingFile(tables.first()),
             SleighIcons.TABLE_GO,
             null
         )
@@ -68,7 +67,7 @@ class TableEntryViewElement(private val entry: SleighConstructorStart) : Structu
                 Regex("\\s+"),
                 " "
             ),
-            SleighPsiImplUtil.getContainingFile(entry),
+            getContainingFile(entry),
             SleighIcons.TABLE_GO,
             null
         )
@@ -94,7 +93,7 @@ class OpcodeViewElement(private val entry: SleighConstructorStart) : StructureVi
     override fun getPresentation(): ItemPresentation {
         return PresentationData(
             entry.display.placeholderText,
-            SleighPsiImplUtil.getContainingFile(entry),
+            getContainingFile(entry),
             SleighIcons.TABLE,
             null
         )

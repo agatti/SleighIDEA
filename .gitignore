@@ -1,5 +1,4 @@
 .gradle
 build
 src/main/gen/*
-src/main/grammar/_SleighLexer.flex
 .DS_Store

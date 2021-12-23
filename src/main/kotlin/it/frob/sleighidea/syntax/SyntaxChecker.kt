@@ -115,11 +115,11 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitVariablesNodeDefinition(visited: SleighVariablesNodeDefinition) {
         super.visitVariablesNodeDefinition(visited)
 
-        visited.size?.toInteger()?.let { integer ->
+        visited.size.toInteger()?.let { integer ->
             if (integer <= 0) {
                 markElementAsError(
-                    visited.keySize.textOffset,
-                    visited.size!!.textOffset + visited.size!!.textLength,
+                    visited.size.textOffset,
+                    visited.size.textOffset + visited.size.textLength,
                     holder,
                     "Variables' size must be greater than zero."
                 )
@@ -238,14 +238,14 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
             markElementAsError(field.bitStart, holder, "Bit extents must not be negative.")
         }
 
-        if (!field.bitEnd!!.isExternal && field.bitEnd!!.toInteger()!! < 0) {
-            markElementAsError(field.bitEnd!!, holder, "Bit extents must not be negative.")
+        if (!field.bitEnd.isExternal && field.bitEnd.toInteger()!! < 0) {
+            markElementAsError(field.bitEnd, holder, "Bit extents must not be negative.")
         }
 
-        if (!field.bitStart.isExternal && !field.bitEnd!!.isExternal &&
-            field.bitStart.toInteger()!! > field.bitEnd!!.toInteger()!!
+        if (!field.bitStart.isExternal && !field.bitEnd.isExternal &&
+            field.bitStart.toInteger()!! > field.bitEnd.toInteger()!!
         ) {
-            markElementAsError(field.bitStart, field.bitEnd!!, holder, "Invalid bit extent order definition.")
+            markElementAsError(field.bitStart, field.bitEnd, holder, "Invalid bit extent order definition.")
         }
 
         token.integer.toInteger()?.let { tokenBits ->
@@ -259,24 +259,24 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
                 }
             }
 
-            if (!field.bitEnd!!.isExternal) {
-                val endBit = field.bitEnd!!.toInteger()!!
+            if (!field.bitEnd.isExternal) {
+                val endBit = field.bitEnd.toInteger()!!
 
                 if (endBit > extentBits) {
-                    markElementAsError(field.bitEnd!!, holder, "Bit extent end $endBit is out of bounds.")
+                    markElementAsError(field.bitEnd, holder, "Bit extent end $endBit is out of bounds.")
                 }
             }
         }
 
-        field.hex.drop(1).forEach { element ->
+        field.hexElements.drop(1).forEach { element ->
             markElementAsError(element, holder, "Token field already has a base 16 modified.")
         }
 
-        field.dec.drop(1).forEach { element ->
+        field.decElements.drop(1).forEach { element ->
             markElementAsError(element, holder, "Token field already has a base 10 modifier.")
         }
 
-        field.signed.drop(1).forEach { element ->
+        field.signedElements.drop(1).forEach { element ->
             markElementAsError(element, holder, "Token field already has signed modifier.")
         }
 
@@ -286,18 +286,22 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
             .forEach { modifier ->
                 if (modifier.keyHex != null) {
                     if (decSeen) {
-                        field.hex.forEach { baseField ->
-                            markElementAsError(baseField, holder, "Cannot have both base 16 and base 10 modifiers.")
-                        }
+                        markElementAsError(
+                            field.hexElements.first(),
+                            holder,
+                            "Cannot have both base 16 and base 10 modifiers."
+                        )
                         return@forEach
                     }
 
                     hexSeen = true
                 } else {
                     if (hexSeen) {
-                        field.dec.forEach { baseField ->
-                            markElementAsError(baseField, holder, "Cannot have both base 16 and base 10 modifiers.")
-                        }
+                        markElementAsError(
+                            field.decElements.first(),
+                            holder,
+                            "Cannot have both base 16 and base 10 modifiers."
+                        )
                         return@forEach
                     }
 
@@ -323,11 +327,11 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
             }
 
             availableTokenFields.find { field -> field.symbol.value == symbol.value }?.let { field ->
-                if (field.bitStart.isExternal || field.bitEnd!!.isExternal) {
+                if (field.bitStart.isExternal || field.bitEnd.isExternal) {
                     return@forEach
                 }
 
-                val fieldSize = abs(field.bitEnd!!.toInteger()!! - field.bitStart.toInteger()!!) + 1
+                val fieldSize = abs(field.bitEnd.toInteger()!! - field.bitStart.toInteger()!!) + 1
                 val expectedValuesLength = 2.toDouble().pow(fieldSize).toULong()
                 if (expectedValuesLength != valuesLength) {
                     markElementAsError(

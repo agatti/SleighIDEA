@@ -8,12 +8,11 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.NavigatablePsiElement
 import it.frob.sleighidea.psi.*
-import it.frob.sleighidea.psi.impl.SleighPsiImplUtil
 
 /**
  * Structure view element wrapper for tokens.
  *
- * @param space the [SleighTokenDefinition] instance to wrap.
+ * @param token the [SleighTokenDefinition] instance to wrap.
  * @constructor Create a `TokenViewElement` wrapping the given [SleighTokenDefinition] instance.
  */
 class TokenViewElement(private val token: SleighTokenDefinition) : StructureViewTreeElement, SortableTreeElement {
@@ -22,7 +21,7 @@ class TokenViewElement(private val token: SleighTokenDefinition) : StructureView
 
     override fun getAlphaSortKey(): String = token.name
 
-    override fun getPresentation(): ItemPresentation = SleighPsiImplUtil.getPresentation(token)
+    override fun getPresentation(): ItemPresentation = token.presentation
 
     override fun getChildren(): Array<TreeElement> =
         token.tokenFieldDefinitionList.mapNotNull { field -> TokenFieldViewElement(field) }.toTypedArray()
@@ -43,7 +42,7 @@ class TokenFieldViewElement(private val field: SleighTokenFieldDefinition) : Str
 
     override fun getAlphaSortKey(): String = field.symbol.value
 
-    override fun getPresentation(): ItemPresentation = SleighPsiImplUtil.getPresentation(field)
+    override fun getPresentation(): ItemPresentation = field.presentation
 
     override fun getChildren(): Array<TreeElement> = emptyArray()
 
