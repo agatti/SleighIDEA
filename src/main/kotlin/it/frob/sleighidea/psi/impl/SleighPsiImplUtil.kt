@@ -304,8 +304,8 @@ object SleighPsiImplUtil {
     fun isExternal(symbol: SleighSymbol): Boolean = symbol.externalDefinition != null
 
     @JvmStatic
-    fun toInteger(value: SleighInteger): Int? = if (value.isExternal) null else baseAwareIntegerParser(value.text)
+    fun isExternal(element: SleighInteger): Boolean = element.externalDefinition != null
 
     @JvmStatic
-    fun isExternal(element: SleighInteger): Boolean = element.externalDefinition != null
+    fun toInteger(value: SleighInteger): Int? = if (value.isExternal) null else baseAwareIntegerParser(value.text)
 }

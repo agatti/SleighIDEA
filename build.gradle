@@ -54,7 +54,47 @@ kotlin {
 }
 
 sourceSets {
-    main.java.srcDirs 'src/main/gen'
-    main.kotlin.srcDirs 'src/main/kotlin'
+    main.java.srcDirs += 'src/main/gen'
+    main.kotlin.srcDirs += 'src/main/kotlin'
 }
 
+/*
+
+// TODO: Figure out why the Grammar-Kit plugin cannot find it.frob.sleighidea.psi.impl.SleighPsiImplUtil
+
+apply plugin: 'org.jetbrains.grammarkit'
+
+grammarKit {
+    // TODO: Use default version once https://github.com/JetBrains/gradle-grammar-kit-plugin/issues/48 is fixed.
+    grammarKitRelease = "6be52771bbac429a54b18141aa2a4dcd19c0ed87"
+}
+
+import org.jetbrains.grammarkit.tasks.GenerateLexer
+import org.jetbrains.grammarkit.tasks.GenerateParser
+
+task generateLexer(type: GenerateLexer) {
+    source = "src/main/grammar/_SleighLexer.flex"
+    targetDir = "src/main/gen/it/frob/sleighidea/"
+    targetClass = "_SleighLexer"
+    purgeOldFiles = true
+}
+
+task generateParser(type: GenerateParser) {
+    source = "src/main/grammar/SleighGrammar.bnf"
+    targetRoot = "src/main/gen"
+    pathToParser = "it/frob/sleighidea/parser/SleighParser.java"
+    pathToPsiRoot = "it/frob/sleighidea/psi"
+    purgeOldFiles = true
+}
+
+compileJava {
+    dependsOn generateLexer
+    dependsOn generateParser
+}
+
+compileKotlin {
+    dependsOn generateLexer
+    dependsOn generateParser
+}
+
+*/

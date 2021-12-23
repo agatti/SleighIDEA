@@ -179,7 +179,7 @@ token_definition ::= KEY_TOKEN symbol LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN 
 { methods=[getEndianness getName getPlaceholderText getPresentation getSize] }
 private token_field_definitions ::= token_field_definition *
 token_field_definition ::= symbol ASSIGN range_pair token_field_modifiers
-{ methods=[bitStart="range_pair/integer[0]" bitEnd="range_pair/integer[1]" getDec getEndianness getHex getPresentation getSigned] }
+{ methods=[bitStart="range_pair/integer[0]" bitEnd="range_pair/integer[1]" getDec getHex getPresentation getSigned] }
 private token_field_modifiers ::= token_field_modifier *
 token_field_modifier ::= KEY_SIGNED
                        | KEY_HEX

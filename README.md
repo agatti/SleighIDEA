@@ -45,8 +45,18 @@ in parsing or there are some original constructs that cannot be mapped 1:1 from 
 * Install the [Grammar-Kit plugin](https://plugins.jetbrains.com/plugin/6606-grammar-kit/), then restart the IDE if
   requested.
 * Import the project
-* Right click on `SleighGrammar.bnf` and select **Generate Parser Code**
-* Right click on `SleighLexer.flex` and select **Run JFlex Generator**
+* Find `SleighGrammar.bnf`, right click on it and select **Generate Parser Code**, it should ask you to save a file
+  called `_SleighLexer.flex` in the same directory as the .bnf file - do not change the file name and let it proceed
+* Right click on the `_SleighLexer.flex` file you just generated and select **Run JFlex Generator**.
+
+### Can't you just generate the parser and lexer files when building?
+
+The Grammar-Kit plugin for Gradle fails to generate a parser for the project as it triggers the same error
+as https://github.com/JetBrains/gradle-grammar-kit-plugin/issues/48. Now, the workaround
+at https://github.com/JetBrains/ForTea/commit/3edee0f78b15c1bb5d903cc0898f08c80c5b4552 solves that particular problem,
+but for some other reason grammar elements' accessor methods are not generated. The class mentioned in the
+grammar's `psiImplUtilClass` configuration key is found correctly from the IntelliJ plugin but not from Gradle, no real
+idea why.
 
 ### How do I run this?
 
