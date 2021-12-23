@@ -74,7 +74,7 @@ import org.jetbrains.grammarkit.tasks.GenerateParser
 
 task generateLexer(type: GenerateLexer) {
     source = "src/main/grammar/_SleighLexer.flex"
-    targetDir = "src/main/gen/it/frob/sleighidea/"
+    targetDir = "src/main/gen/it/frob/sleighidea/parser"
     targetClass = "_SleighLexer"
     purgeOldFiles = true
 }
