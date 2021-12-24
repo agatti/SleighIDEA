@@ -2,8 +2,11 @@
 
 package it.frob.sleighidea.psi
 
+import com.intellij.ide.projectView.PresentationData
 import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
+import com.intellij.util.PlatformIcons
 
 abstract class SleighTokenDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighTokenDefinition {
     override fun setName(name: String): PsiElement {
@@ -11,15 +14,20 @@ abstract class SleighTokenDefinitionMixin(node: ASTNode) : SleighNamedElementImp
         return this
     }
 
-    override fun getName(): String? {
-        return symbol.value
-    }
+    override fun getName(): String? = symbol.value
 
     override fun getNameIdentifier(): PsiElement? = symbol
 
     override fun getIdentifyingElement(): PsiElement? = symbol
 
     override fun getTextOffset(): Int = symbol.textOffset
+
+    override fun getPresentation(): ItemPresentation = PresentationData(
+        "$placeholderText (${size ?: "?"})",
+        getContainingFile(this),
+        PlatformIcons.CLASS_ICON,
+        null
+    )
 }
 
 abstract class SleighTokenFieldDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node),
@@ -29,15 +37,19 @@ abstract class SleighTokenFieldDefinitionMixin(node: ASTNode) : SleighNamedEleme
         return this
     }
 
-    override fun getName(): String? {
-        return symbol.value
-    }
+    override fun getName(): String? = symbol.value
 
     override fun getNameIdentifier(): PsiElement? = symbol
 
     override fun getIdentifyingElement(): PsiElement? = symbol
 
     override fun getTextOffset(): Int = symbol.textOffset
+
+    override fun getPresentation(): ItemPresentation = PresentationData(
+        "${symbol.value} (${bitStart.toInteger() ?: "?"}, ${bitEnd.toInteger() ?: "?"})",
+        getContainingFile(this), PlatformIcons.CLASS_ICON,
+        null
+    )
 }
 
 abstract class SleighSpaceDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighSpaceDefinition {
@@ -46,15 +58,16 @@ abstract class SleighSpaceDefinitionMixin(node: ASTNode) : SleighNamedElementImp
         return this
     }
 
-    override fun getName(): String? {
-        return symbol.value
-    }
+    override fun getName(): String? = symbol.value
 
     override fun getNameIdentifier(): PsiElement? = symbol
 
     override fun getIdentifyingElement(): PsiElement? = symbol
 
     override fun getTextOffset(): Int = symbol.textOffset
+
+    override fun getPresentation(): ItemPresentation =
+        PresentationData(placeholderText, getContainingFile(this), PlatformIcons.ANONYMOUS_CLASS_ICON, null)
 }
 
 abstract class SleighPcodeDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighPcodeopDefinition {
@@ -63,9 +76,7 @@ abstract class SleighPcodeDefinitionMixin(node: ASTNode) : SleighNamedElementImp
         return this
     }
 
-    override fun getName(): String? {
-        return symbol.value
-    }
+    override fun getName(): String? = symbol.value
 
     override fun getNameIdentifier(): PsiElement? = symbol
 
@@ -81,9 +92,7 @@ abstract class SleighVariablesNodeDefinitionMixin(node: ASTNode) : SleighNamedEl
         return this
     }
 
-    override fun getName(): String? {
-        return symbol.value
-    }
+    override fun getName(): String? = symbol.value
 
     override fun getNameIdentifier(): PsiElement? = symbol
 
@@ -98,9 +107,7 @@ abstract class SleighContextDefinitionMixin(node: ASTNode) : SleighNamedElementI
         return this
     }
 
-    override fun getName(): String? {
-        return symbol.value
-    }
+    override fun getName(): String? = symbol.value
 
     override fun getNameIdentifier(): PsiElement? = symbol
 
@@ -116,9 +123,7 @@ abstract class SleighContextFieldDefinitionMixin(node: ASTNode) : SleighNamedEle
         return this
     }
 
-    override fun getName(): String? {
-        return symbol.value
-    }
+    override fun getName(): String? = symbol.value
 
     override fun getNameIdentifier(): PsiElement? = symbol
 
@@ -133,9 +138,7 @@ abstract class SleighBitRangeMixin(node: ASTNode) : SleighNamedElementImpl(node)
         return this
     }
 
-    override fun getName(): String? {
-        return symbolList.first().value
-    }
+    override fun getName(): String? = symbolList.first().value
 
     override fun getNameIdentifier(): PsiElement? = symbolList.first()
 
@@ -150,13 +153,18 @@ abstract class SleighMacroDefinitionMixin(node: ASTNode) : SleighNamedElementImp
         return this
     }
 
-    override fun getName(): String? {
-        return symbol.value
-    }
+    override fun getName(): String? = symbol.value
 
     override fun getNameIdentifier(): PsiElement? = symbol
 
     override fun getIdentifyingElement(): PsiElement? = symbol
 
     override fun getTextOffset(): Int = symbol.textOffset
+
+    override fun getPresentation(): ItemPresentation = PresentationData(
+        placeholderText,
+        getContainingFile(this),
+        PlatformIcons.FUNCTION_ICON,
+        null
+    )
 }

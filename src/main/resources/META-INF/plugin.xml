@@ -21,8 +21,7 @@
         <lang.braceMatcher language="Sleigh"
                            implementationClass="it.frob.sleighidea.SleighBraceMatcher"/>
         <lang.parserDefinition language="Sleigh" implementationClass="it.frob.sleighidea.SleighParserDefinition"/>
-        <lang.psiStructureViewFactory language="Sleigh"
-                                      implementationClass="it.frob.sleighidea.structure.ViewFactory"/>
+        <lang.psiStructureViewFactory language="Sleigh" implementationClass="it.frob.sleighidea.ViewFactory"/>
         <lang.syntaxHighlighterFactory language="Sleigh"
                                        implementationClass="it.frob.sleighidea.syntax.SyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="it.frob.sleighidea.SleighColourSettingsPage"/>

@@ -6,6 +6,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
+import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.ResolveState
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NonNls
 /**
  * Interface for Sleigh elements that may or may not contain sub-elements.
  */
-interface SleighCompositeElement : PsiElement
+interface SleighCompositeElement : NavigatablePsiElement
 
 interface SleighNamedElement : SleighCompositeElement, PsiNameIdentifierOwner
 

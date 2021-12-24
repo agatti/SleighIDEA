@@ -2,13 +2,10 @@
 
 package it.frob.sleighidea.psi
 
-import com.intellij.ide.projectView.PresentationData
-import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
-import com.intellij.util.PlatformIcons
 import it.frob.sleighidea.model.Endianness
 import java.util.stream.Collectors
 
@@ -64,24 +61,8 @@ val SleighMacroDefinition.placeholderText: String
     get() = symbol.value +
             arguments.identifierList.joinToString(", ", "(", ")") { item -> item.text }
 
-val SleighMacroDefinition.presentation: ItemPresentation
-    get() = PresentationData(
-        placeholderText,
-        getContainingFile(this),
-        PlatformIcons.FUNCTION_ICON,
-        null
-    )
-
 val SleighTokenDefinition.placeholderText: String
     get() = name!!
-
-val SleighTokenDefinition.presentation: ItemPresentation
-    get() = PresentationData(
-        "$placeholderText (${size ?: "?"})",
-        getContainingFile(this),
-        PlatformIcons.CLASS_ICON,
-        null
-    )
 
 val SleighTokenDefinition.size: Int?
     get() = integer.toInteger()
@@ -116,13 +97,6 @@ val SleighTokenFieldDefinition.bitStart: SleighInteger
 val SleighTokenFieldDefinition.bitEnd: SleighInteger
     get() = rangePair.integerList[1]
 
-val SleighTokenFieldDefinition.presentation: ItemPresentation
-    get() = PresentationData(
-        "${symbol.value} (${bitStart.toInteger() ?: "?"}, ${bitEnd.toInteger() ?: "?"})",
-        getContainingFile(this), PlatformIcons.CLASS_ICON,
-        null
-    )
-
 /**
  * Extract a placeholder text string from a [SleighSpaceDefinition] element.
  *
@@ -145,9 +119,6 @@ private fun getSpacePlaceholderText(element: SleighSpaceDefinition): String {
 
 val SleighSpaceDefinition.placeholderText: String
     get() = getSpacePlaceholderText(this)
-
-val SleighSpaceDefinition.presentation: ItemPresentation
-    get() = PresentationData(placeholderText, getContainingFile(this), PlatformIcons.ANONYMOUS_CLASS_ICON, null)
 
 /**
  * Extract the size modifiers of a [SleighSpaceDefinition] element.
