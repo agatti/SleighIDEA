@@ -29,13 +29,6 @@ class SleighElementType(debugName: @NonNls String) : IElementType(debugName, Sle
 
 open class SleighCompositeElementImpl(node: ASTNode?) : ASTWrapperPsiElement(node!!), SleighCompositeElement {
 
-    override fun processDeclarations(
-        processor: PsiScopeProcessor,
-        state: ResolveState,
-        lastParent: PsiElement?,
-        place: PsiElement
-    ): Boolean = super.processDeclarations(processor, state, lastParent, place)
-
     override fun getPresentation(): ItemPresentation = PresentationData(
         UsageViewUtil.createNodeText(this), containingFile.name,
         getIcon(0), null
@@ -70,4 +63,8 @@ open class SleighCompositeElementImpl(node: ASTNode?) : ASTWrapperPsiElement(nod
 
 abstract class SleighNamedElementImpl(node: ASTNode) : SleighCompositeElementImpl(node), SleighNamedElement {
     override fun setName(name: String): PsiElement = this
+}
+
+class SleighTokenType(debugName: @NonNls String) : IElementType(debugName, SleighLanguage.INSTANCE) {
+    override fun toString(): String = "SleighTokenType.${super.toString()}"
 }

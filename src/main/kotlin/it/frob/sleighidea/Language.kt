@@ -20,6 +20,43 @@ import it.frob.sleighidea.psi.SleighFile
 import it.frob.sleighidea.psi.SleighTypes
 import javax.swing.Icon
 
+/**
+ * A list containing all built-in function calls.
+ */
+private val STD_LIBRARY_CALL = listOf(
+    "abs",
+    "carry",
+    "ceil",
+    "cpool",
+    "delayslot",
+    "float2float",
+    "floor",
+    "int2float",
+    "nan",
+    "newobject",
+    "round",
+    "sborrow",
+    "scarry",
+    "sext",
+    "sqrt",
+    "trunc",
+    "zext"
+)
+
+fun isStandardLibraryCall(functionName: String): Boolean = functionName.trim() in STD_LIBRARY_CALL
+
+/**
+ * A list containing all built-in symbols.
+ */
+val BUILT_IN_SYMBOLS = listOf(
+    "const",
+    "epsilon",
+    "inst_next",
+    "inst_start",
+    "instruction",
+    "unique"
+)
+
 class SleighLanguage : Language("Sleigh") {
     companion object {
         val INSTANCE: SleighLanguage = SleighLanguage()
@@ -51,7 +88,7 @@ class SleighParserDefinition : ParserDefinition {
     override fun getWhitespaceTokens(): TokenSet = WHITE_SPACES
 
     override fun spaceExistenceTypeBetweenTokens(left: ASTNode, right: ASTNode): ParserDefinition.SpaceRequirements =
-        ParserDefinition.SpaceRequirements.MAY
+        ParserDefinition.SpaceRequirements.MUST
 
     override fun createLexer(project: Project): Lexer = SleighLexerAdapter()
 

@@ -6,6 +6,8 @@ import com.intellij.ide.projectView.PresentationData
 import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.util.PlatformIcons
 
 abstract class SleighTokenDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighTokenDefinition {
@@ -167,4 +169,21 @@ abstract class SleighMacroDefinitionMixin(node: ASTNode) : SleighNamedElementImp
         PlatformIcons.FUNCTION_ICON,
         null
     )
+}
+
+abstract class SleighExpressionApplyNameMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighExpressionApplyName {
+    override fun setName(name: String): PsiElement {
+        nameIdentifier?.replace(SleighElementFactory.createSleighSymbol(project, name))
+        return this
+    }
+
+    override fun getNameIdentifier(): PsiElement? = symbol
+
+    override fun getIdentifyingElement(): PsiElement? = symbol
+
+    override fun getTextOffset(): Int = symbol.textOffset
+
+    override fun getReferences(): Array<PsiReference> {
+        return ReferenceProvidersRegistry.getReferencesFromProviders(this)
+    }
 }

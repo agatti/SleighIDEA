@@ -58,8 +58,7 @@ val SleighDisplay.placeholderText: String
     get() = getDisplayPlaceholderText(this)
 
 val SleighMacroDefinition.placeholderText: String
-    get() = symbol.value +
-            arguments.identifierList.joinToString(", ", "(", ")") { item -> item.text }
+    get() = symbol.value + identifierList.joinToString(", ", "(", ")") { item -> item.text }
 
 val SleighTokenDefinition.placeholderText: String
     get() = name!!

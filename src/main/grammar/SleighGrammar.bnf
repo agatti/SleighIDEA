@@ -284,7 +284,7 @@ macro_definition ::= KEY_MACRO symbol LPAREN arguments RPAREN semanticbody
     mixin="it.frob.sleighidea.psi.SleighMacroDefinitionMixin"
 }
 
-arguments ::= [ <<comma_separated identifier>> ]
+private arguments ::= [ <<comma_separated identifier>> ]
 withblock ::= RES_WITH id_or_nil COLON bit_patterns context_blocks LBRACE constructor_like_list RBRACE
 id_or_nil ::= identifier *
 bit_patterns ::= bit_pattern *
@@ -391,7 +391,7 @@ statement ::= statement_kind SEMI
             | section_def
 private statement_kind ::= assignment
                          | declaration
-                         | funcall
+                         | function_call
                          | build_stmt
                          | crossbuild_stmt
                          | goto_stmt
@@ -407,7 +407,7 @@ lvalue ::= sembitrange
 sembitrange ::= identifier LBRACKET constant COMMA constant RBRACKET
 sizedstar ::= ASTERISK [ sized_star_element ]
 private sized_star_element ::= [ LBRACKET identifier RBRACKET ] [ COLON constant ]
-funcall ::= expr_apply
+private function_call ::= expression_apply
 build_stmt ::= KEY_BUILD identifier
 crossbuild_stmt ::= KEY_CROSSBUILD variable_node COMMA identifier
 goto_stmt ::= KEY_GOTO jumpdest
@@ -476,10 +476,15 @@ unary_op ::= EXCLAIM
            | MINUS
            | FMINUS
            | sizedstar
-expr_func ::= expr_apply
+expr_func ::= expression_apply
             | expr_term
-expr_apply ::= identifier expr_operands
-expr_operands ::= LPAREN [ <<comma_separated expr>> ] RPAREN
+expression_apply ::= expression_apply_name LPAREN [ <<comma_separated expr>> ] RPAREN
+expression_apply_name ::= symbol
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighExpressionApplyNameMixin"
+}
+
 expr_term ::= LPAREN expr RPAREN
             | sembitrange
             | variable_node

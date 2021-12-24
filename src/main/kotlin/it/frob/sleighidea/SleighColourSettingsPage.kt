@@ -29,8 +29,9 @@ macro <macro>testmacro</macro>() {}
 define pcodeop <pcodeop>readIRQ</pcodeop>;
 REL: reloc is rel [ reloc = inst_next + rel; ] { export *:2 reloc; } 
 :NOP is op=0b00000000 {
-if <function>carry</function>(A, B) goto <builtinsymbol>next_inst</builtinsymbol>;
+if <stdfun>carry</stdfun>(A, B) goto <builtinsymbol>inst_next</builtinsymbol>;
 <label><skip></label>
+<fun>testmacro</fun>()
 }"""
 
     override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String, TextAttributesKey> = ATTRIBUTES_KEY_MAP
@@ -44,6 +45,7 @@ if <function>carry</function>(A, B) goto <builtinsymbol>next_inst</builtinsymbol
     companion object {
         private val DESCRIPTORS = arrayOf(
             AttributesDescriptor("Bad value", SyntaxHighlighting.BAD_CHARACTER),
+            AttributesDescriptor("Built-in function call", SyntaxHighlighting.STDLIB_FUNCTION_CALL),
             AttributesDescriptor("Built-in symbol", SyntaxHighlighting.BUILT_IN_SYMBOL),
             AttributesDescriptor("Function call", SyntaxHighlighting.FUNCTION_CALL),
             AttributesDescriptor("Keyword", SyntaxHighlighting.KEYWORD),
@@ -57,11 +59,12 @@ if <function>carry</function>(A, B) goto <builtinsymbol>next_inst</builtinsymbol
 
         private val ATTRIBUTES_KEY_MAP: Map<String, TextAttributesKey> = mapOf(
             Pair("builtinsymbol", SyntaxHighlighting.BUILT_IN_SYMBOL),
-            Pair("function", SyntaxHighlighting.FUNCTION_CALL),
+            Pair("fun", SyntaxHighlighting.FUNCTION_CALL),
             Pair("label", SyntaxHighlighting.LABEL),
             Pair("identifier", SyntaxHighlighting.IDENTIFIER),
             Pair("macro", SyntaxHighlighting.MACRO),
             Pair("pcodeop", SyntaxHighlighting.MACRO),
+            Pair("stdfun", SyntaxHighlighting.STDLIB_FUNCTION_CALL),
         )
     }
 }

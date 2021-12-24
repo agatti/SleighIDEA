@@ -29,6 +29,7 @@
         <lang.foldingBuilder language="Sleigh"
                              implementationClass="it.frob.sleighidea.SleighFoldingBuilder"/>
         <lang.commenter language="Sleigh" implementationClass="it.frob.sleighidea.SleighCommenter"/>
+        <psi.referenceContributor implementation="it.frob.sleighidea.psi.SleighReferenceContributor"/>
 
         <intentionAction>
             <className>it.frob.sleighidea.intention.ConvertToBinaryIntention</className>

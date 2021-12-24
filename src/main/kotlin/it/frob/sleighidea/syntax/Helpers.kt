@@ -77,37 +77,3 @@ internal fun assignGutterIcon(element: PsiElement, holder: AnnotationHolder, ico
  */
 const val SLEIGH_PREFIX_STRING = "sleigh"
 
-/**
- * A list containing all built-in function calls.
- */
-internal val STD_LIBRARY_CALL = listOf(
-    "abs",
-    "carry",
-    "ceil",
-    "cpool",
-    "delayslot",
-    "float2float",
-    "floor",
-    "int2float",
-    "nan",
-    "newobject",
-    "round",
-    "sborrow",
-    "scarry",
-    "sext",
-    "sqrt",
-    "trunc",
-    "zext"
-)
-
-/**
- * A list containing all built-in symbols.
- */
-internal val BUILT_IN_SYMBOLS = listOf(
-    "const",
-    "epsilon",
-    "inst_next",
-    "inst_start",
-    "instruction",
-    "unique"
-)
