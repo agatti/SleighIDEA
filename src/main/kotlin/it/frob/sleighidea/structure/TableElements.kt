@@ -42,7 +42,7 @@ class TableViewElement(private val tables: List<SleighConstructorStart>) : Struc
     override fun getChildren(): Array<TreeElement> = if (tables.size > 1) {
         tables.map { table -> TableEntryViewElement(table) }.toTypedArray()
     } else {
-        TreeElement.EMPTY_ARRAY
+        emptyArray()
     }
 
     override fun navigate(requestFocus: Boolean) {

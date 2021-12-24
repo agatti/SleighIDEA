@@ -31,4 +31,14 @@ object SleighElementFactory {
             ), SleighInteger::class.java
         ).first()!!
     }
+
+    @JvmStatic
+    fun createSleighSymbol(project: Project, value: String): SleighSymbol {
+        return PsiTreeUtil.collectElementsOfType(
+            createFile(
+                project,
+                "define token ${value.trim()} (0);"
+            ), SleighSymbol::class.java
+        ).first()!!
+    }
 }

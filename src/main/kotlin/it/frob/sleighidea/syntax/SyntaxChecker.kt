@@ -52,7 +52,7 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
                 .toList()
 
         if (knownSpaces.contains(visited.name)) {
-            markElementAsError(visited.identifier, holder, "Memory space \"${visited.name}\" already defined.")
+            markElementAsError(visited.symbol, holder, "Memory space \"${visited.name}\" already defined.")
             return
         }
 

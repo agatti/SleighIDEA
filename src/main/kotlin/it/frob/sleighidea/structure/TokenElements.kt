@@ -19,7 +19,7 @@ class TokenViewElement(private val token: SleighTokenDefinition) : StructureView
 
     override fun getValue(): Any = token
 
-    override fun getAlphaSortKey(): String = token.name
+    override fun getAlphaSortKey(): String = token.name!!
 
     override fun getPresentation(): ItemPresentation = token.presentation
 

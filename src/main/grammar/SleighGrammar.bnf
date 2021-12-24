@@ -174,8 +174,16 @@ endian ::= KEY_BIG
 alignment_definition ::= KEY_ALIGNMENT ASSIGN integer
 
 token_definition ::= KEY_TOKEN symbol LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.impl.SleighTokenDefinitionMixin"
+}
 private token_field_definitions ::= token_field_definition *
 token_field_definition ::= symbol ASSIGN range_pair token_field_modifiers
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.impl.SleighTokenFieldDefinitionMixin"
+}
 private token_field_modifiers ::= token_field_modifier *
 token_field_modifier ::= KEY_SIGNED
                        | KEY_HEX
@@ -194,7 +202,11 @@ context_field_modifier ::= KEY_SIGNED
 
 range_pair ::= LPAREN integer COMMA integer RPAREN
 
-space_definition ::= KEY_SPACE identifier space_modifiers
+space_definition ::= KEY_SPACE symbol space_modifiers
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.impl.SleighSpaceDefinitionMixin"
+}
 private space_modifiers ::= space_modifier *
 space_modifier ::= space_type_modifier
                  | space_size_modifier
@@ -218,6 +230,10 @@ private bit_ranges ::= bit_range +
 bit_range ::= symbol ASSIGN symbol LBRACKET integer COMMA integer RBRACKET
 
 pcodeop_definition ::= KEY_PCODEOP symbol
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.impl.SleighPcodeDefinitionMixin"
+}
 
 value_attach ::= KEY_VALUES <<variable_list symbol>> <<variable_list integer_or_wildcard>>
 

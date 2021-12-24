@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: Apache-2.0
-
 package it.frob.sleighidea.psi.impl
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
@@ -11,6 +9,7 @@ import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.usageView.UsageViewUtil
 import it.frob.sleighidea.psi.SleighCompositeElement
+import it.frob.sleighidea.psi.SleighNamedElement
 
 open class SleighCompositeElementImpl(node: ASTNode?) : ASTWrapperPsiElement(node!!), SleighCompositeElement {
 
@@ -51,4 +50,8 @@ open class SleighCompositeElementImpl(node: ASTNode?) : ASTWrapperPsiElement(nod
             return true
         }
     }
+}
+
+abstract class SleighNamedElementImpl(node: ASTNode) : SleighCompositeElementImpl(node), SleighNamedElement {
+    override fun setName(name: String): PsiElement = this
 }

@@ -10,7 +10,6 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import java.util.*
 import javax.swing.Icon
 
 internal fun markElementAsError(element: PsiElement, holder: AnnotationHolder, message: String) {
@@ -43,10 +42,7 @@ internal fun markElementAsError(
  * @param holder  the annotation holder that will bind the given rule to the given element.
  * @param key     the text attributes to use when rendering the element.
  */
-internal fun highlight(
-    element: PsiElement, holder: AnnotationHolder,
-    key: TextAttributesKey
-) {
+internal fun highlight(element: PsiElement, holder: AnnotationHolder, key: TextAttributesKey) {
     holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
         .range(element)
         .enforcedTextAttributes(TextAttributes.ERASE_MARKER)
@@ -83,10 +79,8 @@ const val SLEIGH_PREFIX_STRING = "sleigh"
 
 /**
  * A list containing all built-in function calls.
- *
- * TODO: Use an immutable data structure.
  */
-internal val STD_LIBRARY_CALL = Arrays.asList(
+internal val STD_LIBRARY_CALL = listOf(
     "abs",
     "carry",
     "ceil",
@@ -108,10 +102,8 @@ internal val STD_LIBRARY_CALL = Arrays.asList(
 
 /**
  * A list containing all built-in symbols.
- *
- * TODO: Use an immutable data structure.
  */
-internal val BUILT_IN_SYMBOLS = Arrays.asList(
+internal val BUILT_IN_SYMBOLS = listOf(
     "const",
     "epsilon",
     "inst_next",

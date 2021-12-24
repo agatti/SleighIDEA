@@ -22,7 +22,7 @@ class SpaceViewElement(private val space: SleighSpaceDefinition) : StructureView
 
     override fun getValue(): Any = space
 
-    override fun getAlphaSortKey(): String = space.name
+    override fun getAlphaSortKey(): String = space.name!!
 
     override fun getPresentation(): ItemPresentation = space.presentation
 
@@ -32,9 +32,7 @@ class SpaceViewElement(private val space: SleighSpaceDefinition) : StructureView
             .map { obj: SleighVariablesNodeDefinition -> obj.symbolOrWildcardList }
             .flatten()
             .mapNotNull { variable: SleighSymbolOrWildcard ->
-                variable.symbol?.let { symbol ->
-                    SpaceVariableElement(symbol)
-                } ?: run { null }
+                variable.symbol?.let { symbol -> SpaceVariableElement(symbol) }
             }
             .toTypedArray()
 

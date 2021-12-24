@@ -6,7 +6,6 @@ import com.intellij.ide.projectView.PresentationData
 import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PlatformIcons
 import it.frob.sleighidea.model.Endianness
 import it.frob.sleighidea.psi.impl.DisplayPlaceholderVisitor
@@ -71,11 +70,8 @@ val SleighMacroDefinition.presentation: ItemPresentation
         null
     )
 
-val SleighTokenDefinition.name: String
-    get() = symbol.value
-
 val SleighTokenDefinition.placeholderText: String
-    get() = name
+    get() = name!!
 
 val SleighTokenDefinition.presentation: ItemPresentation
     get() = PresentationData(
@@ -124,9 +120,6 @@ val SleighTokenFieldDefinition.presentation: ItemPresentation
         getContainingFile(this), PlatformIcons.CLASS_ICON,
         null
     )
-
-val SleighSpaceDefinition.name
-    get() = identifier.text
 
 /**
  * Extract a placeholder text string from a [SleighSpaceDefinition] element.
