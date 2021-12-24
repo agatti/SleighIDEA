@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 {
+    generateTokens=true
+    generatePsi=true
+
     parserUtilClass="it.frob.sleighidea.parser.SleighParserUtil"
     parserClass="it.frob.sleighidea.parser.SleighParser"
 
     implements="it.frob.sleighidea.psi.SleighCompositeElement"
-    extends="it.frob.sleighidea.psi.impl.SleighCompositeElementImpl"
+    extends="it.frob.sleighidea.psi.SleighCompositeElementImpl"
 
     psiClassPrefix="Sleigh"
     psiImplClassSuffix="Impl"
@@ -176,13 +179,13 @@ alignment_definition ::= KEY_ALIGNMENT ASSIGN integer
 token_definition ::= KEY_TOKEN symbol LPAREN integer RPAREN [ KEY_ENDIAN ASSIGN endian ] token_field_definitions
 {
     implements="it.frob.sleighidea.psi.SleighNamedElement"
-    mixin="it.frob.sleighidea.psi.impl.SleighTokenDefinitionMixin"
+    mixin="it.frob.sleighidea.psi.SleighTokenDefinitionMixin"
 }
 private token_field_definitions ::= token_field_definition *
 token_field_definition ::= symbol ASSIGN range_pair token_field_modifiers
 {
     implements="it.frob.sleighidea.psi.SleighNamedElement"
-    mixin="it.frob.sleighidea.psi.impl.SleighTokenFieldDefinitionMixin"
+    mixin="it.frob.sleighidea.psi.SleighTokenFieldDefinitionMixin"
 }
 private token_field_modifiers ::= token_field_modifier *
 token_field_modifier ::= KEY_SIGNED
@@ -190,9 +193,17 @@ token_field_modifier ::= KEY_SIGNED
                        | KEY_DEC
 { generateTokenAccessors=true }
 
-context_definition ::= KEY_CONTEXT identifier context_field_definitions
+context_definition ::= KEY_CONTEXT symbol context_field_definitions
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighContextDefinitionMixin"
+}
 private context_field_definitions ::= context_field_definition *
-context_field_definition ::= identifier ASSIGN range_pair context_field_modifiers
+context_field_definition ::= symbol ASSIGN range_pair context_field_modifiers
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighContextFieldDefinitionMixin"
+}
 private context_field_modifiers ::= context_field_modifier *
 context_field_modifier ::= KEY_SIGNED
                          | KEY_NOFLOW
@@ -205,7 +216,7 @@ range_pair ::= LPAREN integer COMMA integer RPAREN
 space_definition ::= KEY_SPACE symbol space_modifiers
 {
     implements="it.frob.sleighidea.psi.SleighNamedElement"
-    mixin="it.frob.sleighidea.psi.impl.SleighSpaceDefinitionMixin"
+    mixin="it.frob.sleighidea.psi.SleighSpaceDefinitionMixin"
 }
 private space_modifiers ::= space_modifier *
 space_modifier ::= space_type_modifier
@@ -223,16 +234,25 @@ space_size_modifier ::= KEY_SIZE ASSIGN integer
 space_wordsize_modifier ::= KEY_WORDSIZE ASSIGN integer
 
 variables_node_definition ::= symbol KEY_OFFSET ASSIGN integer KEY_SIZE ASSIGN integer <<variable_list symbol_or_wildcard>>
-{ generateTokenAccessors=true }
+{
+    generateTokenAccessors=true
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighVariablesNodeDefinitionMixin"
+}
 
 bit_range_definition ::= KEY_BITRANGE bit_ranges
 private bit_ranges ::= bit_range +
 bit_range ::= symbol ASSIGN symbol LBRACKET integer COMMA integer RBRACKET
+{
+    generateTokenAccessors=true
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighBitRangeMixin"
+}
 
 pcodeop_definition ::= KEY_PCODEOP symbol
 {
     implements="it.frob.sleighidea.psi.SleighNamedElement"
-    mixin="it.frob.sleighidea.psi.impl.SleighPcodeDefinitionMixin"
+    mixin="it.frob.sleighidea.psi.SleighPcodeDefinitionMixin"
 }
 
 value_attach ::= KEY_VALUES <<variable_list symbol>> <<variable_list integer_or_wildcard>>
@@ -257,7 +277,13 @@ symbol_or_wildcard ::= symbol
 constructor_like ::= macro_definition
                    | withblock
                    | constructor
-macro_definition ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody
+
+macro_definition ::= KEY_MACRO symbol LPAREN arguments RPAREN semanticbody
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighMacroDefinitionMixin"
+}
+
 arguments ::= [ <<comma_separated identifier>> ]
 withblock ::= RES_WITH id_or_nil COLON bit_patterns context_blocks LBRACE constructor_like_list RBRACE
 id_or_nil ::= identifier *
@@ -279,6 +305,7 @@ private context_statement_kind ::= context_assignment
                                  | pfuncall
 context_assignment ::= context_lvalue ASSIGN pexpression
 context_lvalue ::= identifier
+
 pfuncall ::= pexpression_apply
 pequation ::= pequation_or
 pequation_or ::= pequation_seq ( pequation_or_op pequation_seq ) *
@@ -471,8 +498,8 @@ print_piece ::= identifier
               | special
 white_space ::= WHITESPACE
 concatenate ::= CARET
-special ::= DISPCHAR
-          | LINECOMMENT
+special ::= dispchar
+          | linecomment
           | LBRACE
           | RBRACE
           | LBRACKET
@@ -507,9 +534,9 @@ special ::= DISPCHAR
           | SPEC_AND
           | SPEC_OR
           | SPEC_XOR
-          | DEC_INT
-          | HEX_INT
-          | BIN_INT
+          | DECNUMBER
+          | HEXNUMBER
+          | BINNUMBER
 
 quoted_string ::= QSTRING
 
@@ -549,17 +576,16 @@ key_as_id ::= KEY_ALIGNMENT
             | KEY_VALUES
             | KEY_VARIABLES
             | KEY_WORDSIZE
-strict_id ::= IDENTIFIER
 
-IDENTIFIER ::= symbol_string
+strict_id ::= symbol_string
 
 integer ::= external_definition
           | [ MINUS ] positive_integer
 { generateTokenAccessors=true }
 
-private positive_integer ::= hexnumber
-                           | decnumber
-                           | binnumber
+private positive_integer ::= HEXNUMBER
+                           | DECNUMBER
+                           | BINNUMBER
 
 symbol ::= external_definition
          | symbol_string
@@ -570,8 +596,5 @@ symbol_string ::= LITERALSYMBOL
 
 private meta comma_separated ::= <<param>> ( COMMA <<param>> ) *
 
-DISPCHAR ::= displaychar
-LINECOMMENT ::= '#'
-DEC_INT ::= decnumber
-HEX_INT ::= hexnumber
-BIN_INT ::= binnumber
+dispchar ::= DISPLAYCHAR
+linecomment ::= '#'

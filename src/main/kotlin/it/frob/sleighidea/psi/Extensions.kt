@@ -6,9 +6,11 @@ import com.intellij.ide.projectView.PresentationData
 import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 import com.intellij.util.PlatformIcons
 import it.frob.sleighidea.model.Endianness
-import it.frob.sleighidea.psi.impl.DisplayPlaceholderVisitor
+import java.util.stream.Collectors
 
 /**
  * Get the file name of the given element's containing file.
@@ -59,7 +61,7 @@ val SleighDisplay.placeholderText: String
     get() = getDisplayPlaceholderText(this)
 
 val SleighMacroDefinition.placeholderText: String
-    get() = identifier.text +
+    get() = symbol.value +
             arguments.identifierList.joinToString(", ", "(", ")") { item -> item.text }
 
 val SleighMacroDefinition.presentation: ItemPresentation
@@ -235,3 +237,39 @@ val SleighBitRange.bitStart: SleighInteger
 
 val SleighBitRange.bitEnd: SleighInteger
     get() = integerList[1]
+
+internal class DisplayPlaceholderVisitor : SleighVisitor() {
+    private enum class SleighDisplayVisitingState {
+        COLLECTING_NAME, COLLECTING_ARGUMENTS
+    }
+
+    private var state = SleighDisplayVisitingState.COLLECTING_NAME
+    private val builder = StringBuilder()
+    private val arguments: MutableList<PsiElement> = ArrayList()
+    override fun visitPrintPiece(visited: SleighPrintPiece) {
+        when (state) {
+            SleighDisplayVisitingState.COLLECTING_NAME -> builder.append(visited.text.trim())
+            SleighDisplayVisitingState.COLLECTING_ARGUMENTS -> arguments.add(visited)
+        }
+    }
+
+    override fun visitWhiteSpace(space: PsiWhiteSpace) {
+        when (state) {
+            SleighDisplayVisitingState.COLLECTING_NAME -> state = SleighDisplayVisitingState.COLLECTING_ARGUMENTS
+            SleighDisplayVisitingState.COLLECTING_ARGUMENTS -> if (arguments[arguments.size - 1] !is PsiWhiteSpace) {
+                arguments.add(PsiWhiteSpaceImpl(" "))
+            }
+        }
+    }
+
+    val placeholderText: String
+        get() {
+            if (arguments.isNotEmpty()) {
+                builder.append(" ")
+                    .append(arguments.stream()
+                        .map { obj: PsiElement -> obj.text }
+                        .collect(Collectors.joining("")).trim())
+            }
+            return builder.toString()
+        }
+}
