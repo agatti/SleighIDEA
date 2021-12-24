@@ -242,21 +242,21 @@ constructor_like ::= macro_definition
                    | withblock
                    | constructor
 macro_definition ::= KEY_MACRO identifier LPAREN arguments RPAREN semanticbody
-arguments ::= oplist *
-oplist ::= identifier ( COMMA identifier ) *
-withblock ::= RES_WITH id_or_nil COLON bit_patterns context_block LBRACE constructor_like_list RBRACE
+arguments ::= [ <<comma_separated identifier>> ]
+withblock ::= RES_WITH id_or_nil COLON bit_patterns context_blocks LBRACE constructor_like_list RBRACE
 id_or_nil ::= identifier *
 bit_patterns ::= bit_pattern *
 definition_or_constructor_like ::= definition
                                  | constructor_like
 constructor_like_list ::= definition_or_constructor_like *
-constructor ::= constructor_start bit_pattern context_block constructor_semantic
+constructor ::= constructor_start bit_pattern context_blocks constructor_semantic
 constructor_semantic ::= semanticbody
                        | KEY_UNIMPL
 { generateTokenAccessors=true }
 bit_pattern ::= pequation
 constructor_start ::= [ identifier ] display
-context_block ::= ( LBRACKET context_statements RBRACKET ) *
+private context_blocks ::= context_block *
+context_block ::= LBRACKET context_statements RBRACKET
 private context_statements ::= context_statement *
 context_statement ::= context_statement_kind SEMI
 private context_statement_kind ::= context_assignment
@@ -308,7 +308,7 @@ pexpression_unary_op ::= MINUS
 pexpression_func ::= pexpression_apply
                    | pexpression_term
 pexpression_apply ::= identifier pexpression_operands
-pexpression_operands ::= LPAREN [ pexpression ( COMMA pexpression ) * ] RPAREN
+pexpression_operands ::= LPAREN [ <<comma_separated pexpression>> ] RPAREN
 pexpression_term ::= identifier
                    | integer
                    | LPAREN pexpression RPAREN
@@ -335,7 +335,7 @@ pexpression2_unary_op ::= MINUS
 pexpression2_func ::= pexpression2_apply
                     | pexpression2_term
 pexpression2_apply ::= identifier pexpression2_operands
-pexpression2_operands ::= LPAREN [ pexpression2 ( COMMA pexpression2 ) * ] RPAREN
+pexpression2_operands ::= LPAREN [ <<comma_separated pexpression2>> ] RPAREN
 pexpression2_term ::= identifier
                     | integer
                     | LPAREN pexpression2 RPAREN
@@ -436,7 +436,7 @@ unary_op ::= EXCLAIM
 expr_func ::= expr_apply
             | expr_term
 expr_apply ::= identifier expr_operands
-expr_operands ::= LPAREN [ expr ( COMMA expr ) * ] RPAREN
+expr_operands ::= LPAREN [ <<comma_separated expr>> ] RPAREN
 expr_term ::= LPAREN expr RPAREN
             | sembitrange
             | variable_node
@@ -551,6 +551,8 @@ symbol ::= external_definition
 external_definition ::= DEFINITION_START symbol_string RPAREN
 
 symbol_string ::= LITERALSYMBOL
+
+private meta comma_separated ::= <<param>> ( COMMA <<param>> ) *
 
 DISPCHAR ::= displaychar
 LINECOMMENT ::= '#'

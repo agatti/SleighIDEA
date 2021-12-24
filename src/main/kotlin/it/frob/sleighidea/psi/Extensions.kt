@@ -61,10 +61,7 @@ val SleighDisplay.placeholderText: String
 
 val SleighMacroDefinition.placeholderText: String
     get() = identifier.text +
-            PsiTreeUtil.getChildrenOfTypeAsList(
-                PsiTreeUtil.findChildOfType(this, SleighOplist::class.java),
-                SleighIdentifier::class.java
-            ).joinToString(", ", "(", ")") { item -> item.text }
+            arguments.identifierList.joinToString(", ", "(", ")") { item -> item.text }
 
 val SleighMacroDefinition.presentation: ItemPresentation
     get() = PresentationData(
