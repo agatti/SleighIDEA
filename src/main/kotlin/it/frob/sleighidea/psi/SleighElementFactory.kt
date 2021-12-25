@@ -22,7 +22,7 @@ object SleighElementFactory {
         val valueString = when (base) {
             NumericBase.DEC -> value.absoluteValue.toString(10)
             NumericBase.BIN -> "0b${value.toString(2)}"
-            NumericBase.HEX -> "0x${value.toString(16)}"
+            NumericBase.HEX -> "0x${value.toString(16).uppercase()}"
         }
         return PsiTreeUtil.collectElementsOfType(
             createFile(

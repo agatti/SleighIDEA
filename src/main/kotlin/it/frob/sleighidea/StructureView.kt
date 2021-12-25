@@ -179,7 +179,7 @@ class TableViewElement(constructor: SleighConstructorStart) : ViewElementBase<Sl
         val presentationText = (if (tables.size > 1) {
             identifier.text
         } else {
-            "${identifier.text} ${item.display.placeholderText} -> ${(item.parent as SleighConstructor).bitPattern.text}"
+            "${identifier.text} ${item.display.placeholderText} \u2192 ${(item.parent as SleighConstructor).bitPattern.text}"
         }).replace(Regex("\\s+"), " ")
 
         return PresentationData(
@@ -212,7 +212,7 @@ class TableEntryViewElement(private val entry: SleighConstructorStart) :
 
     override fun getPresentation(): ItemPresentation {
         return PresentationData(
-            "${entry.display.placeholderText} -> ${(entry.parent as SleighConstructor).bitPattern.text}".replace(
+            "${entry.display.placeholderText} \u2192 ${(entry.parent as SleighConstructor).bitPattern.text}".replace(
                 Regex("\\s+"),
                 " "
             ),
