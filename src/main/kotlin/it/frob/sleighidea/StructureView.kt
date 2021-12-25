@@ -14,6 +14,7 @@ import com.intellij.util.PlatformIcons
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import it.frob.sleighidea.model.Endianness
 import it.frob.sleighidea.psi.*
 
 class ViewModel(psiFile: PsiFile?) : StructureViewModelBase(psiFile!!, RootViewElement(psiFile)),
@@ -41,11 +42,32 @@ class RootViewElement(private val element: NavigatablePsiElement) : StructureVie
 
     override fun getAlphaSortKey(): String = element.name ?: ""
 
-    override fun getPresentation(): ItemPresentation = element.presentation ?: PresentationData()
+    override fun getPresentation(): ItemPresentation {
+        if (element is SleighFile) {
+            PsiTreeUtil.findChildOfType(element, SleighEndianDefinition::class.java)?.let { definition ->
+                element.presentation?.let { presentationData ->
+                    val endianTag = when (endiannessResolver(element, definition.endian)) {
+                        Endianness.BIG -> "BE"
+                        Endianness.LITTLE -> "LE"
+                        Endianness.EXTERNAL -> "EXT"
+                        Endianness.DEFAULT, Endianness.UNKNOWN -> "?"
+                    }
 
-    override fun getChildren(): Array<TreeElement> = if (element !is SleighFile) {
-        emptyArray()
-    } else buildChildrenList().toTypedArray()
+                    return PresentationData(
+                        "${presentationData.presentableText} ($endianTag)",
+                        presentationData.locationString,
+                        presentationData.getIcon(true),
+                        null
+                    )
+                }
+            }
+        }
+
+        return element.presentation ?: PresentationData()
+    }
+
+    override fun getChildren(): Array<TreeElement> =
+        if (element is SleighFile) buildChildrenList().toTypedArray() else emptyArray()
 
     private fun buildChildrenList(): List<TreeElement> {
         val viewElements: MutableList<TreeElement> = mutableListOf()

@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
+import com.intellij.psi.util.PsiTreeUtil
 import it.frob.sleighidea.model.Endianness
 import java.util.stream.Collectors
 
@@ -66,13 +67,22 @@ val SleighTokenDefinition.placeholderText: String
 val SleighTokenDefinition.size: Int?
     get() = integer.toInteger()
 
-val SleighTokenDefinition.endianness: Endianness
+val SleighEndian?.endianness: Endianness
     get() = when {
-        endian == null -> Endianness.DEFAULT
-        endian?.externalDefinition != null -> Endianness.EXTERNAL
-        endian?.keyBig != null -> Endianness.BIG
-        endian?.keyLittle != null -> Endianness.LITTLE
+        this == null -> Endianness.DEFAULT
+        this.externalDefinition != null -> Endianness.EXTERNAL
+        this.keyBig != null -> Endianness.BIG
+        this.keyLittle != null -> Endianness.LITTLE
         else -> throw RuntimeException("Invalid endianness value.")
+    }
+
+val SleighTokenDefinition.endianness: Endianness
+    get() = endian?.endianness ?: Endianness.DEFAULT
+
+fun endiannessResolver(root: SleighFile, endian: SleighEndian?): Endianness =
+    endian?.let { endianNode -> endianNode.endianness } ?: run {
+        PsiTreeUtil.findChildOfType(root, SleighEndianDefinition::class.java)
+            ?.let { node -> node.endian.endianness } ?: Endianness.UNKNOWN
     }
 
 val SleighTokenFieldDefinition.hexElements: List<PsiElement>
@@ -95,6 +105,13 @@ val SleighTokenFieldDefinition.bitStart: SleighInteger
 
 val SleighTokenFieldDefinition.bitEnd: SleighInteger
     get() = rangePair.integerList[1]
+
+val SleighTokenFieldDefinition.baseString: String
+    get() = (when {
+        (hexElements.isNotEmpty()) && (decElements.isNotEmpty()) -> "?"
+        decElements.isNotEmpty() -> "10"
+        else -> "16"
+    }) + " " + (if (signedElements.isNotEmpty()) "S" else "")
 
 /**
  * Extract a placeholder text string from a [SleighSpaceDefinition] element.

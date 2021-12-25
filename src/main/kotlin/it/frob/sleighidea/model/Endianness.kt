@@ -3,5 +3,5 @@
 package it.frob.sleighidea.model
 
 enum class Endianness {
-    BIG, LITTLE, EXTERNAL, DEFAULT
+    BIG, LITTLE, EXTERNAL, DEFAULT, UNKNOWN
 }
