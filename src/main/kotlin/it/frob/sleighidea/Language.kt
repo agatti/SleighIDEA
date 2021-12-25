@@ -57,6 +57,11 @@ val BUILT_IN_SYMBOLS = listOf(
     "unique"
 )
 
+fun isBuiltInSymbol(symbolName: String): Boolean = symbolName.trim() in BUILT_IN_SYMBOLS
+
+fun isBuiltInJumpTarget(symbolName: String): Boolean =
+    isBuiltInSymbol(symbolName) && (symbolName == "inst_start" || symbolName == "inst_next")
+
 class SleighLanguage : Language("Sleigh") {
     companion object {
         val INSTANCE: SleighLanguage = SleighLanguage()

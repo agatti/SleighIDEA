@@ -19,6 +19,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.util.PlatformIcons
 import it.frob.sleighidea.SleighIcons
 import it.frob.sleighidea.SleighLexerAdapter
+import it.frob.sleighidea.isBuiltInJumpTarget
 import it.frob.sleighidea.isStandardLibraryCall
 import it.frob.sleighidea.psi.*
 
@@ -223,10 +224,9 @@ open class SyntaxHighlightingVisitor(protected val holder: AnnotationHolder) : S
         }
     }
 
-    override fun visitJumpdest(visited: SleighJumpdest) {
+    override fun visitJumpDestination(visited: SleighJumpDestination) {
         visited.identifier?.let { identifier ->
-            val jumpTargetString = identifier.text
-            if (jumpTargetString == "inst_next" || jumpTargetString == "inst_start") {
+            if (isBuiltInJumpTarget(identifier.text)) {
                 highlight(identifier, holder, SyntaxHighlighting.BUILT_IN_SYMBOL)
             }
         }

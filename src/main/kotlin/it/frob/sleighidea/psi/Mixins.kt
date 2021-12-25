@@ -183,7 +183,35 @@ abstract class SleighExpressionApplyNameMixin(node: ASTNode) : SleighNamedElemen
 
     override fun getTextOffset(): Int = symbol.textOffset
 
-    override fun getReferences(): Array<PsiReference> {
-        return ReferenceProvidersRegistry.getReferencesFromProviders(this)
+    override fun getReferences(): Array<PsiReference> = ReferenceProvidersRegistry.getReferencesFromProviders(this)
+}
+
+abstract class SleighVariableNodeMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighVariableNode {
+    override fun setName(name: String): PsiElement {
+        nameIdentifier?.replace(SleighElementFactory.createSleighSymbol(project, name))
+        return this
     }
+
+    override fun getNameIdentifier(): PsiElement? = symbol
+
+    override fun getIdentifyingElement(): PsiElement? = symbol
+
+    override fun getTextOffset(): Int = symbol?.textOffset ?: 0
+
+    override fun getReferences(): Array<PsiReference> = ReferenceProvidersRegistry.getReferencesFromProviders(this)
+}
+
+abstract class SleighLvalueMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighLvalue {
+    override fun setName(name: String): PsiElement {
+        nameIdentifier?.replace(SleighElementFactory.createSleighSymbol(project, name))
+        return this
+    }
+
+    override fun getNameIdentifier(): PsiElement? = identifier
+
+    override fun getIdentifyingElement(): PsiElement? = identifier
+
+    override fun getTextOffset(): Int = identifier?.textOffset ?: 0
+
+    override fun getReferences(): Array<PsiReference> = ReferenceProvidersRegistry.getReferencesFromProviders(this)
 }

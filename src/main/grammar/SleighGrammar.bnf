@@ -278,7 +278,7 @@ constructor_like ::= macro_definition
                    | withblock
                    | constructor
 
-macro_definition ::= KEY_MACRO symbol LPAREN arguments RPAREN semanticbody
+macro_definition ::= KEY_MACRO symbol LPAREN arguments RPAREN semantic_body
 {
     implements="it.frob.sleighidea.psi.SleighNamedElement"
     mixin="it.frob.sleighidea.psi.SleighMacroDefinitionMixin"
@@ -292,7 +292,7 @@ definition_or_constructor_like ::= definition
                                  | constructor_like
 constructor_like_list ::= definition_or_constructor_like *
 constructor ::= constructor_start bit_pattern context_blocks constructor_semantic
-constructor_semantic ::= semanticbody
+constructor_semantic ::= semantic_body
                        | KEY_UNIMPL
 { generateTokenAccessors=true }
 bit_pattern ::= pequation
@@ -383,7 +383,7 @@ pexpression2_term ::= identifier
                     | integer
                     | LPAREN pexpression2 RPAREN
 
-semanticbody ::= LBRACE statement * RBRACE
+semantic_body ::= LBRACE statement * RBRACE
 label ::= LESS identifier GREAT
 section_def ::= LEFT identifier RIGHT
 statement ::= statement_kind SEMI
@@ -396,7 +396,7 @@ private statement_kind ::= assignment
                          | crossbuild_stmt
                          | goto_stmt
                          | cond_stmt
-                         | call_stmt
+                         | call_statement
                          | export
                          | return_stmt
 assignment ::= [ KEY_LOCAL ] lvalue ASSIGN expr
@@ -404,20 +404,24 @@ declaration ::= KEY_LOCAL identifier [ COLON constant ]
 lvalue ::= sembitrange
          | identifier [ COLON constant ]
          | sizedstar expr
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighLvalueMixin"
+}
 sembitrange ::= identifier LBRACKET constant COMMA constant RBRACKET
 sizedstar ::= ASTERISK [ sized_star_element ]
 private sized_star_element ::= [ LBRACKET identifier RBRACKET ] [ COLON constant ]
 private function_call ::= expression_apply
 build_stmt ::= KEY_BUILD identifier
 crossbuild_stmt ::= KEY_CROSSBUILD variable_node COMMA identifier
-goto_stmt ::= KEY_GOTO jumpdest
-jumpdest ::= identifier
-           | LBRACKET expr RBRACKET
-           | integer
-           | constant
-           | label
+goto_stmt ::= KEY_GOTO jump_destination
+call_statement ::= KEY_CALL jump_destination
+jump_destination ::= identifier
+                   | LBRACKET expr RBRACKET
+                   | integer
+                   | constant
+                   | label
 cond_stmt ::= RES_IF expr goto_stmt
-call_stmt ::= KEY_CALL jumpdest
 return_stmt ::= KEY_RETURN LBRACKET expr RBRACKET
 sized_export ::= sizedstar identifier
 export ::= KEY_EXPORT export_item
@@ -492,6 +496,10 @@ expr_term ::= LPAREN expr RPAREN
 variable_node ::= symbol [ COLON constant ]
                 | integer [ COLON constant ]
                 | AMPERSAND [ COLON constant ] variable_node
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighVariableNodeMixin"
+}
 constant ::= integer
 
 display ::= COLON print_pieces RES_IS

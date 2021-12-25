@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 package it.frob.sleighidea.lexer;
 
 import com.intellij.lexer.FlexLexer;
