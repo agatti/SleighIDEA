@@ -12,7 +12,9 @@ a [Sleigh](https://ghidra.re/courses/languages/html/sleigh.html) plugin for Inte
 * Simple colour customisation support
 * Gutter icons for tables and opcodes
 * Basic structure view support for opcodes
-* Basic folding support.
+* Basic folding support
+* Initial references support
+* Token definition structure viewer.
 
 ## What is not there
 
@@ -23,6 +25,8 @@ Pretty much everything else:
 * Full folding support
 * Full structure view
 * Full syntax colouring
+* Full references support
+* Rename refactoring
 * Autocompletion support
 * Handling of `.ldefs`, `.cspec`, `.pspec`, and `.opinion` files
 * Syntax inspections
@@ -69,6 +73,9 @@ using the instructions in the appropriate section, executing the `runIde` Gradle
 
 * The filetype icon is taken from Ghidra's source code repository and it is believed to be released under the same
   licence as Ghidra, hence Apache 2.0.
+* The token viewer panel icon is derived from the original Ghidra icon
+  in [SVG format](https://github.com/NationalSecurityAgency/ghidra/discussions/3709#discussioncomment-1763882), which is
+  under the same licence as Ghidra itself.
 * The table and opcode marker icons are taken from [FamFamFam](http://www.famfamfam.com/lab/icons/silk/), and licensed
   under the Creative Commons Attributed 2.5 licence.
 

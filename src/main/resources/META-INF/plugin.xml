@@ -31,6 +31,13 @@
         <lang.commenter language="Sleigh" implementationClass="it.frob.sleighidea.SleighCommenter"/>
         <psi.referenceContributor implementation="it.frob.sleighidea.psi.SleighReferenceContributor"/>
 
+        <!-- UI Elements -->
+
+        <toolWindow factoryClass="it.frob.sleighidea.ui.TokenToolWindowFactory" id="Sleigh Tokens Viewer"
+                    secondary="true" anchor="bottom" icon="it.frob.sleighidea.SleighIcons.TOKEN_VIEWER_ICON"/>
+
+        <!-- Intentions -->
+
         <intentionAction>
             <className>it.frob.sleighidea.intention.ConvertToBinaryIntention</className>
             <category>Sleigh</category>
