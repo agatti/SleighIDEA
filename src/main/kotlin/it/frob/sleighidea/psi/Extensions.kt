@@ -113,6 +113,21 @@ val SleighTokenFieldDefinition.baseString: String
         else -> "16"
     }) + " " + (if (signedElements.isNotEmpty()) "S" else "")
 
+private fun getTokenFieldBitWidth(field: SleighTokenFieldDefinition): Int? {
+    if (field.bitStart.isExternal || field.bitEnd.isExternal) {
+        val tokenSize = PsiTreeUtil.findFirstParent(field) { element -> element is SleighTokenDefinition }
+            ?.let { token -> (token as SleighTokenDefinition).size }
+            ?: run { null } ?: return null
+
+        return ((field.bitEnd.toInteger() ?: tokenSize) - (field.bitStart.toInteger() ?: 0)) + 1
+    }
+
+    return (field.bitEnd.toInteger()!! - field.bitStart.toInteger()!!) + 1
+}
+
+val SleighTokenFieldDefinition.bitWidth: Int?
+    get() = getTokenFieldBitWidth(this)
+
 /**
  * Extract a placeholder text string from a [SleighSpaceDefinition] element.
  *

@@ -23,13 +23,16 @@ import com.intellij.util.ui.JBUI
 import it.frob.sleighidea.model.Endianness
 import it.frob.sleighidea.psi.*
 import java.awt.*
-import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
+import java.awt.event.*
 import javax.swing.*
 import javax.swing.border.LineBorder
+import kotlin.math.roundToInt
 
 private const val MARGIN = 5
 
+/**
+ * Abstract implementation of [MouseListener], providing default empty methods.
+ */
 open class AbstractMouseListener : MouseListener {
     override fun mouseClicked(event: MouseEvent?) = Unit
 
@@ -45,98 +48,154 @@ open class AbstractMouseListener : MouseListener {
 internal interface TokenClickListener {
     fun tokenClicked(token: SleighTokenDefinition)
 
-    fun fieldClicked(token: SleighTokenDefinition, field: SleighTokenFieldDefinition)
+    fun fieldClicked(field: SleighTokenFieldDefinition)
 }
 
-private fun buildLabel(text: String, clickable: Boolean = false): JBLabel {
-    val label = JBLabel(text, SwingConstants.CENTER)
-    label.border = LineBorder(JBUI.CurrentTheme.Label.foreground(), 1)
-    label.verticalAlignment = SwingConstants.CENTER
-    if (clickable) {
-        label.cursor = Cursor(Cursor.HAND_CURSOR)
+/**
+ * A label which will display tick marks across the horizontal border.
+ *
+ * @param text the text to display in the label.
+ * @param segments how many segments the label is made up of.
+ */
+private open class TickLabel(text: String, private val segments: Int) : JBLabel(text, SwingConstants.CENTER) {
+    override fun paintComponent(g: Graphics?) {
+        (g as? Graphics2D)?.let { graphics ->
+            graphics.color = JBUI.CurrentTheme.Label.foreground()
+            graphics.drawRect(0, 0, width, height)
+            val segmentWidth = width / segments
+
+            (1 until segments).forEach { index ->
+                graphics.drawLine(segmentWidth * index, 0, segmentWidth * index, height / 6)
+                graphics.drawLine(segmentWidth * index, (height / 6) * 5, segmentWidth * index, height)
+            }
+        }
+
+        super.paintComponent(g)
     }
+}
+
+private fun buildLabel(text: String): JBLabel = JBLabel(text, SwingConstants.CENTER).apply {
+    border = LineBorder(JBUI.CurrentTheme.Label.foreground(), 1)
+    verticalAlignment = SwingConstants.CENTER
+    cursor = Cursor(Cursor.HAND_CURSOR)
+}
+
+private fun buildTokenTableTitle(token: SleighTokenDefinition): JBLabel {
+    val endianness = when (endiannessResolver(token.containingFile as SleighFile, token.endian)) {
+        Endianness.BIG -> "BE"
+        Endianness.LITTLE -> "LE"
+        Endianness.EXTERNAL -> "EXT"
+        Endianness.DEFAULT -> "?"
+        Endianness.UNKNOWN -> "?"
+    }
+
+    @Suppress("HtmlRequiredLangAttribute")
+    // language=HTML
+    val label = buildLabel(
+        "<html><a href=''>${token.symbol.value}<sub>$endianness</sub> (${token.size!!})</a></html>",
+    )
+    label.font = JBFont.h4().asBold()
 
     return label
 }
 
-class TokenTableComponent(private val token: SleighTokenDefinition) : JPanel(GridBagLayout()) {
-
-    private var listener: TokenClickListener? = null
-
-    internal fun setListener(clickListener: TokenClickListener?) {
-        listener = clickListener
+class TokenTableHeader(private val bits: Int) : JComponent() {
+    init {
+        // TODO: Update the whole lot when the label font changes.
+        font = JBFont.label()
     }
+
+    override fun paintComponent(g: Graphics?) {
+        super.paintComponent(g)
+
+        (g as? Graphics2D)?.let { graphics ->
+            val cellWidth = width.toFloat() / bits.toFloat()
+            graphics.color = JBUI.CurrentTheme.Label.foreground()
+            graphics.drawRect(0, 0, width, height)
+            (bits downTo 0).forEach { index ->
+                val bitIndex = index - 1
+                graphics.drawLine((cellWidth * index).roundToInt(), 0, (cellWidth * index).roundToInt(), height)
+                // TODO: Cache string bounds if the font stays the same.
+                val stringBounds = font.getStringBounds(bitIndex.toString(), graphics.fontRenderContext)
+                graphics.drawString(
+                    bitIndex.toString(),
+                    ((cellWidth * (bits - index)) + ((cellWidth - stringBounds.width) / 2)).toInt(),
+                    (stringBounds.height + graphics.fontMetrics.descent).toInt()
+                )
+            }
+        }
+    }
+
+    override fun preferredSize(): Dimension = Dimension(0, getFontMetrics(font).height + (MARGIN * 2))
+}
+
+private class TokenFieldComponent(private val field: SleighTokenFieldDefinition, clickListener: TokenClickListener?) :
+    JPanel() {
+
+    private var label: TickLabel
+    private var parentWidth: Int
+
+    init {
+        // TODO: Update the whole lot when the label font changes.
+        font = JBFont.label()
+
+        @Suppress("HtmlRequiredLangAttribute")
+        // language=HTML
+        label = TickLabel(
+            "<html><a href=''><nobr>${field.symbol.value}<sub>${field.baseString}</sub></nobr></a></html>",
+            field.bitWidth!!
+        ).apply {
+            cursor = Cursor(Cursor.HAND_CURSOR)
+            addMouseListener(object : AbstractMouseListener() {
+                override fun mouseClicked(event: MouseEvent?) {
+                    clickListener?.fieldClicked(field)
+                }
+            })
+        }
+        add(label)
+        parentWidth = (field.parent as SleighTokenDefinition).size!!
+    }
+
+    override fun paintComponent(g: Graphics?) {
+        super.paintComponent(g)
+
+        (g as? Graphics2D)?.let {
+            val cellWidth = width.toFloat() / parentWidth.toFloat()
+
+            val labelHeight = height
+            val labelWidth = (field.bitWidth!! * cellWidth).roundToInt()
+            label.size = Dimension(labelWidth, labelHeight)
+            label.location = Point((cellWidth * (parentWidth - field.bitEnd.toInteger()!! - 1)).roundToInt(), 0)
+        }
+    }
+
+    override fun preferredSize(): Dimension = Dimension(label.width, getFontMetrics(label.font).height + (MARGIN * 2))
+}
+
+private class TokenTable(private val token: SleighTokenDefinition, private val clickListener: TokenClickListener?) :
+    JPanel(GridBagLayout()) {
 
     init {
         val constraints = GridBagConstraints().apply {
             fill = GridBagConstraints.HORIZONTAL
             weightx = 1.0
+            gridx = GridBagConstraints.REMAINDER
         }
 
-        constraints.apply {
-            (0 until token.size!!).forEach { index ->
-                gridx = token.size!! - index
-                gridy = 0
-                insets = JBInsets(MARGIN, 0, MARGIN, 0)
-
-                this@TokenTableComponent.add(buildLabel(index.toString()), this)
-            }
-        }
-
-        constraints.apply {
-            gridx = 0
-            gridy = 1
-            gridwidth = token.size!! + 1
-            insets = JBInsets(0, 0, MARGIN, 0)
-
-            val endianness = when (endiannessResolver(token.containingFile as SleighFile, token.endian)) {
-                Endianness.BIG -> "BE"
-                Endianness.LITTLE -> "LE"
-                Endianness.EXTERNAL -> "EXT"
-                Endianness.DEFAULT -> "?"
-                Endianness.UNKNOWN -> "?"
-            }
-
-            @Suppress("HtmlRequiredLangAttribute")
-            // language=HTML
-            val label = buildLabel(
-                "<html><a href=''>${token.symbol.value}<sub>$endianness</sub> (${token.size!!})</a></html>",
-                clickable = true
-            )
-            label.font = JBFont.h4().asBold()
-            label.addMouseListener(object : AbstractMouseListener() {
+        buildTokenTableTitle(token).run {
+            addMouseListener(object : AbstractMouseListener() {
                 override fun mouseClicked(event: MouseEvent?) {
-                    listener?.tokenClicked(token)
+                    clickListener?.tokenClicked(token)
                 }
             })
-
-            this@TokenTableComponent.add(label, this)
+            this@TokenTable.add(this, constraints)
         }
 
-        constraints.insets = JBInsets(0, 0, 0, 0)
-
-        token.tokenFieldDefinitionList.forEachIndexed { index, field ->
-            constraints.apply {
-                val endBit = field.bitEnd.toInteger() ?: token.size!!
-                val startBit = field.bitStart.toInteger() ?: 0
-
-                gridy = index + 2
-                gridx = token.size!! - endBit
-                gridwidth = endBit - startBit + 1
-
-                @Suppress("HtmlRequiredLangAttribute")
-                // language=HTML
-                val label = buildLabel(
-                    "<html><a href=''>${field.symbol.value}<sub>${field.baseString}</sub> ($startBit, $endBit)</a></html>",
-                    clickable = true
-                )
-                label.addMouseListener(object : AbstractMouseListener() {
-                    override fun mouseClicked(event: MouseEvent?) {
-                        listener?.fieldClicked(token, field)
-                    }
-                })
-
-                this@TokenTableComponent.add(label, this)
+        // TODO: Add a notice if the token size cannot be figured out.
+        token.size?.let { tokenBits ->
+            add(TokenTableHeader(tokenBits), constraints)
+            token.tokenFieldDefinitionList.forEach { field ->
+                add(TokenFieldComponent(field, clickListener), constraints)
             }
         }
     }
@@ -151,23 +210,17 @@ class TokenToolWindow(private val project: Project, rootToolWindow: ToolWindow) 
 
     private fun refreshWithFile(sleighFile: SleighFile) {
         currentFile = sleighFile
-        val panel = JPanel()
-        val layout = BoxLayout(panel, BoxLayout.PAGE_AXIS)
-        panel.layout = layout
-
-        var lastFiller: Component? = null
-        sleighFile.tokens.forEach { token ->
-            val table = TokenTableComponent(token)
-            table.setListener(this)
-            panel.add(table)
-
-            val filler = Box.createVerticalGlue()
-            filler.minimumSize.height = JBUIScale.scale(MARGIN)
-            panel.add(filler)
-            lastFiller = filler
+        val panel = JPanel(GridBagLayout())
+        val constraints = GridBagConstraints().apply {
+            fill = GridBagConstraints.HORIZONTAL
+            weightx = 1.0
+            gridx = GridBagConstraints.REMAINDER
+            ipady = JBUIScale.scale(INTRA_TABLE_PADDING)
+            insets = JBInsets(0, MARGIN, 0, MARGIN)
         }
-        lastFiller?.let { filler -> panel.remove(filler) }
         scrollPane.viewport.removeAll()
+        sleighFile.tokens.map { token -> TokenTable(token, this) }
+            .forEach { table -> panel.add(table, constraints) }
         scrollPane.viewport.add(panel)
     }
 
@@ -198,7 +251,7 @@ class TokenToolWindow(private val project: Project, rootToolWindow: ToolWindow) 
         }
     }
 
-    override fun fieldClicked(token: SleighTokenDefinition, field: SleighTokenFieldDefinition) {
+    override fun fieldClicked(field: SleighTokenFieldDefinition) {
         if (currentFile == null) return
         FileEditorManager.getInstance(project).selectedTextEditor?.let { editor ->
             editor.caretModel.moveToOffset(field.textOffset)
@@ -219,6 +272,10 @@ class TokenToolWindow(private val project: Project, rootToolWindow: ToolWindow) 
                     refreshIfNeeded(event.newFile)
                 }
             })
+    }
+
+    companion object {
+        private const val INTRA_TABLE_PADDING = 15
     }
 }
 
