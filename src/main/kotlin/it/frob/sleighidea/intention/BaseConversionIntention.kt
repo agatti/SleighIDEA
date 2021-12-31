@@ -14,9 +14,9 @@ import it.frob.sleighidea.psi.*
 
 private fun convertInteger(element: SleighInteger): Pair<NumericBase, Int> {
     return when {
-        element.hexnumber != null -> Pair(NumericBase.HEX, element.toInteger()!!)
-        element.decnumber != null -> Pair(NumericBase.DEC, element.toInteger()!!)
-        element.binnumber != null -> Pair(NumericBase.BIN, element.toInteger()!!)
+        element.strictInteger?.hexnumber != null -> Pair(NumericBase.HEX, element.toInteger()!!)
+        element.strictInteger?.decnumber != null -> Pair(NumericBase.DEC, element.toInteger()!!)
+        element.strictInteger?.binnumber != null -> Pair(NumericBase.BIN, element.toInteger()!!)
         else -> throw RuntimeException("Invalid number format.")
     }
 }

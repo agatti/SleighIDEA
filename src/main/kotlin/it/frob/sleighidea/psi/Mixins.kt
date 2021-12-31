@@ -95,7 +95,7 @@ abstract class SleighPcodeopDefinitionMixin(node: ASTNode) : SleighNamedElementI
 }
 
 abstract class SleighVariablesNodeDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node),
-    SleighPcodeopDefinition {
+    SleighVariablesNodeDefinition {
     override fun setName(name: String): PsiElement {
         nameIdentifier?.replace(SleighElementFactory.createSleighSymbol(project, name))
         return this
@@ -174,6 +174,28 @@ abstract class SleighMacroDefinitionMixin(node: ASTNode) : SleighNamedElementImp
         placeholderText,
         getContainingFile(this),
         PlatformIcons.FUNCTION_ICON,
+        null
+    )
+}
+
+abstract class SleighDefineMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighDefine {
+    override fun setName(name: String): PsiElement {
+        nameIdentifier?.replace(SleighElementFactory.createSleighLiteralSymbol(project, name))
+        return this
+    }
+
+    override fun getName(): String? = defineName.text
+
+    override fun getNameIdentifier(): PsiElement? = defineName
+
+    override fun getIdentifyingElement(): PsiElement? = defineName
+
+    override fun getTextOffset(): Int = defineName.textOffset
+
+    override fun getPresentation(): ItemPresentation = PresentationData(
+        "$name \u2192 \"${defineValue.string}\"",
+        getContainingFile(this),
+        PlatformIcons.ANNOTATION_TYPE_ICON,
         null
     )
 }

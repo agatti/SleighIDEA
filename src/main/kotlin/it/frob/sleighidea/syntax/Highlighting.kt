@@ -45,66 +45,70 @@ class SyntaxHighlighting : SyntaxHighlighterBase() {
     companion object {
 
         @JvmField
-        val KEYWORD =
+        val KEYWORD: TextAttributesKey =
             TextAttributesKey.createTextAttributesKey("SLEIGH_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
 
-        val COMMENT =
+        val COMMENT: TextAttributesKey =
             TextAttributesKey.createTextAttributesKey("SLEIGH_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
 
         @JvmField
-        val BAD_CHARACTER =
+        val BAD_CHARACTER: TextAttributesKey =
             TextAttributesKey.createTextAttributesKey("SLEIGH_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
 
         @JvmField
-        val NUMBER = TextAttributesKey.createTextAttributesKey("SLEIGH_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
+        val NUMBER: TextAttributesKey =
+            TextAttributesKey.createTextAttributesKey("SLEIGH_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
 
         @JvmField
-        val LABEL = TextAttributesKey.createTextAttributesKey("SLEIGH_LABEL", DefaultLanguageHighlighterColors.LABEL)
+        val LABEL: TextAttributesKey =
+            TextAttributesKey.createTextAttributesKey("SLEIGH_LABEL", DefaultLanguageHighlighterColors.LABEL)
 
         @JvmField
-        val FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
+        val FUNCTION_CALL: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
             "SLEIGH_FUNCTION_CALL",
             DefaultLanguageHighlighterColors.FUNCTION_CALL
         )
 
         @JvmField
-        val STDLIB_FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
+        val STDLIB_FUNCTION_CALL: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
             "SLEIGH_STDLIB_FUNCTION_CALL",
             DefaultLanguageHighlighterColors.FUNCTION_CALL
         )
 
         @JvmField
-        val MACRO = TextAttributesKey.createTextAttributesKey(
+        val MACRO: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
             "SLEIGH_MACRO",
             DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
         )
 
-        val PCODEOP = TextAttributesKey.createTextAttributesKey(
+        val PCODEOP: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
             "SLEIGH_PCODEOP",
             DefaultLanguageHighlighterColors.FUNCTION_DECLARATION
         )
 
         @JvmField
-        val IDENTIFIER = TextAttributesKey.createTextAttributesKey(
+        val IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
             "SLEIGH_IDENTIFIER",
             DefaultLanguageHighlighterColors.GLOBAL_VARIABLE
         )
 
         @JvmField
-        val BUILT_IN_SYMBOL = TextAttributesKey.createTextAttributesKey(
+        val BUILT_IN_SYMBOL: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
             "SLEIGH_BUILT_IN_SYMBOL",
             DefaultLanguageHighlighterColors.KEYWORD
         )
 
-        val DEFINITION =
-            TextAttributesKey.createTextAttributesKey("SLEIGH_DEFINITION", DefaultLanguageHighlighterColors.MARKUP_TAG)
+        @JvmField
+        val DEFINITION: TextAttributesKey =
+            TextAttributesKey.createTextAttributesKey("SLEIGH_DEFINITION", DefaultLanguageHighlighterColors.IDENTIFIER)
 
         @JvmField
-        val PREPROCESSOR =
+        val PREPROCESSOR: TextAttributesKey =
             TextAttributesKey.createTextAttributesKey("SLEIGH_PREPROCESSOR", DefaultLanguageHighlighterColors.METADATA)
 
         @JvmField
-        val STRING = TextAttributesKey.createTextAttributesKey("SLEIGH_STRING", DefaultLanguageHighlighterColors.STRING)
+        val STRING: TextAttributesKey =
+            TextAttributesKey.createTextAttributesKey("SLEIGH_STRING", DefaultLanguageHighlighterColors.STRING)
 
         private val PREPROCESSOR_KEYS = arrayOf(PREPROCESSOR)
         private val BAD_CHAR_KEYS = arrayOf(BAD_CHARACTER)
@@ -249,5 +253,10 @@ open class SyntaxHighlightingVisitor(protected val holder: AnnotationHolder) : S
         visited.constructorSemantic.keyUnimpl?.let {
             holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "Table is not implemented.").create()
         }
+    }
+
+    override fun visitDefine(visited: SleighDefine) {
+        highlight(visited.defineName, holder, SyntaxHighlighting.DEFINITION)
+        assignGutterIcon(visited, holder, PlatformIcons.ANNOTATION_TYPE_ICON)
     }
 }

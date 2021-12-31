@@ -3,6 +3,7 @@
 package it.frob.sleighidea.psi
 
 import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
@@ -239,6 +240,15 @@ val SleighBitRange.bitStart: SleighInteger
 
 val SleighBitRange.bitEnd: SleighInteger
     get() = integerList[1]
+
+fun SleighStrictInteger.toInt(): Int = baseAwareIntegerParser(text)
+
+private fun getSleighDefineValueString(value: SleighDefineValue): String =
+    value.quotedString?.let { string -> StringUtil.unquoteString(string.text) } ?: value.strictInteger?.toInt()
+        .toString()
+
+val SleighDefineValue.string: String
+    get() = getSleighDefineValueString(this)
 
 internal class DisplayPlaceholderVisitor : SleighVisitor() {
     private enum class SleighDisplayVisitingState {

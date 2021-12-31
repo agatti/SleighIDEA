@@ -147,9 +147,19 @@ spec ::= ( spec_element ) * <<eof>>
 spec_element ::= definition
                | constructor_like
                | include
+               | define
 
 include ::= KEY_ATINCLUDE include_string
 include_string ::= quoted_string
+
+define ::= KEY_ATDEFINE define_name define_value
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighDefineMixin"
+}
+define_name ::= literalsymbol
+define_value ::= quoted_string
+               | strict_integer
 
 definition ::= definition_kind SEMI
 private definition_kind ::= definition_container
@@ -593,7 +603,9 @@ key_as_id ::= KEY_ALIGNMENT
 strict_id ::= symbol_string
 
 integer ::= external_definition
-          | [ MINUS ] positive_integer
+          | strict_integer
+
+strict_integer ::= [ MINUS ] positive_integer
 { generateTokenAccessors=true }
 
 private positive_integer ::= HEXNUMBER

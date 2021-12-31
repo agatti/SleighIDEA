@@ -103,6 +103,10 @@ class RootViewElement(private val element: NavigatablePsiElement) : StructureVie
                 override fun visitPcodeopDefinition(visited: SleighPcodeopDefinition) {
                     viewElements.add(PcodeOpViewElement(visited))
                 }
+
+                override fun visitDefine(visited: SleighDefine) {
+                    viewElements.add(DefineViewElement(visited))
+                }
             })
 
             true
@@ -275,11 +279,7 @@ class TokenViewElement(private val token: SleighTokenDefinition) : ViewElementBa
         token.tokenFieldDefinitionList.map { field -> TokenFieldViewElement(field) }.toTypedArray()
 }
 
-class TokenFieldViewElement(private val field: SleighTokenFieldDefinition) :
-    ViewElementBase<SleighTokenFieldDefinition>(field) {
-
-    override fun getAlphaSortKey(): String = field.symbol.value
-}
+class TokenFieldViewElement(field: SleighTokenFieldDefinition) : ViewElementBase<SleighTokenFieldDefinition>(field)
 
 /**
  * Structure view element wrapper for macros.
@@ -287,10 +287,7 @@ class TokenFieldViewElement(private val field: SleighTokenFieldDefinition) :
  * @param macro the [SleighMacroDefinition] instance to wrap.
  * @constructor Create a `MacroViewElement` wrapping the given [SleighMacroDefinition] instance.
  */
-class MacroViewElement(private val macro: SleighMacroDefinition) : ViewElementBase<SleighMacroDefinition>(macro) {
-
-    override fun getAlphaSortKey(): String = macro.placeholderText
-}
+class MacroViewElement(macro: SleighMacroDefinition) : ViewElementBase<SleighMacroDefinition>(macro)
 
 /**
  * Structure view element wrapper for pcodeop definitions.
@@ -298,8 +295,12 @@ class MacroViewElement(private val macro: SleighMacroDefinition) : ViewElementBa
  * @param pcodeop the [SleighPcodeopDefinition] instance to wrap.
  * @constructor Create a `PcodeOpViewElement` wrapping the given [SleighPcodeopDefinition] instance.
  */
-class PcodeOpViewElement(private val pcodeop: SleighPcodeopDefinition) :
-    ViewElementBase<SleighPcodeopDefinition>(pcodeop) {
+class PcodeOpViewElement(pcodeop: SleighPcodeopDefinition) : ViewElementBase<SleighPcodeopDefinition>(pcodeop)
 
-    override fun getAlphaSortKey(): String = pcodeop.symbol.value
-}
+/**
+ * Structure view element wrapper for @define instances.
+ *
+ * @param define the [SleighDefine] instance to wrap.
+ * @constructor Create a `DefineViewElement` wrapping the given [SleighDefine] instance.
+ */
+class DefineViewElement(define: SleighDefine) : ViewElementBase<SleighDefine>(define)

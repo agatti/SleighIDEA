@@ -101,6 +101,17 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
     val pcodeops: List<SleighPcodeopDefinition>
         get() = _pcodeops.value
 
+    /**
+     * All the @define elements in the file, wrapped in a cache-aware container.
+     */
+    private val _defines = createCachedValue(
+        object : ValueProvider<List<SleighDefine>>() {
+            override fun computeValue(): List<SleighDefine> = collectDefines()
+        }
+    )
+    val defines: List<SleighDefine>
+        get() = _defines.value
+
     override fun getFileType(): FileType = SleighFileType.INSTANCE
 
     override fun toString(): String = "Sleigh File"
@@ -194,4 +205,12 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      */
     private fun collectPcodeops(): List<SleighPcodeopDefinition> =
         ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighPcodeopDefinition::class.java))
+
+    /**
+     * Extract all @define elements in the file.
+     *
+     * @return a list containing the [SleighDefine] instances found in the file.
+     */
+    private fun collectDefines(): List<SleighDefine> =
+        ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighDefine::class.java))
 }

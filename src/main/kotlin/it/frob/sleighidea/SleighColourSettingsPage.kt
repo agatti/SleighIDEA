@@ -18,13 +18,13 @@ class SleighColourSettingsPage : ColorSettingsPage {
 
     override fun getDemoText(): String = """# sleigh specification file
 @include "file.sinc"
+@define <def>DEFINEINT</def> 1
+@define <def>DEFINESTR</def> "a"
 define endian=little;
 define alignment=1;
 define space RAM type=ram_space size=2 default;
 define register offset=0x00 size=1 [ <identifier>A</identifier> <identifier>B</identifier> ];
-define token opbyte (8)
-op       = (0,7) signed dec
-;
+define token opbyte (8) op = (0,7) signed dec;
 macro <macro>testmacro</macro>() {}
 define pcodeop <pcodeop>readIRQ</pcodeop>;
 REL: reloc is rel [ reloc = inst_next + rel; ] { export *:2 reloc; } 
@@ -53,12 +53,14 @@ if <stdfun>carry</stdfun>(A, B) goto <builtinsymbol>inst_next</builtinsymbol>;
             AttributesDescriptor("Label", SyntaxHighlighting.LABEL),
             AttributesDescriptor("Macro and PcodeOp", SyntaxHighlighting.MACRO),
             AttributesDescriptor("Number", SyntaxHighlighting.NUMBER),
+            AttributesDescriptor("Preprocessor definition", SyntaxHighlighting.DEFINITION),
             AttributesDescriptor("Preprocessor directive", SyntaxHighlighting.PREPROCESSOR),
             AttributesDescriptor("String", SyntaxHighlighting.STRING)
         )
 
         private val ATTRIBUTES_KEY_MAP: Map<String, TextAttributesKey> = mapOf(
             Pair("builtinsymbol", SyntaxHighlighting.BUILT_IN_SYMBOL),
+            Pair("def", SyntaxHighlighting.DEFINITION),
             Pair("fun", SyntaxHighlighting.FUNCTION_CALL),
             Pair("label", SyntaxHighlighting.LABEL),
             Pair("identifier", SyntaxHighlighting.IDENTIFIER),
