@@ -252,7 +252,7 @@ bit_range ::= symbol ASSIGN symbol LBRACKET integer COMMA integer RBRACKET
 pcodeop_definition ::= KEY_PCODEOP symbol
 {
     implements="it.frob.sleighidea.psi.SleighNamedElement"
-    mixin="it.frob.sleighidea.psi.SleighPcodeDefinitionMixin"
+    mixin="it.frob.sleighidea.psi.SleighPcodeopDefinitionMixin"
 }
 
 value_attach ::= KEY_VALUES <<variable_list symbol>> <<variable_list integer_or_wildcard>>

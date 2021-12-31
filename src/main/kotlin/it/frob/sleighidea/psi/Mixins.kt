@@ -72,7 +72,7 @@ abstract class SleighSpaceDefinitionMixin(node: ASTNode) : SleighNamedElementImp
         PresentationData(placeholderText, getContainingFile(this), PlatformIcons.ANONYMOUS_CLASS_ICON, null)
 }
 
-abstract class SleighPcodeDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighPcodeopDefinition {
+abstract class SleighPcodeopDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighPcodeopDefinition {
     override fun setName(name: String): PsiElement {
         nameIdentifier?.replace(SleighElementFactory.createSleighSymbol(project, name))
         return this
@@ -85,6 +85,13 @@ abstract class SleighPcodeDefinitionMixin(node: ASTNode) : SleighNamedElementImp
     override fun getIdentifyingElement(): PsiElement? = symbol
 
     override fun getTextOffset(): Int = symbol.textOffset
+
+    override fun getPresentation(): ItemPresentation = PresentationData(
+        name,
+        getContainingFile(this),
+        PlatformIcons.ABSTRACT_CLASS_ICON,
+        null
+    )
 }
 
 abstract class SleighVariablesNodeDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node),

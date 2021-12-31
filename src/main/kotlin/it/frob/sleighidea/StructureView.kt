@@ -99,6 +99,10 @@ class RootViewElement(private val element: NavigatablePsiElement) : StructureVie
                         viewElements.add(OpcodeViewElement(visited))
                     }
                 }
+
+                override fun visitPcodeopDefinition(visited: SleighPcodeopDefinition) {
+                    viewElements.add(PcodeOpViewElement(visited))
+                }
             })
 
             true
@@ -281,9 +285,21 @@ class TokenFieldViewElement(private val field: SleighTokenFieldDefinition) :
  * Structure view element wrapper for macros.
  *
  * @param macro the [SleighMacroDefinition] instance to wrap.
- * @constructor Create a `TokenViewElement` wrapping the given [SleighMacroDefinition] instance.
+ * @constructor Create a `MacroViewElement` wrapping the given [SleighMacroDefinition] instance.
  */
 class MacroViewElement(private val macro: SleighMacroDefinition) : ViewElementBase<SleighMacroDefinition>(macro) {
 
     override fun getAlphaSortKey(): String = macro.placeholderText
+}
+
+/**
+ * Structure view element wrapper for pcodeop definitions.
+ *
+ * @param pcodeop the [SleighPcodeopDefinition] instance to wrap.
+ * @constructor Create a `PcodeOpViewElement` wrapping the given [SleighPcodeopDefinition] instance.
+ */
+class PcodeOpViewElement(private val pcodeop: SleighPcodeopDefinition) :
+    ViewElementBase<SleighPcodeopDefinition>(pcodeop) {
+
+    override fun getAlphaSortKey(): String = pcodeop.symbol.value
 }
