@@ -29,7 +29,7 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      */
     private val _tokens = createCachedValue(
         object : ValueProvider<List<SleighTokenDefinition>>() {
-            override fun computeValue(): List<SleighTokenDefinition> = collectTokens()
+            override fun computeValue(): List<SleighTokenDefinition> = simpleCollector()
         }
     )
     val tokens: List<SleighTokenDefinition>
@@ -40,7 +40,7 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      */
     private val _macros = createCachedValue(
         object : ValueProvider<List<SleighMacroDefinition>>() {
-            override fun computeValue(): List<SleighMacroDefinition> = collectMacros()
+            override fun computeValue(): List<SleighMacroDefinition> = simpleCollector()
         }
     )
     val macros: List<SleighMacroDefinition>
@@ -51,7 +51,7 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      */
     private val _spaces = createCachedValue(
         object : ValueProvider<List<SleighSpaceDefinition>>() {
-            override fun computeValue(): List<SleighSpaceDefinition> = collectSpaces()
+            override fun computeValue(): List<SleighSpaceDefinition> = simpleCollector()
         }
     )
     val spaces: List<SleighSpaceDefinition>
@@ -62,7 +62,7 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      */
     private val _includes = createCachedValue(
         object : ValueProvider<List<SleighInclude>>() {
-            override fun computeValue(): List<SleighInclude> = collectIncludes()
+            override fun computeValue(): List<SleighInclude> = simpleCollector()
         }
     )
     val includes: List<SleighInclude>
@@ -84,7 +84,7 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      */
     private val _constructorStarts = createCachedValue(
         object : ValueProvider<List<SleighConstructorStart>>() {
-            override fun computeValue(): List<SleighConstructorStart> = collectConstructorStarts()
+            override fun computeValue(): List<SleighConstructorStart> = simpleCollector()
         }
     )
     val constructorStarts: List<SleighConstructorStart>
@@ -95,7 +95,7 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      */
     private val _pcodeops = createCachedValue(
         object : ValueProvider<List<SleighPcodeopDefinition>>() {
-            override fun computeValue(): List<SleighPcodeopDefinition> = collectPcodeops()
+            override fun computeValue(): List<SleighPcodeopDefinition> = simpleCollector()
         }
     )
     val pcodeops: List<SleighPcodeopDefinition>
@@ -106,7 +106,7 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      */
     private val _defines = createCachedValue(
         object : ValueProvider<List<SleighDefine>>() {
-            override fun computeValue(): List<SleighDefine> = collectDefines()
+            override fun computeValue(): List<SleighDefine> = simpleCollector()
         }
     )
     val defines: List<SleighDefine>
@@ -146,36 +146,13 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
     }
 
     /**
-     * Extract all `token` elements in the file.
+     * Extract all elements of the given [PsiElement]-derived type in the file.
      *
-     * @return a list containing the [SleighTokenDefinition] instances found in the file.
+     * @param T the type of the elements to collect.
+     * @return a list containing the [PsiElement]-derived instances found in the file.
      */
-    private fun collectTokens(): List<SleighTokenDefinition> =
-        ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighTokenDefinition::class.java))
-
-    /**
-     * Extract all `macro` elements in the file.
-     *
-     * @return a list containing the [SleighMacroDefinition] instances found in the file.
-     */
-    private fun collectMacros(): List<SleighMacroDefinition> =
-        ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighMacroDefinition::class.java))
-
-    /**
-     * Extract all `space` elements in the file.
-     *
-     * @return a list containing the [SleighSpaceDefinition] instances found in the file.
-     */
-    private fun collectSpaces(): List<SleighSpaceDefinition> =
-        ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighSpaceDefinition::class.java))
-
-    /**
-     * Extract all `include` elements in the file.
-     *
-     * @return a list containing the [SleighInclude] instances found in the file.
-     */
-    private fun collectIncludes(): List<SleighInclude> =
-        ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighInclude::class.java))
+    private inline fun <reified T : PsiElement> simpleCollector(): List<T> =
+        ArrayList(PsiTreeUtil.collectElementsOfType(this, T::class.java))
 
     /**
      * Extract all variables node definition elements in the file.
@@ -183,34 +160,10 @@ class SleighFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Sle
      * @return a list containing the [SleighVariablesNodeDefinition] instances found in the file.
      */
     private fun collectVariablesNodeDefinitions(): List<SleighVariablesNodeDefinition> =
-        PsiTreeUtil.collectElementsOfType(this, SleighDefinition::class.java)
+        simpleCollector<SleighDefinition>()
             .map { child: SleighDefinition? ->
                 PsiTreeUtil.getChildrenOfTypeAsList(child, SleighVariablesNodeDefinition::class.java)
             }
             .flatten()
             .toList()
-
-    /**
-     * Extract all constructor start elements in the file.
-     *
-     * @return a list containing the [SleighConstructorStart] instances found in the file.
-     */
-    private fun collectConstructorStarts(): List<SleighConstructorStart> =
-        ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighConstructorStart::class.java))
-
-    /**
-     * Extract all pcodeop elements in the file.
-     *
-     * @return a list containing the [SleighPcodeopDefinition] instances found in the file.
-     */
-    private fun collectPcodeops(): List<SleighPcodeopDefinition> =
-        ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighPcodeopDefinition::class.java))
-
-    /**
-     * Extract all @define elements in the file.
-     *
-     * @return a list containing the [SleighDefine] instances found in the file.
-     */
-    private fun collectDefines(): List<SleighDefine> =
-        ArrayList(PsiTreeUtil.collectElementsOfType(this, SleighDefine::class.java))
 }
