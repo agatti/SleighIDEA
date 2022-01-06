@@ -6,14 +6,24 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import it.frob.sleighidea.psi.*
+import java.io.InvalidClassException
 import kotlin.math.abs
 import kotlin.math.pow
 
-class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighlightingVisitor(holder) {
-
-    private val firstDefinedAlignment: SleighAlignmentDefinition? by lazy {
-        PsiTreeUtil.findChildOfType(root.containingFile, SleighAlignmentDefinition::class.java)
+fun lookupInteger(element: SleighInteger): Int? = if (element.isExternal) {
+    (element.containingFile as SleighFile).defines.takeWhile { define ->
+        define.textRange.endOffset < element.textOffset
+    }.find { define -> define.name == element.externalDefinition!!.symbolString.text }?.let { define ->
+        define.defineValue.strictInteger?.let { integer ->
+            return integer.toInt()
+        } ?: run {
+            throw InvalidClassException("Invalid definition content.")
+        }
     }
+    null
+} else element.strictInteger!!.toInt()
+
+class SyntaxChecker(private val root: PsiElement, holder: AnnotationHolder) : SyntaxHighlightingVisitor(holder) {
 
     private val availableSpaces: List<SleighSpaceDefinition> by lazy {
         PsiTreeUtil.collectElementsOfType(
@@ -101,14 +111,26 @@ class SyntaxChecker(root: PsiElement, holder: AnnotationHolder) : SyntaxHighligh
     override fun visitAlignmentDefinition(visited: SleighAlignmentDefinition) {
         super.visitAlignmentDefinition(visited)
 
-        if (firstDefinedAlignment != visited) {
-            markElementAsError(visited, holder, "There is already another alignment directive being defined.")
-        }
-
-        visited.integer.toInteger()?.let { integer ->
-            if (integer <= 0) {
-                markElementAsError(visited.integer.parent, holder, "Alignment must be greater than zero.")
+        PsiTreeUtil.findChildOfType(root.containingFile, SleighAlignmentDefinition::class.java)
+            ?.let { firstDefinedAlignment ->
+                if (firstDefinedAlignment != visited) {
+                    markElementAsError(
+                        visited,
+                        holder,
+                        "There is already another alignment directive being defined."
+                    )
+                    return
+                }
             }
+
+        try {
+            lookupInteger(visited.integer)?.let { integer ->
+                if (integer <= 0) {
+                    markElementAsError(visited.integer, holder, "Alignment must be greater than zero.")
+                }
+            }
+        } catch (exception: InvalidClassException) {
+            markElementAsError(visited.integer, holder, "Invalid definition type.")
         }
     }
 
