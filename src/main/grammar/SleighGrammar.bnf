@@ -616,6 +616,10 @@ symbol ::= external_definition
          | symbol_string
 
 external_definition ::= DEFINITION_START symbol_string RPAREN
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighExternalDefinitionMixin"
+}
 
 symbol_string ::= LITERALSYMBOL
 

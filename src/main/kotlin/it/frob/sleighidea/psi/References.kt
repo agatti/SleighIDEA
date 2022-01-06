@@ -76,6 +76,13 @@ class VariableReference(element: PsiElement, textRange: TextRange) :
         ?: findFirstAssignmentInLocalScopeForVariable(element) ?: findFirstDeclarationInLocalScopeForVariable(element)
 }
 
+class ExternalDefinitionReference(element: PsiElement, textRange: TextRange) :
+    PsiReferenceBase<PsiElement?>(element, textRange) {
+    override fun resolve(): PsiElement? = (element.containingFile as SleighFile).defines.find { definition ->
+        definition.defineName.text == (element as? SleighExternalDefinition)?.symbolString?.text
+    }
+}
+
 class FunctionCallReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> =
         arrayOf(FunctionCallReference(element, (element as SleighExpressionApplyName).symbol.textRangeInParent))
@@ -90,6 +97,11 @@ class VariableReferenceProvider : PsiReferenceProvider() {
 
     override fun acceptsHints(element: PsiElement, hints: PsiReferenceService.Hints): Boolean =
         !isBuiltInSymbol((element as SleighExpressionApplyName).symbol.value)
+}
+
+class ExternalDefinitionReferenceProvider : PsiReferenceProvider() {
+    override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> =
+        arrayOf(ExternalDefinitionReference(element, element.textRangeInParent))
 }
 
 class SleighReferenceContributor : PsiReferenceContributor() {
@@ -109,6 +121,11 @@ class SleighReferenceContributor : PsiReferenceContributor() {
             PlatformPatterns.psiElement(SleighLvalue::class.java)
                 .withParent(SleighAssignment::class.java)
                 .inFile(PlatformPatterns.psiFile(SleighFile::class.java)), VariableReferenceProvider()
+        )
+
+        registrar.registerReferenceProvider(
+            PlatformPatterns.psiElement(SleighExternalDefinition::class.java)
+                .inFile(PlatformPatterns.psiFile(SleighFile::class.java)), ExternalDefinitionReferenceProvider()
         )
     }
 }

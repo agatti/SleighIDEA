@@ -53,4 +53,12 @@ object SleighElementFactory {
             element.elementType == SleighTypes.LITERALSYMBOL
         }
     }
+
+    @JvmStatic
+    fun createSleighExternalDefinition(project: Project, value: String): PsiElement {
+        return PsiTreeUtil.collectElementsOfType(
+            createFile(project, "define alignment=$($value);"),
+            SleighExternalDefinition::class.java
+        ).first()!!
+    }
 }

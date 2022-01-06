@@ -244,3 +244,18 @@ abstract class SleighLvalueMixin(node: ASTNode) : SleighNamedElementImpl(node), 
 
     override fun getReferences(): Array<PsiReference> = ReferenceProvidersRegistry.getReferencesFromProviders(this)
 }
+
+abstract class SleighExternalDefinitionMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighExternalDefinition {
+    override fun setName(name: String): PsiElement {
+        nameIdentifier?.replace(SleighElementFactory.createSleighExternalDefinition(project, name))
+        return this
+    }
+
+    override fun getNameIdentifier(): PsiElement? = symbolString
+
+    override fun getIdentifyingElement(): PsiElement? = symbolString
+
+    override fun getTextOffset(): Int = symbolString.textOffset
+
+    override fun getReferences(): Array<PsiReference> = ReferenceProvidersRegistry.getReferencesFromProviders(this)
+}
