@@ -20,7 +20,7 @@ import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBInsets
 import com.intellij.util.ui.JBUI
-import it.frob.sleighidea.model.Endianness
+import it.frob.sleighidea.Endianness
 import it.frob.sleighidea.psi.*
 import java.awt.*
 import java.awt.event.*

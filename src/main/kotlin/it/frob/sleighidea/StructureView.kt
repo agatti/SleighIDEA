@@ -14,7 +14,6 @@ import com.intellij.util.PlatformIcons
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import it.frob.sleighidea.model.Endianness
 import it.frob.sleighidea.psi.*
 
 class ViewModel(psiFile: PsiFile?) : StructureViewModelBase(psiFile!!, RootViewElement(psiFile)),

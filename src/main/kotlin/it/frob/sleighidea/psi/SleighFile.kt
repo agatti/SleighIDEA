@@ -12,8 +12,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
-import it.frob.sleighidea.SleighFileType
-import it.frob.sleighidea.SleighLanguage
+import it.frob.sleighidea.*
 import java.util.*
 
 /**

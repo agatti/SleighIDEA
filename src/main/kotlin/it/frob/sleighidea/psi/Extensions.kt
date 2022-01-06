@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 import com.intellij.psi.util.PsiTreeUtil
-import it.frob.sleighidea.model.Endianness
+import it.frob.sleighidea.Endianness
 import java.util.stream.Collectors
 
 /**

@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.elementType
-import it.frob.sleighidea.model.NumericBase
+import it.frob.sleighidea.NumericBase
 import it.frob.sleighidea.psi.*
 
 private fun convertInteger(element: SleighInteger): Pair<NumericBase, Int> {

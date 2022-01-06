@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
+import it.frob.sleighidea.NumericBase
 import it.frob.sleighidea.SleighFileType
-import it.frob.sleighidea.model.NumericBase
 import kotlin.math.absoluteValue
 
 object SleighElementFactory {
