@@ -243,6 +243,9 @@ val SleighBitRange.bitEnd: SleighInteger
 
 fun SleighStrictInteger.toInt(): Int = baseAwareIntegerParser(text)
 
+val SleighInclude.fileName: String?
+    get() = StringUtil.unquoteString(quotedString.text).ifEmpty { null }
+
 private fun getSleighDefineValueString(value: SleighDefineValue): String =
     value.quotedString?.let { string -> StringUtil.unquoteString(string.text) } ?: value.strictInteger?.toInt()
         .toString()

@@ -150,7 +150,11 @@ spec_element ::= definition
                | define
 
 include ::= KEY_ATINCLUDE include_string
-include_string ::= quoted_string
+{
+    implements="it.frob.sleighidea.psi.SleighNamedElement"
+    mixin="it.frob.sleighidea.psi.SleighIncludeMixin"
+}
+private include_string ::= quoted_string
 
 define ::= KEY_ATDEFINE define_name define_value
 {

@@ -3,6 +3,9 @@
 package it.frob.sleighidea.psi
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.io.OSAgnosticPathUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
@@ -67,6 +70,25 @@ class FunctionCallReference(element: PsiElement, textRange: TextRange) :
     }
 }
 
+/**
+ * PSI reference class for file inclusion statements.
+ *
+ * @param element the PSI element that contains a yet-to-be resolved file reference.
+ */
+class IncludeReference(element: PsiElement) :
+    PsiReferenceBase<PsiElement>(element, (element as SleighInclude).quotedString.textRangeInParent) {
+
+    override fun resolve(): PsiElement? = (element as SleighInclude).fileName?.let { targetFile ->
+        return (if (OSAgnosticPathUtil.isAbsolute(targetFile)) LocalFileSystem.getInstance()
+            .findFileByPath(targetFile) else VfsUtil.findRelativeFile(
+            targetFile,
+            element.containingFile.virtualFile.parent
+        ))?.let { virtualFile ->
+            PsiManager.getInstance(element.project).findFile(virtualFile)
+        }
+    } ?: run { null }
+}
+
 // TODO: Turn this into a multi-element reference (tables can have more than one entry after all).
 
 class VariableReference(element: PsiElement, textRange: TextRange) :
@@ -126,6 +148,16 @@ class SleighReferenceContributor : PsiReferenceContributor() {
         registrar.registerReferenceProvider(
             PlatformPatterns.psiElement(SleighExternalDefinition::class.java)
                 .inFile(PlatformPatterns.psiFile(SleighFile::class.java)), ExternalDefinitionReferenceProvider()
+        )
+
+        registrar.registerReferenceProvider(
+            PlatformPatterns.psiElement(SleighInclude::class.java)
+                .inFile(PlatformPatterns.psiFile(SleighFile::class.java)), object : PsiReferenceProvider() {
+                override fun getReferencesByElement(
+                    element: PsiElement,
+                    context: ProcessingContext
+                ): Array<PsiReference> = arrayOf(IncludeReference(element))
+            }
         )
     }
 }

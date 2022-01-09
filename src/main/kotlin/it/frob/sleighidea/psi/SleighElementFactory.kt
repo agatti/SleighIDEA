@@ -61,4 +61,12 @@ object SleighElementFactory {
             SleighExternalDefinition::class.java
         ).first()!!
     }
+
+    @JvmStatic
+    fun createSleighQuotedString(project: Project, value: String): PsiElement {
+        return PsiTreeUtil.collectElementsOfType(
+            createFile(project, "@define def \"${value.trim()}\""),
+            SleighQuotedString::class.java
+        ).first()!!
+    }
 }

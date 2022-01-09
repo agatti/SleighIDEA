@@ -253,9 +253,20 @@ abstract class SleighExternalDefinitionMixin(node: ASTNode) : SleighNamedElement
 
     override fun getNameIdentifier(): PsiElement? = symbolString
 
-    override fun getIdentifyingElement(): PsiElement? = symbolString
+    override fun getReferences(): Array<PsiReference> = ReferenceProvidersRegistry.getReferencesFromProviders(this)
+}
 
-    override fun getTextOffset(): Int = symbolString.textOffset
+abstract class SleighIncludeMixin(node: ASTNode) : SleighNamedElementImpl(node), SleighInclude {
+    override fun setName(name: String): PsiElement {
+        nameIdentifier?.replace(SleighElementFactory.createSleighQuotedString(project, name))
+        return this
+    }
+
+    override fun getName(): String? = fileName
+
+    override fun getTextOffset(): Int = nameIdentifier?.textOffset ?: super.getTextOffset()
+
+    override fun getNameIdentifier(): PsiElement? = quotedString
 
     override fun getReferences(): Array<PsiReference> = ReferenceProvidersRegistry.getReferencesFromProviders(this)
 }
