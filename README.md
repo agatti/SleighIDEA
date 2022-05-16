@@ -14,7 +14,9 @@ a [Sleigh](https://ghidra.re/courses/languages/html/sleigh.html) plugin for Inte
 * Basic structure view support for opcodes
 * Basic folding support
 * Initial references support
-* Token definition structure viewer.
+* Token definition structure viewer
+* Basic handling of `.ldefs`, `.cspec`, `.pspec`, and `.opinion` files.
+
 
 ## What is not there
 
@@ -28,8 +30,8 @@ Pretty much everything else:
 * Full references support
 * Rename refactoring
 * Autocompletion support
-* Handling of `.ldefs`, `.cspec`, `.pspec`, and `.opinion` files
 * Syntax inspections
+* Analysis and validation of `.ldefs`, `.cspec`, `.pspec`, and `.opinion` files.
 * etc.
 
 ## FAQ
