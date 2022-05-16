@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="properties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="property"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="property">
+        <xs:complexType>
+            <xs:attribute name="key" use="required"/>
+            <xs:attribute name="value" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:attributeGroup name="inject_parameter_type">
+        <xs:attribute name="name" use="required"/>
+        <xs:attribute name="size"/>
+    </xs:attributeGroup>
+    <xs:element name="input">
+        <xs:complexType>
+            <xs:attributeGroup ref="inject_parameter_type"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="output">
+        <xs:complexType>
+            <xs:attributeGroup ref="inject_parameter_type"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="body" type="xs:string"/>
+    <xs:complexType name="pcode_type">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="input"/>
+                <xs:element ref="output"/>
+            </xs:choice>
+            <xs:element minOccurs="0" ref="body"/>
+        </xs:sequence>
+        <xs:attribute name="paramshift"/>
+        <xs:attribute name="dynamic"/>
+        <xs:attribute name="incidentalcopy"/>
+    </xs:complexType>
+    <xs:element name="pcode" type="pcode_type"/>
+    <xs:element name="register">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="varnode">
+        <xs:complexType>
+            <xs:attribute name="space" use="required"/>
+            <xs:attribute name="offset" use="required"/>
+            <xs:attribute name="size" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:group name="varnode_tags_type">
+        <xs:choice>
+            <xs:element ref="register"/>
+            <xs:element ref="varnode"/>
+        </xs:choice>
+    </xs:group>
+    <xs:element name="constresolve">
+        <xs:complexType>
+            <xs:group ref="varnode_tags_type"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="segmentop">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="pcode"/>
+                <xs:element minOccurs="0" ref="constresolve"/>
+            </xs:sequence>
+            <xs:attribute name="space" use="required"/>
+            <xs:attribute name="userop"/>
+            <xs:attribute name="farpointer"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="processor_spec">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="properties"/>
+                <xs:element ref="programcounter"/>
+                <xs:element ref="data_space"/>
+                <xs:element ref="inferptrbounds"/>
+                <xs:element ref="segmented_address"/>
+                <xs:element ref="segmentop"/>
+                <xs:element ref="context_data"/>
+                <xs:element ref="volatile"/>
+                <xs:element ref="incidentalcopy"/>
+                <xs:element ref="jumpassist"/>
+                <xs:element ref="register_data"/>
+                <xs:element ref="default_symbols"/>
+                <xs:element ref="default_memory_blocks"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="programcounter">
+        <xs:complexType>
+            <xs:attribute name="register" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="data_space">
+        <xs:complexType>
+            <xs:attribute name="space" use="required"/>
+            <xs:attribute name="ptr_wordsize"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="range">
+        <xs:complexType>
+            <xs:attribute name="space" use="required"/>
+            <xs:attribute name="first"/>
+            <xs:attribute name="last"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="inferptrbounds">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="range"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="segmented_address">
+        <xs:complexType>
+            <xs:attribute name="space" use="required"/>
+            <xs:attribute name="type"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="set">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="val" use="required"/>
+            <xs:attribute name="description"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="context_tracked_set_type">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" ref="set"/>
+        </xs:sequence>
+        <xs:attribute name="space" use="required"/>
+        <xs:attribute name="first"/>
+        <xs:attribute name="last"/>
+    </xs:complexType>
+    <xs:element name="context_set" type="context_tracked_set_type"/>
+    <xs:element name="tracked_set" type="context_tracked_set_type"/>
+    <xs:complexType name="context_data_type">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="context_set"/>
+            <xs:element ref="tracked_set"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:element name="context_data" type="context_data_type"/>
+    <xs:group name="memory_tags_type">
+        <xs:choice>
+            <xs:element ref="register"/>
+            <xs:element ref="range"/>
+        </xs:choice>
+    </xs:group>
+    <xs:element name="volatile">
+        <xs:complexType>
+            <xs:group maxOccurs="unbounded" ref="memory_tags_type"/>
+            <xs:attribute name="inputop" use="required"/>
+            <xs:attribute name="outputop" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="incidentalcopy">
+        <xs:complexType>
+            <xs:group maxOccurs="unbounded" ref="varnode_tags_type"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="case_pcode" type="pcode_type"/>
+    <xs:element name="addr_pcode" type="pcode_type"/>
+    <xs:element name="default_pcode" type="pcode_type"/>
+    <xs:element name="size_pcode" type="pcode_type"/>
+    <xs:complexType name="jumpassist_type">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="case_pcode"/>
+            <xs:element ref="addr_pcode"/>
+            <xs:element ref="default_pcode"/>
+            <xs:element ref="size_pcode"/>
+        </xs:choice>
+        <xs:attribute name="name" use="required"/>
+    </xs:complexType>
+    <xs:element name="jumpassist" type="jumpassist_type"/>
+    <xs:simpleType name="boolean_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="true"/>
+            <xs:enumeration value="false"/>
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="register_data">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="register">
+                    <xs:complexType>
+                        <xs:attribute name="name" use="required"/>
+                        <xs:attribute name="rename"/>
+                        <xs:attribute name="alias"/>
+                        <xs:attribute name="group"/>
+                        <xs:attribute name="hidden" type="boolean_type"/>
+                        <xs:attribute name="vector_lane_sizes"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="default_symbols">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="symbol"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="symbol_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="code"/>
+            <xs:enumeration value="code_ptr"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="symbol">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="address" use="required"/>
+            <xs:attribute name="entry" type="boolean_type"/>
+            <xs:attribute name="type" type="symbol_type"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="default_memory_blocks">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="memory_block"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="memory_block">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="start_address" use="required"/>
+            <xs:attribute name="bit_mapped_address"/>
+            <xs:attribute name="mode"/>
+            <xs:attribute name="length"/>
+            <xs:attribute name="initialized" type="boolean_type"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

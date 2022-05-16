@@ -55,6 +55,13 @@
                   fieldName="INSTANCE" language="XML" extensions="cspec"/>
         <xml.schemaProvider implementation="it.frob.sleighidea.SleighCompilerSpecificationsSchemaProvider"/>
 
+        <!-- Sleigh processor specifications files -->
+
+        <fileType name="Sleigh Processor Specification File"
+                  implementationClass="it.frob.sleighidea.SleighProcessorSpecificationsFileType"
+                  fieldName="INSTANCE" language="XML" extensions="pspec"/>
+        <xml.schemaProvider implementation="it.frob.sleighidea.SleighProcessorSpecificationsSchemaProvider"/>
+
         <!-- UI Elements -->
 
         <toolWindow factoryClass="it.frob.sleighidea.ui.TokenToolWindowFactory" id="Sleigh Tokens Viewer"
