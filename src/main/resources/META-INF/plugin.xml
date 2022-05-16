@@ -10,7 +10,7 @@
 
     <change-notes><![CDATA[]]></change-notes>
 
-    <idea-version since-build="212.5457"/>
+    <idea-version since-build="221"/>
 
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.java</depends>
