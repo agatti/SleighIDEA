@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:simpleType name="boolean_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="true"/>
+            <xs:enumeration value="false"/>
+            <xs:enumeration value="yes"/>
+            <xs:enumeration value="no"/>
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="properties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="property"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="property">
+        <xs:complexType>
+            <xs:attribute name="key" use="required"/>
+            <xs:attribute name="value" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:attributeGroup name="inject_parameter_type">
+        <xs:attribute name="name" use="required"/>
+        <xs:attribute name="size"/>
+    </xs:attributeGroup>
+    <xs:element name="body" type="xs:string"/>
+    <xs:element name="register">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="varnode">
+        <xs:complexType>
+            <xs:attribute name="space" use="required"/>
+            <xs:attribute name="offset" use="required"/>
+            <xs:attribute name="size" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:group name="varnode_tags_type">
+        <xs:choice>
+            <xs:element ref="register"/>
+            <xs:element ref="varnode"/>
+        </xs:choice>
+    </xs:group>
+    <xs:element name="constresolve">
+        <xs:complexType>
+            <xs:group ref="varnode_tags_type"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

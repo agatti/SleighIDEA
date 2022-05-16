@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-    <xs:simpleType name="boolean_type">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="true"/>
-            <xs:enumeration value="false"/>
-            <xs:enumeration value="yes"/>
-            <xs:enumeration value="no"/>
-            <xs:enumeration value="1"/>
-            <xs:enumeration value="0"/>
-        </xs:restriction>
-    </xs:simpleType>
+    <xs:include schemaLocation="common.xsd"/>
     <xs:simpleType name="endian_type">
         <xs:restriction base="xs:token">
             <xs:enumeration value="big"/>
