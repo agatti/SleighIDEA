@@ -13,9 +13,13 @@
     <idea-version since-build="221"/>
 
     <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.xml</depends>
     <depends>com.intellij.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+
+        <!-- Sleigh specification files -->
+
         <fileType name="Sleigh File" implementationClass="it.frob.sleighidea.SleighFileType"
                   fieldName="INSTANCE" language="Sleigh" extensions="slaspec;sinc"/>
         <lang.braceMatcher language="Sleigh"
@@ -30,6 +34,12 @@
                              implementationClass="it.frob.sleighidea.SleighFoldingBuilder"/>
         <lang.commenter language="Sleigh" implementationClass="it.frob.sleighidea.SleighCommenter"/>
         <psi.referenceContributor implementation="it.frob.sleighidea.psi.SleighReferenceContributor"/>
+
+        <!-- Sleigh opinion files -->
+
+        <fileType name="Sleigh Opinion File" implementationClass="it.frob.sleighidea.SleighOpinionFileType"
+                  fieldName="INSTANCE" language="XML" extensions="opinion"/>
+        <xml.schemaProvider implementation="it.frob.sleighidea.SleighOpinionSchemaProvider"/>
 
         <!-- UI Elements -->
 
